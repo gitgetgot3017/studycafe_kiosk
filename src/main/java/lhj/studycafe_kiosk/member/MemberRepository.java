@@ -5,6 +5,8 @@ import jakarta.persistence.PersistenceContext;
 import lhj.studycafe_kiosk.domain.Member;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public class MemberRepository {
 
@@ -13,5 +15,12 @@ public class MemberRepository {
 
     public void saveMember(Member member) {
         em.persist(member);
+    }
+
+    public boolean getPhoneYn(String phone) {
+        List<Member> members = em.createQuery("select m from Member m where m.phone = :phone", Member.class)
+                .setParameter("phone", phone)
+                .getResultList();
+        return members.size() > 0;
     }
 }
