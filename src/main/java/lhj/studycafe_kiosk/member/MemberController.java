@@ -22,6 +22,7 @@ import java.time.LocalDate;
 @RequestMapping("/members")
 public class MemberController {
 
+    private final MemberService memberService;
     private final MemberRepository memberRepository;
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -42,7 +43,7 @@ public class MemberController {
         validateDuplicatePhone(joinRequest.getPhone());
 
         Member member = changeFormToDomain(joinRequest);
-        memberRepository.saveMember(member);
+        memberService.join(member);
 
         JoinResponse joinResponse = new JoinResponse("회원가입이 성공적으로 완료되었습니다.", member.getId());
         return new ResponseEntity<>(joinResponse, HttpStatus.CREATED);
