@@ -45,8 +45,8 @@ public class MemberController {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
-    public JoinFailResponse loginFail(LoginFailException e) {
-        return new JoinFailResponse("로그인", e.getMessage());
+    public LoginFailResponse loginFail(LoginFailException e) {
+        return new LoginFailResponse("로그인", e.getMessage());
     }
 
     @PostMapping("/join")
@@ -70,7 +70,7 @@ public class MemberController {
         HttpSession session = request.getSession();
         session.setAttribute("loginMember", memberId);
 
-        LoginResponse loginResponse = new LoginResponse();
+        LoginResponse loginResponse = new LoginResponse("로그인이 성공적으로 완료되었습니다.", memberId);
         return new ResponseEntity<>(loginResponse, HttpStatus.ACCEPTED);
     }
 
