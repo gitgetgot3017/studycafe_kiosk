@@ -6,6 +6,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lhj.studycafe_kiosk.domain.Member;
+import lhj.studycafe_kiosk.exception.DuplicatePhoneException;
+import lhj.studycafe_kiosk.exception.LoginFailException;
+import lhj.studycafe_kiosk.member.dto.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -90,78 +93,5 @@ public class MemberController {
             throw new LoginFailException("전화번호 혹은 비밀번호를 잘못 입력하셨습니다.");
         }
         return opMemberId.get();
-    }
-
-    @Getter
-    static class JoinRequest {
-
-        @NotBlank
-        private String name;
-
-        @Pattern(regexp = "^01([0|1|6|7|8|9])([0-9]{3,4})([0-9]{4})$")
-        @NotNull
-        private String phone;
-
-        @Pattern(regexp = "^[0-9]{4}$")
-        @NotNull
-        private String password;
-
-        @NotNull
-        private LocalDate birth;
-    }
-
-    @AllArgsConstructor
-    @Getter
-    static class JoinResponse {
-
-        private String message;
-        private Long id;
-    }
-
-    @AllArgsConstructor
-    @Getter
-    static class JoinFailResponse {
-
-        private String domain;
-        private String message;
-    }
-
-    @Getter
-    static class LoginRequest {
-
-        @Pattern(regexp = "^01([0|1|6|7|8|9])([0-9]{3,4})([0-9]{4})$")
-        @NotNull
-        private String phone;
-
-        @NotNull
-        private String password;
-    }
-
-    @Getter
-    static class LoginResponse {
-
-        private String message;
-        private Long id;
-    }
-
-    @Getter
-    static class LoginFailResponse {
-
-        private String domain;
-        private String message;
-    }
-
-    static class DuplicatePhoneException extends RuntimeException {
-
-        public DuplicatePhoneException(String message) {
-            super(message);
-        }
-    }
-
-    static class LoginFailException extends RuntimeException {
-
-        public LoginFailException(String message) {
-            super(message);
-        }
     }
 }
