@@ -58,7 +58,7 @@ public class MemberController {
 
     private Member changeFormToDomain(JoinRequest joinRequest) {
 
-        return new Member(joinRequest.getName(), joinRequest.getPhone(), joinRequest.getBirth());
+        return new Member(joinRequest.getName(), joinRequest.getPhone(), joinRequest.getPassword(), joinRequest.getBirth());
     }
 
     @Getter
@@ -70,6 +70,10 @@ public class MemberController {
         @Pattern(regexp = "^01([0|1|6|7|8|9])([0-9]{3,4})([0-9]{4})$")
         @NotNull
         private String phone;
+
+        @Pattern(regexp = "^[0-9]{4}$")
+        @NotNull
+        private String password;
 
         @NotNull
         private LocalDate birth;

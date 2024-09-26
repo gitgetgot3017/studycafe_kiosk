@@ -20,11 +20,14 @@ public class Member {
 
     private String phone;
 
+    private String password;
+
     private LocalDate birth;
 
-    public Member(String name, String phone, LocalDate birth) {
+    public Member(String name, String phone, String password, LocalDate birth) {
         this.name = name;
         this.phone = phone;
+        this.password = password;
         this.birth = birth;
     }
 }
