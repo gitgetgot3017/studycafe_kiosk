@@ -2,15 +2,10 @@ package lhj.studycafe_kiosk.member;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import lhj.studycafe_kiosk.domain.Member;
 import lhj.studycafe_kiosk.exception.DuplicatePhoneException;
 import lhj.studycafe_kiosk.exception.LoginFailException;
 import lhj.studycafe_kiosk.member.dto.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -20,7 +15,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.Optional;
 
 @RestController
@@ -72,6 +66,20 @@ public class MemberController {
 
         LoginResponse loginResponse = new LoginResponse("로그인이 성공적으로 완료되었습니다.", memberId);
         return new ResponseEntity<>(loginResponse, HttpStatus.ACCEPTED);
+    }
+
+    @PostMapping("/logout")
+    public HttpEntity<LogoutResponse> logout(HttpServletRequest request) {
+
+        HttpSession session = request.getSession(false);
+        Long loginId = null;
+        if (session != null) {
+            loginId = (Long) session.getAttribute("loginMember");
+            session.invalidate();
+        }
+
+        LogoutResponse logoutResponse = new LogoutResponse("로그아웃이 정상적으로 완료되었습니다.", loginId);
+        return new ResponseEntity<>(logoutResponse, HttpStatus.OK);
     }
 
     private void validateDuplicatePhone(String phone) {
