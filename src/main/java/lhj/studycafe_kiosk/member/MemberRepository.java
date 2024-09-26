@@ -17,14 +17,13 @@ public class MemberRepository {
         em.persist(member);
     }
 
-    public boolean getPhoneYn(String phone) {
-        List<Member> members = em.createQuery("select m from Member m where m.phone = :phone", Member.class)
+    public List<Member> getJoinMember(String phone) {
+         return em.createQuery("select m from Member m where m.phone = :phone", Member.class)
                 .setParameter("phone", phone)
                 .getResultList();
-        return members.size() > 0;
     }
 
-    public List<Member> getMember(String phone, String password) {
+    public List<Member> getLoginMember(String phone, String password) {
          return em.createQuery("select m from Member m where m.phone = :phone and m.password = :password", Member.class)
                 .setParameter("phone", phone)
                 .setParameter("password", password)

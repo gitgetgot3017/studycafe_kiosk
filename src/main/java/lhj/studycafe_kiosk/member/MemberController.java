@@ -76,7 +76,7 @@ public class MemberController {
 
     private void validateDuplicatePhone(String phone) {
 
-        if (memberRepository.getPhoneYn(phone)) {
+        if (memberService.existPhone(phone)) {
             throw new DuplicatePhoneException("이미 등록된 휴대폰 번호입니다.");
         }
     }

@@ -20,9 +20,14 @@ public class MemberService {
         memberRepository.saveMember(member);
     }
 
+    public boolean existPhone(String phone) {
+
+        return memberRepository.getJoinMember(phone).size() > 0;
+    }
+
     public Optional<Long> login(String phone, String password) {
 
-        List<Member> member = memberRepository.getMember(phone, password);
+        List<Member> member = memberRepository.getLoginMember(phone, password);
 
         if (member.isEmpty()) {
             return Optional.empty();
