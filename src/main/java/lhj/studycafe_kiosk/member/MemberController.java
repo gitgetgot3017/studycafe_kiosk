@@ -63,7 +63,7 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public HttpEntity<LoginResponse> login(@RequestBody @Validated LoginRequest loginRequest, HttpServletRequest request) {
+    public HttpEntity<LoginResponse> login(@RequestBody @Validated LoginRequest loginRequest, HttpServletRequest request, @RequestParam(value = "redirectURL", defaultValue = "/") String redirectURL) {
 
         Long memberId = validateLoginUser(loginRequest);
 
@@ -71,7 +71,7 @@ public class MemberController {
         HttpSession session = request.getSession();
         session.setAttribute("loginMember", memberId);
 
-        LoginResponse loginResponse = new LoginResponse("로그인이 성공적으로 완료되었습니다.", memberId);
+        LoginResponse loginResponse = new LoginResponse("로그인이 성공적으로 완료되었습니다.", memberId, redirectURL);
         return new ResponseEntity<>(loginResponse, HttpStatus.ACCEPTED);
     }
 
