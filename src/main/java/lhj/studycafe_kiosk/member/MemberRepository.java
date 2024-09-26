@@ -23,4 +23,11 @@ public class MemberRepository {
                 .getResultList();
         return members.size() > 0;
     }
+
+    public List<Member> getMember(String phone, String password) {
+         return em.createQuery("select m from Member m where m.phone = :phone and m.password = :password", Member.class)
+                .setParameter("phone", phone)
+                .setParameter("password", password)
+                .getResultList();
+    }
 }

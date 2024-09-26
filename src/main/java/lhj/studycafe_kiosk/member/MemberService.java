@@ -5,6 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -15,5 +18,15 @@ public class MemberService {
     public void join(Member member) {
 
         memberRepository.saveMember(member);
+    }
+
+    public Optional<Long> login(String phone, String password) {
+
+        List<Member> member = memberRepository.getMember(phone, password);
+
+        if (member.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(member.get(0).getId());
     }
 }
