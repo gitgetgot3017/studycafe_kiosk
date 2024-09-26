@@ -1,4 +1,4 @@
-package lhj.studycafe_kiosk.exception;
+package lhj.studycafe_kiosk.member.exception;
 
 public class DuplicatePhoneException extends RuntimeException {
 

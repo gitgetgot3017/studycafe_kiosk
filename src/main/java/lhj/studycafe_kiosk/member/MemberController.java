@@ -3,9 +3,10 @@ package lhj.studycafe_kiosk.member;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lhj.studycafe_kiosk.domain.Member;
-import lhj.studycafe_kiosk.exception.DuplicatePhoneException;
-import lhj.studycafe_kiosk.exception.LoginFailException;
+import lhj.studycafe_kiosk.member.exception.DuplicatePhoneException;
+import lhj.studycafe_kiosk.member.exception.LoginFailException;
 import lhj.studycafe_kiosk.member.dto.*;
+import lhj.studycafe_kiosk.member.exception.NotExistMemberException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -43,12 +44,18 @@ public class MemberController {
         return new LoginFailResponse("로그인", e.getMessage());
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public FindMemberFailResponse findMemberFail(NotExistMemberException e) {
+        return new FindMemberFailResponse("회원", e.getMessage());
+    }
+
     @PostMapping("/join")
     public HttpEntity<JoinResponse> join(@RequestBody @Validated JoinRequest joinRequest) {
 
         validateDuplicatePhone(joinRequest.getPhone());
 
-        Member member = changeFormToDomain(joinRequest);
+        Member member = changeJoinRequestToMember(joinRequest);
         memberService.join(member);
 
         JoinResponse joinResponse = new JoinResponse("회원가입이 성공적으로 완료되었습니다.", member.getId());
@@ -82,6 +89,18 @@ public class MemberController {
         return new ResponseEntity<>(logoutResponse, HttpStatus.OK);
     }
 
+    @GetMapping("/{memberId}")
+    public HttpEntity<MemberInfoResponse> getMemberInfo(@PathVariable("memberId") Long memberId) {
+
+        Member member = memberRepository.getMember(memberId);
+        if (member == null) {
+            throw new NotExistMemberException("존재하지 않는 회원입니다.");
+        }
+
+        MemberInfoResponse memberInfoResponse = changeMemberToMemberInfoResponse(member);
+        return new ResponseEntity<>(memberInfoResponse, HttpStatus.OK);
+    }
+
     private void validateDuplicatePhone(String phone) {
 
         if (memberService.existPhone(phone)) {
@@ -89,7 +108,7 @@ public class MemberController {
         }
     }
 
-    private Member changeFormToDomain(JoinRequest joinRequest) {
+    private Member changeJoinRequestToMember(JoinRequest joinRequest) {
 
         return new Member(joinRequest.getName(), joinRequest.getPhone(), joinRequest.getPassword(), joinRequest.getBirth());
     }
@@ -101,5 +120,10 @@ public class MemberController {
             throw new LoginFailException("전화번호 혹은 비밀번호를 잘못 입력하셨습니다.");
         }
         return opMemberId.get();
+    }
+
+    private MemberInfoResponse changeMemberToMemberInfoResponse(Member member) {
+
+        return new MemberInfoResponse(member.getName(), member.getPhone(), member.getBirth());
     }
 }
