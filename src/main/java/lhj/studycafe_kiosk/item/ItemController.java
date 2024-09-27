@@ -40,7 +40,6 @@ public class ItemController {
 
         Item item = changeItemRegRequestToItem(itemRegRequest);
         itemService.registerItem(item);
-        System.out.println("item.getId() = " + item.getId());
 
         ItemRegResponse itemRegResponse = new ItemRegResponse("상품을 정상적으로 등록하였습니다.", item.getId());
         return new ResponseEntity<>(itemRegResponse, HttpStatus.CREATED);
