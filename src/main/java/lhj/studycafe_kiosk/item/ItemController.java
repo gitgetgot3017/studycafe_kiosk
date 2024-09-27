@@ -1,10 +1,9 @@
 package lhj.studycafe_kiosk.item;
 
 import lhj.studycafe_kiosk.domain.Item;
-import lhj.studycafe_kiosk.item.dto.ItemRegFailResponse;
-import lhj.studycafe_kiosk.item.dto.ItemRegRequest;
-import lhj.studycafe_kiosk.item.dto.ItemRegResponse;
+import lhj.studycafe_kiosk.item.dto.*;
 import lhj.studycafe_kiosk.item.exception.DuplicateItemNameException;
+import lhj.studycafe_kiosk.item.exception.NotExistItemException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class ItemController {
 
     private final ItemService itemService;
+    private final ItemRepository itemRepository;
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({MethodArgumentNotValidException.class, HttpMessageNotReadableException.class})
@@ -31,6 +31,12 @@ public class ItemController {
     @ExceptionHandler
     public ItemRegFailResponse regItemFail(DuplicateItemNameException e) {
         return new ItemRegFailResponse("상품등록", e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public FindItemFailResponse findItemFail(NotExistItemException e) {
+        return new FindItemFailResponse("상품조회", e.getMessage());
     }
 
     @PostMapping
@@ -45,6 +51,18 @@ public class ItemController {
         return new ResponseEntity<>(itemRegResponse, HttpStatus.CREATED);
     }
 
+    @GetMapping("/{itemId}")
+    public HttpEntity<ItemInfoResponse> findItem(@PathVariable("itemId") Long itemId) {
+
+        Item item = itemRepository.getItem(itemId);
+        if (item == null) {
+            throw new NotExistItemException("등록되지 않은 상품입니다.");
+        }
+
+        ItemInfoResponse itemInfoResponse = changeItemInfoResponseToItem(item);
+        return new ResponseEntity<>(itemInfoResponse, HttpStatus.OK);
+    }
+
     private void validateDuplicateItemName(String itemName) {
 
         if (itemService.existItemName(itemName)) {
@@ -55,5 +73,10 @@ public class ItemController {
     private Item changeItemRegRequestToItem(ItemRegRequest itemRegRequest) {
 
         return new Item(itemRegRequest.getItemType(), itemRegRequest.getItemName(), itemRegRequest.getPrice());
+    }
+
+    private ItemInfoResponse changeItemInfoResponseToItem(Item item) {
+
+        return new ItemInfoResponse(item.getItemType(), item.getItemName(), item.getPrice());
     }
 }

@@ -22,4 +22,8 @@ public class ItemRepository {
                 .setParameter("itemName", itemName)
                 .getResultList();
     }
+
+    public Item getItem(Long itemId) {
+        return em.find(Item.class, itemId);
+    }
 }
