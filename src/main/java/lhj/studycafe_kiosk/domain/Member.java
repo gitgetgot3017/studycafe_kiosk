@@ -30,4 +30,17 @@ public class Member {
         this.password = password;
         this.birth = birth;
     }
+
+    public void changeGeneralInfo(String name, LocalDate birth) {
+        this.name = name;
+        this.birth = birth;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

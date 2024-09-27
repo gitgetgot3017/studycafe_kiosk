@@ -3,20 +3,21 @@ package lhj.studycafe_kiosk.member;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lhj.studycafe_kiosk.domain.Member;
-import lhj.studycafe_kiosk.member.exception.DuplicatePhoneException;
-import lhj.studycafe_kiosk.member.exception.LoginFailException;
 import lhj.studycafe_kiosk.member.dto.*;
-import lhj.studycafe_kiosk.member.exception.NotExistMemberException;
+import lhj.studycafe_kiosk.member.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.util.StringUtils;
+import org.springframework.validation.Validator;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,9 +26,10 @@ public class MemberController {
 
     private final MemberService memberService;
     private final MemberRepository memberRepository;
+    private final Validator validator;
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({MethodArgumentNotValidException.class, HttpMessageNotReadableException.class})
+    @ExceptionHandler({MethodArgumentNotValidException.class, HttpMessageNotReadableException.class, ChangeMemberInfoException.class})
     public JoinFailResponse memberFail() {
         return new JoinFailResponse("회원", "필드 검증에 실패하였습니다.");
     }
@@ -48,6 +50,12 @@ public class MemberController {
     @ExceptionHandler
     public FindMemberFailResponse findMemberFail(NotExistMemberException e) {
         return new FindMemberFailResponse("회원", e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public ChangeMemberInfoFailResponse findMemberFail(PasswordMismatchException e) {
+        return new ChangeMemberInfoFailResponse("회원", e.getMessage());
     }
 
     @PostMapping("/join")
@@ -101,6 +109,22 @@ public class MemberController {
         return new ResponseEntity<>(memberInfoResponse, HttpStatus.OK);
     }
 
+    @PatchMapping("/{memberId}")
+    public HttpEntity<ChangeMemberInfoResponse> changeMemberInfo(@PathVariable("memberId") Long memberId, @RequestParam("type") String type, @RequestBody ChangeMemberInfoRequest changeMemberInfoRequest) {
+
+        if (!type.equals("general") && !type.equals("phone") && !type.equals("password")) {
+            throw new IllegalArgumentException("잘못된 쿼리 파라미터를 요청하였습니다.");
+        }
+
+        System.out.println("changeMemberInfoRequest = " + changeMemberInfoRequest);
+        validateChangeMemberInfo(type, changeMemberInfoRequest);
+
+        memberService.changeMemberInfo(memberId, type, changeMemberInfoRequest);
+
+        ChangeMemberInfoResponse changeMemberInfoResponse = new ChangeMemberInfoResponse("회원 정보 수정이 정상적으로 완료되었습니다.", memberId);
+        return new ResponseEntity<>(changeMemberInfoResponse, HttpStatus.ACCEPTED);
+    }
+
     private void validateDuplicatePhone(String phone) {
 
         if (memberService.existPhone(phone)) {
@@ -125,5 +149,25 @@ public class MemberController {
     private MemberInfoResponse changeMemberToMemberInfoResponse(Member member) {
 
         return new MemberInfoResponse(member.getName(), member.getPhone(), member.getBirth());
+    }
+
+    private void validateChangeMemberInfo(String type, ChangeMemberInfoRequest changeMemberInfoRequest) {
+
+        if (type.equals("general")) {
+            if (!StringUtils.hasText(changeMemberInfoRequest.getName()) || changeMemberInfoRequest.getBirth() == null) {
+                throw new ChangeMemberInfoException();
+            }
+        } else if (type.equals("phone")) {
+            String phone = changeMemberInfoRequest.getPhone();
+            if (phone == null || !Pattern.matches("^01([0|1|6|7|8|9])([0-9]{3,4})([0-9]{4})$", phone)) {
+                throw new ChangeMemberInfoException();
+            }
+        } else if (type.equals("password")) {
+            String curPassword = changeMemberInfoRequest.getCurPassword();
+            String newPassword = changeMemberInfoRequest.getNewPassword();
+            if (curPassword == null || !Pattern.matches("^[0-9]{4}$", curPassword) || newPassword == null || !Pattern.matches("^[0-9]{4}$", newPassword)) {
+                throw new ChangeMemberInfoException();
+            }
+        }
     }
 }

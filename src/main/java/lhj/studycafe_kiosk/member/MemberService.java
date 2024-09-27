@@ -1,6 +1,8 @@
 package lhj.studycafe_kiosk.member;
 
 import lhj.studycafe_kiosk.domain.Member;
+import lhj.studycafe_kiosk.member.dto.ChangeMemberInfoRequest;
+import lhj.studycafe_kiosk.member.exception.PasswordMismatchException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,5 +35,17 @@ public class MemberService {
             return Optional.empty();
         }
         return Optional.of(member.get(0).getId());
+    }
+
+    public void changeMemberInfo(Long memberId, String type, ChangeMemberInfoRequest changeMemberInfoRequest) {
+
+        if (type.equals("password")) {
+            Member member = memberRepository.getMember(memberId);
+            if (!changeMemberInfoRequest.getCurPassword().equals(member.getPassword())) {
+                throw new PasswordMismatchException("비밀번호가 일치하지 않습니다.");
+            }
+        }
+
+        memberRepository.updateMember(memberId, type, changeMemberInfoRequest);
     }
 }
