@@ -16,6 +16,7 @@ public class Item {
     @Enumerated(EnumType.STRING)
     private ItemType itemType;
 
+    @Column(unique = true)
     private String itemName;
 
     private int price;

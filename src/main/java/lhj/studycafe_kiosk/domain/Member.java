@@ -18,6 +18,7 @@ public class Member {
     @Column(name = "member_name")
     private String name;
 
+    @Column(unique = true)
     private String phone;
 
     private String password;
