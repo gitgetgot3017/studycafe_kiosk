@@ -3,6 +3,7 @@ package lhj.studycafe_kiosk.item;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lhj.studycafe_kiosk.domain.Item;
+import lhj.studycafe_kiosk.domain.ItemType;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -23,12 +24,9 @@ public class ItemRepository {
                 .getResultList();
     }
 
-    public Item getItem(Long itemId) {
-        return em.find(Item.class, itemId);
-    }
-
-    public List<Item> getItems() {
-        return em.createQuery("select i from Item i", Item.class)
+    public List<Item> getItems(ItemType itemType) {
+        return em.createQuery("select i from Item i where i.itemType = :itemType")
+                .setParameter("itemType", itemType)
                 .getResultList();
     }
 }
