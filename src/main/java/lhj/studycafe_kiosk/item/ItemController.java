@@ -13,6 +13,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/items")
@@ -39,6 +41,12 @@ public class ItemController {
         return new FindItemFailResponse("상품조회", e.getMessage());
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public FindItemFailResponse findItemsFail(NoItemException e) {
+        return new FindItemFailResponse("상품조회", e.getMessage());
+    }
+
     @PostMapping
     public HttpEntity<ItemRegResponse> registerItem(@RequestBody @Validated ItemRegRequest itemRegRequest) {
 
@@ -61,6 +69,17 @@ public class ItemController {
 
         ItemInfoResponse itemInfoResponse = changeItemInfoResponseToItem(item);
         return new ResponseEntity<>(itemInfoResponse, HttpStatus.OK);
+    }
+
+    @GetMapping
+    public HttpEntity<List<Item>> findItems() {
+
+        List<Item> items = itemRepository.getItems();
+        if (items.isEmpty()) {
+            throw new NoItemException("해당 상품이 존재하지 않습니다.");
+        }
+
+        return new ResponseEntity<>(items, HttpStatus.OK);
     }
 
     private void validateDuplicateItemName(String itemName) {

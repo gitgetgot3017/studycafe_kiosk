@@ -26,4 +26,9 @@ public class ItemRepository {
     public Item getItem(Long itemId) {
         return em.find(Item.class, itemId);
     }
+
+    public List<Item> getItems() {
+        return em.createQuery("select i from Item i", Item.class)
+                .getResultList();
+    }
 }
