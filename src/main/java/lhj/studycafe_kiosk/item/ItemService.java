@@ -7,19 +7,24 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class ItemService {
 
     private final ItemRepository itemRepository;
 
-    @Transactional
     public void registerItem(Item item) {
 
         itemRepository.saveItem(item);
     }
 
+    @Transactional(readOnly = true)
     public boolean existItemName(String itemName) {
 
         return itemRepository.getExistItemName(itemName).size() > 0;
+    }
+
+    public void changeItemInfo(Long itemId, Item changedItem) {
+
+        itemRepository.updateItemInfo(itemId, changedItem);
     }
 }

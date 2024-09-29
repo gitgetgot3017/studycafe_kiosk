@@ -29,4 +29,11 @@ public class ItemRepository {
                 .setParameter("itemType", itemType)
                 .getResultList();
     }
+
+    public Long updateItemInfo(Long itemId, Item changedItem) {
+
+        Item item = em.find(Item.class, itemId);
+        item.changeItem(changedItem);
+        return item.getId();
+    }
 }

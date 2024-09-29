@@ -2,10 +2,7 @@ package lhj.studycafe_kiosk.item;
 
 import lhj.studycafe_kiosk.domain.Item;
 import lhj.studycafe_kiosk.domain.ItemType;
-import lhj.studycafe_kiosk.item.dto.ItemInfoResponse;
-import lhj.studycafe_kiosk.item.dto.ItemRegRequest;
-import lhj.studycafe_kiosk.item.dto.ItemRegResponse;
-import lhj.studycafe_kiosk.item.dto.NoItemException;
+import lhj.studycafe_kiosk.item.dto.*;
 import lhj.studycafe_kiosk.item.exception.DuplicateItemNameException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
@@ -50,6 +47,18 @@ public class ItemController {
         return new ResponseEntity<>(responseItems, HttpStatus.OK);
     }
 
+    @PatchMapping("/{itemId}")
+    public HttpEntity<ItemChangeResponse> changeItemInfo(@PathVariable("itemId") Long itemId, @RequestBody @Validated ItemChangeRequest itemChangeRequest) {
+
+        validateDuplicateItemName(itemChangeRequest.getItemName());
+
+        Item item = changeItemChangeRequestToItem(itemChangeRequest);
+        itemService.changeItemInfo(itemId, item);
+
+        ItemChangeResponse itemChangeResponse = new ItemChangeResponse("상품 수정이 정상적으로 완료되었습니다.", itemId);
+        return new ResponseEntity<>(itemChangeResponse, HttpStatus.ACCEPTED);
+    }
+
     private void validateDuplicateItemName(String itemName) {
 
         if (itemService.existItemName(itemName)) {
@@ -74,5 +83,10 @@ public class ItemController {
             responseItems.add(changeItemToItemInfoResponse(item));
         }
         return responseItems;
+    }
+
+    private Item changeItemChangeRequestToItem(ItemChangeRequest itemChangeRequest) {
+
+        return new Item(itemChangeRequest.getItemType(), itemChangeRequest.getItemName(), itemChangeRequest.getPrice());
     }
 }

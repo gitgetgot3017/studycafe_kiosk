@@ -26,4 +26,10 @@ public class Item {
         this.itemName = itemName;
         this.price = price;
     }
+
+    public void changeItem(Item changedItem) {
+        this.itemType = changedItem.getItemType();
+        this.itemName = changedItem.getItemName();
+        this.price = changedItem.getPrice();
+    }
 }
