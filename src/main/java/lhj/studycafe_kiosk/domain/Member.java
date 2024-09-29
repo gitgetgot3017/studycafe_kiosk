@@ -25,6 +25,9 @@ public class Member {
 
     private LocalDate birth;
 
+    @Enumerated(EnumType.STRING)
+    private MemberGrade memberGrade;
+
     public Member(String name, String phone, String password, LocalDate birth) {
         this.name = name;
         this.phone = phone;
