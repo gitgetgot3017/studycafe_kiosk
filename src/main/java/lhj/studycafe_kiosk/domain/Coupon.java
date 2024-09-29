@@ -20,6 +20,8 @@ public class Coupon {
     @Column(name = "coupon_name")
     private String name;
 
+    private boolean isUsed;
+
     private LocalDateTime startDatetime;
 
     private LocalDateTime endDatetime;
