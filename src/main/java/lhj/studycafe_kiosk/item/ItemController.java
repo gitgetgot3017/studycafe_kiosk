@@ -26,36 +26,6 @@ public class ItemController {
     private final ItemService itemService;
     private final ItemRepository itemRepository;
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({MethodArgumentNotValidException.class, HttpMessageNotReadableException.class})
-    public ItemRegFailResponse itemFieldValidationFail() {
-        return new ItemRegFailResponse("상품", "필드 검증에 실패하였습니다.");
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler
-    public ItemRegFailResponse regItemFail(DuplicateItemNameException e) {
-        return new ItemRegFailResponse("상품등록", e.getMessage());
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler
-    public FindItemFailResponse findItemsFail1(NoItemException e) {
-        return new FindItemFailResponse("상품조회", e.getMessage());
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MissingServletRequestParameterException.class)
-    public FindItemFailResponse findItemsFail2() {
-        return new FindItemFailResponse("상품조회", "파라미터 입력은 필수입니다.");
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public FindItemFailResponse findItemsFail3() {
-        return new FindItemFailResponse("상품조회", "잘못된 파라미터를 입력하셨습니다.");
-    }
-
     @PostMapping
     public HttpEntity<ItemRegResponse> registerItem(@RequestBody @Validated ItemRegRequest itemRegRequest) {
 
