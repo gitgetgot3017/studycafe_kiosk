@@ -47,4 +47,9 @@ public class MemberRepository {
             member.setPassword(changeMember.getNewPassword());
         }
     }
+
+    public List<Member> getAllMembers() {
+        return em.createQuery("select m from Member m", Member.class)
+                .getResultList();
+    }
 }

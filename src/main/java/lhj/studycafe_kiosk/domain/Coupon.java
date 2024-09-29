@@ -2,11 +2,13 @@ package lhj.studycafe_kiosk.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class Coupon {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,4 +29,13 @@ public class Coupon {
     private LocalDateTime endDatetime;
 
     private LocalDateTime issueDatetime;
+
+    public Coupon(Member member, String name, boolean isUsed, LocalDateTime startDatetime, LocalDateTime endDatetime, LocalDateTime issueDatetime) {
+        this.member = member;
+        this.name = name;
+        this.isUsed = isUsed;
+        this.startDatetime = startDatetime;
+        this.endDatetime = endDatetime;
+        this.issueDatetime = issueDatetime;
+    }
 }
