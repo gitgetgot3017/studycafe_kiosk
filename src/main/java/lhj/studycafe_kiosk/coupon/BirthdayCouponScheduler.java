@@ -1,6 +1,7 @@
 package lhj.studycafe_kiosk.coupon;
 
 import lhj.studycafe_kiosk.domain.Coupon;
+import lhj.studycafe_kiosk.domain.CouponType;
 import lhj.studycafe_kiosk.domain.Member;
 import lhj.studycafe_kiosk.member.MemberRepository;
 import lombok.AllArgsConstructor;
@@ -26,7 +27,7 @@ public class BirthdayCouponScheduler {
         for (Member member : members) {
             if (couponService.isBirthCouponIssueDate(member.getBirth())) {
                 LocalDateTime issueDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 0, 0));
-                Coupon coupon = new Coupon(member, "[생일을 축하합니다!] 생일 맞이 10% 할인 쿠폰", false, issueDateTime, issueDateTime.plusDays(14), issueDateTime);
+                Coupon coupon = new Coupon(member, "[생일을 축하합니다!] 생일 맞이 10% 할인 쿠폰", CouponType.RATE, false, issueDateTime, issueDateTime.plusDays(14), issueDateTime);
                 couponService.issueCoupon(coupon);
             }
         }

@@ -22,6 +22,8 @@ public class Coupon {
     @Column(name = "coupon_name")
     private String name;
 
+    private CouponType couponType;
+
     private boolean isUsed;
 
     private LocalDateTime startDatetime;
@@ -30,9 +32,10 @@ public class Coupon {
 
     private LocalDateTime issueDatetime;
 
-    public Coupon(Member member, String name, boolean isUsed, LocalDateTime startDatetime, LocalDateTime endDatetime, LocalDateTime issueDatetime) {
+    public Coupon(Member member, String name, CouponType couponType, boolean isUsed, LocalDateTime startDatetime, LocalDateTime endDatetime, LocalDateTime issueDatetime) {
         this.member = member;
         this.name = name;
+        this.couponType = couponType;
         this.isUsed = isUsed;
         this.startDatetime = startDatetime;
         this.endDatetime = endDatetime;
