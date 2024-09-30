@@ -4,6 +4,7 @@ import lhj.studycafe_kiosk.domain.Member;
 import lhj.studycafe_kiosk.member.dto.ChangeMemberInfoRequest;
 import lhj.studycafe_kiosk.member.exception.PasswordMismatchException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,10 +17,12 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public void join(Member member) {
 
         memberRepository.saveMember(member);
+        eventPublisher.publishEvent(new JoinMemberEvent(this, member)); // 회원가입 이벤트 발생
     }
 
     public boolean existPhone(String phone) {

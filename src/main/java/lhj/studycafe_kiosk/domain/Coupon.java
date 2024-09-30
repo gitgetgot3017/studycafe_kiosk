@@ -44,4 +44,18 @@ public class Coupon {
         this.endDatetime = endDatetime;
         this.issueDatetime = issueDatetime;
     }
+
+    public Coupon(Member member, CouponType couponType, boolean isUsed, LocalDateTime startDatetime, LocalDateTime endDatetime, LocalDateTime issueDatetime) {
+        this.member = member;
+        this.couponType = couponType;
+        this.isUsed = isUsed;
+        this.startDatetime = startDatetime;
+        this.endDatetime = endDatetime;
+        this.issueDatetime = issueDatetime;
+    }
+
+    public void setCouponSubField(String name, int rateOrHour) {
+        this.name = name;
+        this.rateOrHour = rateOrHour;
+    }
 }
