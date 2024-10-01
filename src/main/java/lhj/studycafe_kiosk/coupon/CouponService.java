@@ -55,16 +55,16 @@ public class CouponService {
         Coupon coupon = new Coupon(member, CouponType.RATE, false, issueDateTime, issueDateTime.plusDays(28), issueDateTime);
         String couponName = "[구매에 감사드립니다!] ";
         int rateOrHour = 0;
-        if (cumulativeAmount >= 300_000) {
+        if (cumulativeAmount < 500_000) {
             couponName += "3% 할인 쿠폰";
             rateOrHour = 3;
-        } else if (cumulativeAmount >= 500_000) {
+        } else if (cumulativeAmount < 1_000_000) {
             couponName += "5% 할인 쿠폰";
             rateOrHour = 5;
-        } else if (cumulativeAmount >= 1_000_000) {
+        } else if (cumulativeAmount < 1_500_000) {
             couponName += "7% 할인 쿠폰";
             rateOrHour = 7;
-        } else if (cumulativeAmount >= 2_000_000) {
+        } else if (cumulativeAmount < 2_000_000) {
             couponName += "10% 할인 쿠폰";
             rateOrHour = 10;
         } else {
