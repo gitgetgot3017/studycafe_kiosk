@@ -28,7 +28,7 @@ public class ItemExControllerAdvice {
         return new ItemRegFailResponse("상품등록", e.getMessage());
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler
     public FindItemFailResponse findItemsFail1(NoItemException e) {
         return new FindItemFailResponse("상품조회", e.getMessage());

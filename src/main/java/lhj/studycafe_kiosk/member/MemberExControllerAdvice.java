@@ -33,7 +33,7 @@ public class MemberExControllerAdvice {
         return new LoginFailResponse("로그인", e.getMessage());
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler
     public FindMemberFailResponse findMemberFail(NotExistMemberException e) {
         return new FindMemberFailResponse("회원", e.getMessage());
