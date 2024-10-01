@@ -23,17 +23,15 @@ public class CouponController {
     private final CouponRepository couponRepository;
 
     @GetMapping
-    public HttpEntity<List<CouponInfoResponse>> issueCoupon(@RequestParam("used") String used, @SessionAttribute("loginMember") Long memberId, @PathVariable("couponId") Long couponId) {
+    public HttpEntity<List<CouponInfoResponse>> issueCoupon(@RequestParam("used") String used, @SessionAttribute("loginMember") Long memberId) {
 
-        Member member = memberRepository.getMember(30L);
+        Member member = memberRepository.getMember(memberId);
 
         List<Coupon> coupons;
         if (used.equals("false")) {
             coupons = couponRepository.getUsableCoupons(member);
-            System.out.println("coupons = " + coupons);
         } else {
             coupons = couponRepository.getExpiredCoupon(member);
-            System.out.println("coupons = " + coupons);
         }
 
         if (coupons.isEmpty()) {
