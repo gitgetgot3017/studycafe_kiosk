@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class CouponRepository {
@@ -33,5 +34,15 @@ public class CouponRepository {
                 .setParameter("isUsed", true)
                 .setParameter("curDatetime", LocalDateTime.now())
                 .getResultList();
+    }
+
+    public Optional<Coupon> getCoupon(Long couponId) {
+        Coupon opCoupon = em.find(Coupon.class, couponId);
+        return Optional.ofNullable(opCoupon);
+    }
+
+    public void updateCouponStatus(Long couponId) {
+        Coupon coupon = getCoupon(couponId).get();
+        coupon.changeCouponStatus(true, LocalDateTime.now());
     }
 }

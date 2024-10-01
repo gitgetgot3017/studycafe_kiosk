@@ -2,12 +2,14 @@ package lhj.studycafe_kiosk.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "orders")
 @Getter
+@NoArgsConstructor
 public class Order {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,4 +27,11 @@ public class Order {
     private int price;
 
     private LocalDateTime orderDatetime;
+
+    public Order(Member member, Item item, int price, LocalDateTime orderDatetime) {
+        this.member = member;
+        this.item = item;
+        this.price = price;
+        this.orderDatetime = orderDatetime;
+    }
 }

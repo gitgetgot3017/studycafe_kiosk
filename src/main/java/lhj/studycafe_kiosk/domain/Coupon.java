@@ -60,4 +60,9 @@ public class Coupon {
         this.name = name;
         this.rateOrHour = rateOrHour;
     }
+
+    public void changeCouponStatus(boolean isUsed, LocalDateTime usageDateTime) {
+        this.isUsed = isUsed;
+        this.usageDateTime = usageDateTime;
+    }
 }

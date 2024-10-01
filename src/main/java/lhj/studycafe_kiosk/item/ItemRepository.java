@@ -7,6 +7,7 @@ import lhj.studycafe_kiosk.domain.ItemType;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class ItemRepository {
@@ -35,5 +36,10 @@ public class ItemRepository {
         Item item = em.find(Item.class, itemId);
         item.changeItem(changedItem);
         return item.getId();
+    }
+
+    public Optional<Item> getItem(Long itemId) {
+        Item item = em.find(Item.class, itemId);
+        return Optional.ofNullable(item);
     }
 }

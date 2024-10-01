@@ -74,4 +74,8 @@ public class CouponService {
         coupon.setCouponSubField(couponName, rateOrHour);
         couponRepository.saveCoupon(coupon);
     }
+
+    public void changeCouponStatus(Long couponId) {
+        couponRepository.updateCouponStatus(couponId);
+    }
 }
