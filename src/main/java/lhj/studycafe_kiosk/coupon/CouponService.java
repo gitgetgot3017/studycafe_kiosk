@@ -35,7 +35,7 @@ public class CouponService {
     public void issueJoinCoupon(Member member) {
 
         LocalDateTime issueDateTime = LocalDateTime.now();
-        Coupon coupon = new Coupon(member, "[가입을 측하합니다!] 회원 맞이 1시간 이용권 증정", CouponType.HOUR, 1, false, issueDateTime, issueDateTime.plusHours(24), issueDateTime);
+        Coupon coupon = new Coupon(member, "[가입을 측하합니다!] 회원 맞이 1시간 이용권 증정", CouponType.HOUR, 1, false, issueDateTime, issueDateTime.plusHours(24), issueDateTime, null);
         couponRepository.saveCoupon(coupon);
     }
 
@@ -52,7 +52,7 @@ public class CouponService {
         }
 
         LocalDateTime issueDateTime = LocalDateTime.now();
-        Coupon coupon = new Coupon(member, CouponType.RATE, false, issueDateTime, issueDateTime.plusDays(28), issueDateTime);
+        Coupon coupon = new Coupon(member, CouponType.RATE, false, issueDateTime, issueDateTime.plusDays(28), issueDateTime, null);
         String couponName = "[구매에 감사드립니다!] ";
         int rateOrHour = 0;
         if (cumulativeAmount < 500_000) {

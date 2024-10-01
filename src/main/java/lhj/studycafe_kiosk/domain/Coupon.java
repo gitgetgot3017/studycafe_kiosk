@@ -36,7 +36,7 @@ public class Coupon {
 
     private LocalDateTime usageDateTime;
 
-    public Coupon(Member member, String name, CouponType couponType, int rateOrHour, boolean isUsed, LocalDateTime startDatetime, LocalDateTime endDatetime, LocalDateTime issueDatetime) {
+    public Coupon(Member member, String name, CouponType couponType, int rateOrHour, boolean isUsed, LocalDateTime startDatetime, LocalDateTime endDatetime, LocalDateTime issueDatetime, LocalDateTime usageDateTime) {
         this.member = member;
         this.name = name;
         this.couponType = couponType;
@@ -45,15 +45,17 @@ public class Coupon {
         this.startDatetime = startDatetime;
         this.endDatetime = endDatetime;
         this.issueDatetime = issueDatetime;
+        this.usageDateTime = usageDateTime;
     }
 
-    public Coupon(Member member, CouponType couponType, boolean isUsed, LocalDateTime startDatetime, LocalDateTime endDatetime, LocalDateTime issueDatetime) {
+    public Coupon(Member member, CouponType couponType, boolean isUsed, LocalDateTime startDatetime, LocalDateTime endDatetime, LocalDateTime issueDatetime, LocalDateTime usageDateTime) {
         this.member = member;
         this.couponType = couponType;
         this.isUsed = isUsed;
         this.startDatetime = startDatetime;
         this.endDatetime = endDatetime;
         this.issueDatetime = issueDatetime;
+        this.usageDateTime = usageDateTime;
     }
 
     public void setCouponSubField(String name, int rateOrHour) {
