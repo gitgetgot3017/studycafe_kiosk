@@ -2,7 +2,7 @@ package lhj.studycafe_kiosk.item;
 
 import lhj.studycafe_kiosk.item.dto.FindItemFailResponse;
 import lhj.studycafe_kiosk.item.dto.ItemRegFailResponse;
-import lhj.studycafe_kiosk.item.dto.NoItemException;
+import lhj.studycafe_kiosk.item.exception.NoItemException;
 import lhj.studycafe_kiosk.item.exception.DuplicateItemNameException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;

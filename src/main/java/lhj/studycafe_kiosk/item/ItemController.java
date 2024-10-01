@@ -4,6 +4,7 @@ import lhj.studycafe_kiosk.domain.Item;
 import lhj.studycafe_kiosk.domain.ItemType;
 import lhj.studycafe_kiosk.item.dto.*;
 import lhj.studycafe_kiosk.item.exception.DuplicateItemNameException;
+import lhj.studycafe_kiosk.item.exception.NoItemException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;

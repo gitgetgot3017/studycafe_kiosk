@@ -1,4 +1,4 @@
-package lhj.studycafe_kiosk.item.dto;
+package lhj.studycafe_kiosk.item.exception;
 
 public class NoItemException extends RuntimeException {
 
