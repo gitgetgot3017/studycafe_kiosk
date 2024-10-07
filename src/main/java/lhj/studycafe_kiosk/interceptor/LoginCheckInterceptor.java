@@ -12,9 +12,9 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
 
         HttpSession session = request.getSession(false);
         if (session == null) {
-            String requestURI = request.getRequestURI();
-            response.sendRedirect("/members/login?redirectURL=" + requestURI);
-            return false;
+//            String requestURI = request.getRequestURI();
+//            response.sendRedirect("/members/login?redirectURL=" + requestURI);
+//            return false;
         }
         return true;
     }

@@ -9,5 +9,4 @@ public class LoginResponse {
 
     private String message;
     private Long id;
-    private String redirectURL;
 }
