@@ -20,6 +20,8 @@ public class Subscription {
     @JoinColumn(name = "item_id")
     private Item item;
 
+    private boolean isRepresentative;
+
     private LocalDateTime orderDateTime;
 
     private LocalDateTime startDateTime;
