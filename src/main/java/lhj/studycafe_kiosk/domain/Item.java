@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.Duration;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -16,14 +18,17 @@ public class Item {
     @Enumerated(EnumType.STRING)
     private ItemType itemType;
 
+    private Duration duration;
+
     @Column(unique = true)
     private String itemName;
 
     private int price;
 
-    public Item(ItemType itemType, String itemName, int price) {
+    public Item(ItemType itemType, String itemName, Duration duration, int price) {
         this.itemType = itemType;
         this.itemName = itemName;
+        this.duration = duration;
         this.price = price;
     }
 
