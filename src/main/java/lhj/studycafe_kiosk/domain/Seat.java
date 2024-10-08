@@ -3,7 +3,7 @@ package lhj.studycafe_kiosk.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -20,5 +20,5 @@ public class Seat {
     @Enumerated(EnumType.STRING)
     private SeatType seatType;
 
-    private LocalTime remainingTime;
+    private LocalDateTime endDateTime;
 }
