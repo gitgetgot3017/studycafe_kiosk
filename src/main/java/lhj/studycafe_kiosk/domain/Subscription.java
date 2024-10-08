@@ -1,12 +1,14 @@
 package lhj.studycafe_kiosk.domain;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
 public class Subscription {
-
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "subscription_id")
@@ -28,5 +30,5 @@ public class Subscription {
 
     private LocalDateTime endDateTime;
 
-    private LocalDateTime leftDateTime;
+    private Duration leftTime;
 }
