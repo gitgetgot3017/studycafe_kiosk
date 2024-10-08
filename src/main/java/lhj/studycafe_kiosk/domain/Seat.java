@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Getter
@@ -21,4 +22,9 @@ public class Seat {
     private SeatType seatType;
 
     private LocalDateTime endDateTime;
+
+    public void changeSeatState(Member member, LocalDateTime endDateTime) {
+        this.member = member;
+        this.endDateTime = endDateTime;
+    }
 }
