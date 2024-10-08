@@ -6,6 +6,8 @@ import lhj.studycafe_kiosk.domain.Member;
 import lhj.studycafe_kiosk.domain.Subscription;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public class SubscriptionRepository {
 
@@ -13,10 +15,13 @@ public class SubscriptionRepository {
     EntityManager em;
 
     public Subscription getRepresentativeSubscription(Member member) {
-        Subscription subscription = em.createQuery("select s from Subscription s where s.member = :member and s.isRepresentative = :isRepresentative", Subscription.class)
+        return em.createQuery("select s from Subscription s where s.member = :member and s.isRepresentative = :isRepresentative", Subscription.class)
                 .setParameter("member", member)
                 .setParameter("isRepresentative", true)
                 .getSingleResult();
-        return subscription;
+    }
+
+    public void saveSubscription(Subscription subscription) {
+        em.persist(subscription);
     }
 }

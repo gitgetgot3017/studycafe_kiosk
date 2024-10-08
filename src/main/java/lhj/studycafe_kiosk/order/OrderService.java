@@ -41,7 +41,7 @@ public class OrderService {
             isUsed = false;
         }
         Order order = new Order(member, item, isUsed, orderPrice, LocalDateTime.now());
-        eventPublisher.publishEvent(new OrderEvent(this, member)); // 주문 이벤트 발생
+        eventPublisher.publishEvent(new OrderEvent(this, member, item, order)); // 주문 이벤트 발생
         return orderRepository.saveOrder(order);
     }
 
