@@ -45,6 +45,10 @@ public class OrderService {
         return orderRepository.saveOrder(order);
     }
 
+    public void changeOrderIsUsed(Order order) {
+        orderRepository.updateOrderIsUsed(order);
+    }
+
     private void validateUsableCoupon(Coupon coupon) {
 
         if (coupon.getId() == null) { // 쿠폰을 사용하지 않은 경우 검증 대상이 아님

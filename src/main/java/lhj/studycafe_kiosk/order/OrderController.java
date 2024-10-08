@@ -3,13 +3,11 @@ package lhj.studycafe_kiosk.order;
 import lhj.studycafe_kiosk.coupon.CouponRepository;
 import lhj.studycafe_kiosk.coupon.CouponService;
 import lhj.studycafe_kiosk.coupon.exception.NotExistCouponException;
-import lhj.studycafe_kiosk.domain.Coupon;
-import lhj.studycafe_kiosk.domain.Item;
-import lhj.studycafe_kiosk.domain.Member;
-import lhj.studycafe_kiosk.domain.Order;
+import lhj.studycafe_kiosk.domain.*;
 import lhj.studycafe_kiosk.item.ItemRepository;
 import lhj.studycafe_kiosk.item.exception.NotExistItemException;
 import lhj.studycafe_kiosk.member.MemberRepository;
+import lhj.studycafe_kiosk.order.dto.ChangeOrderIsUsedResponse;
 import lhj.studycafe_kiosk.order.dto.OrderRequest;
 import lhj.studycafe_kiosk.order.dto.OrderResponse;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +47,25 @@ public class OrderController {
         handleCouponUsage(orderRequest.getCouponId()); // 쿠폰 사용 완료 처리
 
         return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);
+    }
+
+    @PatchMapping("/{orderId}")
+    public HttpEntity<ChangeOrderIsUsedResponse> startUseRequest(@PathVariable("orderId") Long orderId) {
+
+        Order order = orderRepository.getOrder(orderId);
+
+        validateState(order);
+        orderService.changeOrderIsUsed(order);
+
+        ChangeOrderIsUsedResponse changeOrderIsUsedResponse = new ChangeOrderIsUsedResponse("주문", "이용권 사용 시작 처리하였습니다.");
+        return new ResponseEntity(changeOrderIsUsedResponse, HttpStatus.ACCEPTED);
+    }
+
+    private void validateState(Order order) {
+
+        if (order.getItem().getItemType() == ItemType.DAILY || order.getItem().getItemType() == ItemType.CHARGE || order.isUsed()) {
+            throw new IllegalStateException("이미 사용 시작된 이용권입니다.");
+        }
     }
 
     private void validateOrderRequest(OrderRequest orderRequest) {

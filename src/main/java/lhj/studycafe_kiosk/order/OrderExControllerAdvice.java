@@ -36,4 +36,10 @@ public class OrderExControllerAdvice {
     public OrderFailResponse orderFailBasedImproperCoupon(InappropriateCouponException e) {
         return new OrderFailResponse("주문", e.getMessage());
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public OrderFailResponse changeOrderIsUsedFail(IllegalStateException e) {
+        return new OrderFailResponse("주문", e.getMessage());
+    }
 }

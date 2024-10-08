@@ -37,4 +37,8 @@ public class Order {
         this.price = price;
         this.orderDatetime = orderDatetime;
     }
+
+    public void setUsed(boolean used) {
+        isUsed = used;
+    }
 }
