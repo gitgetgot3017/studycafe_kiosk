@@ -36,7 +36,11 @@ public class OrderService {
 
         int orderPrice = calculateOrderPrice(item.getPrice(), item, coupon);
 
-        Order order = new Order(member, item, orderPrice, LocalDateTime.now());
+        boolean isUsed = true;
+        if (item.getItemType() == ItemType.PERIOD || item.getItemType() == ItemType.FIXED) {
+            isUsed = false;
+        }
+        Order order = new Order(member, item, isUsed, orderPrice, LocalDateTime.now());
         eventPublisher.publishEvent(new OrderEvent(this, member)); // 주문 이벤트 발생
         return orderRepository.saveOrder(order);
     }

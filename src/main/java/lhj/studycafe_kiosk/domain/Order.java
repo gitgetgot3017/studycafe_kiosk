@@ -24,13 +24,16 @@ public class Order {
     @JoinColumn(name = "item_id")
     private Item item;
 
+    private boolean isUsed;
+
     private int price;
 
     private LocalDateTime orderDatetime;
 
-    public Order(Member member, Item item, int price, LocalDateTime orderDatetime) {
+    public Order(Member member, Item item, boolean isUsed, int price, LocalDateTime orderDatetime) {
         this.member = member;
         this.item = item;
+        this.isUsed = isUsed;
         this.price = price;
         this.orderDatetime = orderDatetime;
     }
