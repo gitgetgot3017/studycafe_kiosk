@@ -19,6 +19,10 @@ public class UsageStatus {
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
 
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
+
     @Enumerated(EnumType.STRING)
     private UserInOut userInOut;
 
