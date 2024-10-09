@@ -4,6 +4,7 @@ import lhj.studycafe_kiosk.domain.*;
 import lhj.studycafe_kiosk.subscription.SubscriptionRepository;
 import lhj.studycafe_kiosk.subscription.exception.ExpiredSubscriptionException;
 import lhj.studycafe_kiosk.subscription.exception.NotExistSubscriptionException;
+import lhj.studycafe_kiosk.usage_status.UsageStatusRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ public class SeatService {
 
     private final SubscriptionRepository subscriptionRepository;
     private final SeatRepository seatRepository;
+    private final UsageStatusRepository usageStatusRepository;
 
     public void chooseSeat(Member member, Seat seat) {
 
@@ -38,8 +40,6 @@ public class SeatService {
         } else if (item.getItemType() == ItemType.CHARGE || item.getItemType() == ItemType.PERIOD) {
             if (leftTime.getSeconds() < 24*60*60) {
                 endDateTime = getEndDateTime(curDateTime, leftTime);
-                System.out.println("curDateTime = " + curDateTime);
-                System.out.println("leftTime = " + leftTime);
             } else {
                 endDateTime = LocalDateTime.now().plusHours(24);
             }
@@ -48,6 +48,7 @@ public class SeatService {
         }
 
         seat.changeSeatState(member, endDateTime);
+        usageStatusRepository.saveUsageStatus(new UsageStatus(subscription, UserInOut.IN, curDateTime));
     }
 
     public void changeSeat(Seat beforeSeat, Seat afterSeat) {

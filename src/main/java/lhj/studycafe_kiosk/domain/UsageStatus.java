@@ -2,11 +2,13 @@ package lhj.studycafe_kiosk.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class UsageStatus {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,4 +23,10 @@ public class UsageStatus {
     private UserInOut userInOut;
 
     private LocalDateTime userDateTime;
+
+    public UsageStatus(Subscription subscription, UserInOut userInOut, LocalDateTime userDateTime) {
+        this.subscription = subscription;
+        this.userInOut = userInOut;
+        this.userDateTime = userDateTime;
+    }
 }
