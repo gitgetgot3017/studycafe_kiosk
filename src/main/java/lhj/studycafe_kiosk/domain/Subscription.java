@@ -34,7 +34,9 @@ public class Subscription {
 
     private Duration leftTime;
 
-    public Subscription(Member member, Item item, boolean isRepresentative, LocalDateTime orderDateTime, LocalDateTime startDateTime, LocalDateTime endDateTime, Duration leftTime) {
+    private boolean isValid;
+
+    public Subscription(Member member, Item item, boolean isRepresentative, LocalDateTime orderDateTime, LocalDateTime startDateTime, LocalDateTime endDateTime, Duration leftTime, boolean isValid) {
         this.member = member;
         this.item = item;
         this.isRepresentative = isRepresentative;
@@ -42,5 +44,6 @@ public class Subscription {
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.leftTime = leftTime;
+        this.isValid = isValid;
     }
 }
