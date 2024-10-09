@@ -28,8 +28,9 @@ public class UsageStatus {
 
     private LocalDateTime userDateTime;
 
-    public UsageStatus(Subscription subscription, UserInOut userInOut, LocalDateTime userDateTime) {
+    public UsageStatus(Subscription subscription, Member member, UserInOut userInOut, LocalDateTime userDateTime) {
         this.subscription = subscription;
+        this.member = member;
         this.userInOut = userInOut;
         this.userDateTime = userDateTime;
     }

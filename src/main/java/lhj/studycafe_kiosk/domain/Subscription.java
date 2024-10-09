@@ -46,4 +46,12 @@ public class Subscription {
         this.leftTime = leftTime;
         this.isValid = isValid;
     }
+
+    public void setLeftTime(Duration leftTime) {
+        this.leftTime = leftTime;
+    }
+
+    public void setIsValid(boolean isValid) {
+        this.isValid = isValid;
+    }
 }

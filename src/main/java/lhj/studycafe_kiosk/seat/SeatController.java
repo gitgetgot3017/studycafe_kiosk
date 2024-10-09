@@ -3,9 +3,11 @@ package lhj.studycafe_kiosk.seat;
 import lhj.studycafe_kiosk.domain.Member;
 import lhj.studycafe_kiosk.domain.Seat;
 import lhj.studycafe_kiosk.member.MemberRepository;
+import lhj.studycafe_kiosk.seat.dto.UserOutSeatResponse;
 import lhj.studycafe_kiosk.seat.dto.SeatChangeRequest;
 import lhj.studycafe_kiosk.seat.dto.SeatChangeSuccessResponse;
 import lhj.studycafe_kiosk.seat.dto.SeatResponse;
+import lhj.studycafe_kiosk.seat.exception.EmptySeatOutException;
 import lhj.studycafe_kiosk.seat.exception.InvalidSeatChangeException;
 import lhj.studycafe_kiosk.seat.exception.NotExistSeatException;
 import lhj.studycafe_kiosk.seat.exception.NotUsableSeatException;
@@ -15,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.Duration;
 
 @RestController
 @RequiredArgsConstructor
@@ -43,12 +47,26 @@ public class SeatController {
 
         Seat beforeSeat = seatRepository.getSeat(seatChangeRequest.getBeforeSeatId());
         Seat afterSeat = seatRepository.getSeat(seatChangeRequest.getAfterSeatId());
+        Member member = memberRepository.getMember(memberId);
 
-        validateChangeability(memberId, beforeSeat, afterSeat);
+        validateChangeability(member, beforeSeat, afterSeat);
         seatService.changeSeat(beforeSeat, afterSeat);
 
         SeatChangeSuccessResponse seatChangeSuccessResponse = new SeatChangeSuccessResponse("좌석 이동을 완료하였습니다.", seatChangeRequest.getBeforeSeatId(), seatChangeRequest.getAfterSeatId());
         return new ResponseEntity(seatChangeSuccessResponse, HttpStatus.ACCEPTED);
+    }
+
+    @PatchMapping("/{seatId}")
+    public HttpEntity<UserOutSeatResponse> outSeat(@SessionAttribute("loginMember") Long memberId, @PathVariable("seatId") Long seatId) {
+
+        Seat seat = seatRepository.getSeat(seatId);
+        Member member = memberRepository.getMember(memberId);
+
+        validateIsMySeat(member, seat);
+        Duration remainderTime = seatService.outSeat(seat, member);
+
+        UserOutSeatResponse outSeatResponse = new UserOutSeatResponse("좌석 퇴실이 완료되었습니다.", seatId, changeDurationToString(remainderTime));
+        return new ResponseEntity<>(outSeatResponse, HttpStatus.ACCEPTED);
     }
 
     private void validateUsableSeat(Seat seat) {
@@ -62,14 +80,35 @@ public class SeatController {
         }
     }
 
-    private void validateChangeability(Long memberId, Seat beforeSeat, Seat afterSeat) {
+    private void validateIsMySeat(Member member, Seat beforeSeat) {
 
-        // 현재 나의 좌석인지 검증
-        if (beforeSeat.getMember().getId() != memberId) {
+        if (beforeSeat.getMember() == null) {
+            throw new EmptySeatOutException("이미 빈 좌석입니다.");
+        }
+
+        if (!beforeSeat.getMember().equals(member)) {
             throw new InvalidSeatChangeException("현재 나의 좌석이 아닙니다.");
         }
+    }
+
+    private void validateChangeability(Member member, Seat beforeSeat, Seat afterSeat) {
+
+        // 현재 나의 좌석인지 검증
+        validateIsMySeat(member, beforeSeat);
 
         // 이동 가능한 좌석인지 검증
         validateUsableSeat(afterSeat);
+    }
+
+    private String changeDurationToString(Duration duration) {
+
+        if (duration == Duration.ZERO || duration.isNegative()) {
+            return "이용 기간이 만료되었습니다.";
+        }
+
+        long leftDay = duration.toDays();
+        long leftHour = duration.toHours() % 24;
+        long leftMinute = duration.toMinutes() % 60;
+        return String.format("이용 기간이 %d일 %d시간 %d분 남았습니다.", leftDay, leftHour, leftMinute);
     }
 }

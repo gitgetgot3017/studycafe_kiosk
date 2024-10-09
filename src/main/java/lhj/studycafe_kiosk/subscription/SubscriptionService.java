@@ -36,4 +36,9 @@ public class SubscriptionService {
         Subscription subscription = new Subscription(member, item, isRepresentative, order.getOrderDatetime(), startDateTime, endDateTime, item.getDuration(), true);
         subscriptionRepository.saveSubscription(subscription);
     }
+
+    public void changeSubscriptionStatus(Subscription subscription) {
+
+        subscriptionRepository.updateSubscriptionStatus(subscription);
+    }
 }

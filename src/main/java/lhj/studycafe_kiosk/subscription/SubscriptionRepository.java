@@ -24,4 +24,9 @@ public class SubscriptionRepository {
     public void saveSubscription(Subscription subscription) {
         em.persist(subscription);
     }
+
+    public void updateSubscriptionStatus(Subscription subscription) {
+
+        subscription.setIsValid(false);
+    }
 }

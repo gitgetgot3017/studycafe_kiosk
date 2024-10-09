@@ -2,10 +2,12 @@ package lhj.studycafe_kiosk.usage_status;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import lhj.studycafe_kiosk.domain.Member;
 import lhj.studycafe_kiosk.domain.UsageStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import lhj.studycafe_kiosk.domain.UserInOut;
+import org.springframework.stereotype.Repository;
 
-@ResponseStatus
+@Repository
 public class UsageStatusRepository {
 
     @PersistenceContext
@@ -13,5 +15,13 @@ public class UsageStatusRepository {
 
     public void saveUsageStatus(UsageStatus usageStatus) {
         em.persist(usageStatus);
+    }
+
+    public UsageStatus getUsageStatus(Member member) {
+        return em.createQuery("select u from UsageStatus u where u.member = :member and u.userInOut = :userInOut order by u.userDateTime desc", UsageStatus.class)
+                .setParameter("member", member)
+                .setParameter("userInOut", UserInOut.IN)
+                .setFirstResult(0)
+                .getSingleResult();
     }
 }
