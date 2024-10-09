@@ -14,4 +14,10 @@ public class SeatRepository {
     public Seat getSeat(Long seatId) {
         return em.find(Seat.class, seatId);
     }
+
+    public void updateSeat(Seat beforeSeat, Seat afterSeat) {
+
+        afterSeat.changeSeatState(beforeSeat.getMember(), beforeSeat.getEndDateTime());
+        beforeSeat.changeSeatState(null, null);
+    }
 }

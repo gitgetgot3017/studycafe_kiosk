@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 public class SeatService {
 
     private final SubscriptionRepository subscriptionRepository;
+    private final SeatRepository seatRepository;
 
     public void chooseSeat(Member member, Seat seat) {
 
@@ -47,6 +48,11 @@ public class SeatService {
         }
 
         seat.changeSeatState(member, endDateTime);
+    }
+
+    public void changeSeat(Seat beforeSeat, Seat afterSeat) {
+
+        seatRepository.updateSeat(beforeSeat, afterSeat);
     }
 
     private Subscription getSubscription(Member member) {

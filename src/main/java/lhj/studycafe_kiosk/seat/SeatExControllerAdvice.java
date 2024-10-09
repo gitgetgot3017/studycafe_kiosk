@@ -1,6 +1,7 @@
 package lhj.studycafe_kiosk.seat;
 
 import lhj.studycafe_kiosk.seat.dto.SeatChooseFailResponse;
+import lhj.studycafe_kiosk.seat.exception.InvalidSeatChangeException;
 import lhj.studycafe_kiosk.seat.exception.NotExistSeatException;
 import lhj.studycafe_kiosk.seat.exception.NotUsableSeatException;
 import lhj.studycafe_kiosk.subscription.exception.ExpiredSubscriptionException;
@@ -34,6 +35,12 @@ public class SeatExControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
     public SeatChooseFailResponse expiredSubscriptionFail(ExpiredSubscriptionException e) {
+        return new SeatChooseFailResponse("좌석", e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public SeatChooseFailResponse invalidSeatChangeFail(InvalidSeatChangeException e) {
         return new SeatChooseFailResponse("좌석", e.getMessage());
     }
 }
