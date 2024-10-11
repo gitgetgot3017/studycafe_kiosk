@@ -13,6 +13,8 @@ public class ChatMessage {
     @Column(name = "chat_message_id")
     private Long id;
 
+    private String content;
+
     @ManyToOne
     @JoinColumn(name = "member_id")
     private ChatMember chatMember;
