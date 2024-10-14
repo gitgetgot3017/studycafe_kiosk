@@ -13,6 +13,9 @@ public class ChatMessage {
     @Column(name = "chat_message_id")
     private Long id;
 
+    @Enumerated(EnumType.STRING)
+    private ChatType chatType;
+
     private String content;
 
     @ManyToOne
