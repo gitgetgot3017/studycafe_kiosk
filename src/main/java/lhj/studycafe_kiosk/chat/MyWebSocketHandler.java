@@ -65,11 +65,21 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 
-        // 서버로 전달된 채팅 메시지를 DB에 저장하기
+        Map<String, Object> attributes = session.getAttributes();
+        Long memberId = (Long) attributes.get("memberId");
 
+        // 서버로 전달된 채팅 메시지를 DB에 저장하기
+        String content = message.getPayload();
+        Member member = memberRepository.getMember(memberId);
+        ChatMember chatMember = chatRepository.findChatMember(member);
+
+        ChatMessage chatMessage = new ChatMessage(ChatType.TALK, content, chatMember, LocalDateTime.now());
+        chatRepository.saveChatMessage(chatMessage);
 
         // 채팅방에 존재하는 모든 멤버에게 채팅 메시지 전송
-
+        for (WebSocketSession webSocketSession : socketSessionList) {
+            webSocketSession.sendMessage(new TextMessage(content));
+        }
     }
 
     @Override

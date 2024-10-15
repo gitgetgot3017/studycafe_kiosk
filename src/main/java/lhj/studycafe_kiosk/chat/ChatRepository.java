@@ -36,4 +36,8 @@ public class ChatRepository {
                 .setParameter("enterDateTime", chatMember.getEnterDateTime())
                 .getResultList();
     }
+
+    public void saveChatMessage(ChatMessage chatMessage) {
+        em.persist(chatMessage);
+    }
 }
