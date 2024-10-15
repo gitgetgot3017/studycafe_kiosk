@@ -1,6 +1,7 @@
 package lhj.studycafe_kiosk.chat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lhj.studycafe_kiosk.chat.dto.ChatMessageDTO;
 import lhj.studycafe_kiosk.domain.ChatMember;
 import lhj.studycafe_kiosk.domain.ChatMessage;
 import lhj.studycafe_kiosk.domain.ChatType;
@@ -16,6 +17,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +52,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
             chatMember = new ChatMember(member, LocalDateTime.now());
             chatRepository.saveChatMember(chatMember);
 
-            ChatMessage chatMessage = new ChatMessage(ChatType.ENTER, member.getName() + " 님이 입장하였습니다.", chatMember, LocalDateTime.now());
+            ChatMessage chatMessage = new ChatMessage(ChatType.ENTER, member.getName() + " 님이 입장하였습니다.", null, LocalDateTime.now());
             chatRepository.saveEnterMessage(chatMessage);
 
             socketSessionList.add(session);
@@ -58,8 +60,27 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 
         // DB에서 채팅 메시지 가져오기
         List<ChatMessage> chatMessages = chatRepository.findChatMember(chatMember);
-        String jsonChatMessages = objectMapper.writeValueAsString(chatMessages);
+        List<ChatMessageDTO> chatMessageDTOs = changeAllChatMessageToChatMessageDto(chatMessages);
+        String jsonChatMessages = objectMapper.writeValueAsString(chatMessageDTOs);
         session.sendMessage(new TextMessage(jsonChatMessages));
+    }
+
+    private List<ChatMessageDTO> changeAllChatMessageToChatMessageDto(List<ChatMessage> chatMessages) {
+
+        ArrayList<ChatMessageDTO> chatMessageDTOs = new ArrayList<>();
+        for (ChatMessage chatMessage : chatMessages) {
+            chatMessageDTOs.add(changeChatMessageToChatMessageDto(chatMessage));
+        }
+        return chatMessageDTOs;
+    }
+
+    private ChatMessageDTO changeChatMessageToChatMessageDto(ChatMessage chatMessage) {
+
+        Long senderId = null;
+        if (chatMessage.getChatMember() != null) {
+            senderId = chatMessage.getChatMember().getId();
+        }
+        return new ChatMessageDTO(chatMessage.getContent(), senderId, chatMessage.getSentDateTime());
     }
 
     @Override
