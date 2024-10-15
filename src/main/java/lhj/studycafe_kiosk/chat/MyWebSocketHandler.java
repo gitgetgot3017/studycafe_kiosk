@@ -16,15 +16,15 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.time.LocalDateTime;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 @RequiredArgsConstructor
 public class MyWebSocketHandler extends TextWebSocketHandler {
 
-    private Map<Long, WebSocketSession> socketSessionMap = new ConcurrentHashMap<>();
+    private List<WebSocketSession> socketSessionList = new LinkedList<>();
 
     private final ChatRepository chatRepository;
     private final MemberRepository memberRepository;
@@ -45,13 +45,15 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         ChatMember chatMember;
         try {
             chatMember = chatRepository.findChatMember(member);
-        } catch (EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException e) { // 채팅방에 처음 입장한 유저에 대한 처리
 
             chatMember = new ChatMember(member, LocalDateTime.now());
             chatRepository.saveChatMember(chatMember);
 
             ChatMessage chatMessage = new ChatMessage(ChatType.ENTER, member.getName() + " 님이 입장하였습니다.", chatMember, LocalDateTime.now());
             chatRepository.saveEnterMessage(chatMessage);
+
+            socketSessionList.add(session);
         }
 
         // DB에서 채팅 메시지 가져오기
