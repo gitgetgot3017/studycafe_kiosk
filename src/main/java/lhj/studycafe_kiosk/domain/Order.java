@@ -30,6 +30,9 @@ public class Order {
 
     private LocalDateTime orderDatetime;
 
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
+
     public Order(Member member, Item item, boolean isUsed, int price, LocalDateTime orderDatetime) {
         this.member = member;
         this.item = item;
