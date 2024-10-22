@@ -16,17 +16,11 @@ public class Subscription {
     @Column(name = "subscription_id")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "member_id")
-    private Member member;
-
-    @ManyToOne
-    @JoinColumn(name = "item_id")
-    private Item item;
+    @OneToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
 
     private boolean isRepresentative;
-
-    private LocalDateTime orderDateTime;
 
     private LocalDateTime startDateTime;
 
@@ -36,11 +30,9 @@ public class Subscription {
 
     private boolean isValid;
 
-    public Subscription(Member member, Item item, boolean isRepresentative, LocalDateTime orderDateTime, LocalDateTime startDateTime, LocalDateTime endDateTime, Duration leftTime, boolean isValid) {
-        this.member = member;
-        this.item = item;
+    public Subscription(Order order, boolean isRepresentative, LocalDateTime startDateTime, LocalDateTime endDateTime, Duration leftTime, boolean isValid) {
+        this.order = order;
         this.isRepresentative = isRepresentative;
-        this.orderDateTime = orderDateTime;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.leftTime = leftTime;

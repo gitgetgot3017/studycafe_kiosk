@@ -33,7 +33,7 @@ public class SubscriptionService {
             endDateTime = LocalDateTime.now().plusSeconds(item.getDuration().getSeconds());
         }
 
-        Subscription subscription = new Subscription(member, item, isRepresentative, order.getOrderDatetime(), startDateTime, endDateTime, item.getDuration(), true);
+        Subscription subscription = new Subscription(order, isRepresentative, startDateTime, endDateTime, item.getDuration(), true);
         subscriptionRepository.saveSubscription(subscription);
     }
 
