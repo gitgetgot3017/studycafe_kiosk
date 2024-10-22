@@ -44,4 +44,14 @@ public class Order {
     public void setUsed(boolean used) {
         isUsed = used;
     }
+
+    public void refundFull() {
+        price = 0;
+        orderStatus = OrderStatus.CANCELED;
+    }
+
+    public void refundPartial(int refundRate) {
+        price *= (100 - refundRate) / 100;
+        orderStatus = OrderStatus.CANCELED;
+    }
 }

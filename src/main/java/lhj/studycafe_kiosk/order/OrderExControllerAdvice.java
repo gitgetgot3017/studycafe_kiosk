@@ -1,6 +1,8 @@
 package lhj.studycafe_kiosk.order;
 
+import lhj.studycafe_kiosk.order.dto.OrderCancelFailResponse;
 import lhj.studycafe_kiosk.order.dto.OrderFailResponse;
+import lhj.studycafe_kiosk.order.exception.AlreadyRefundException;
 import lhj.studycafe_kiosk.order.exception.ImproperRequestException;
 import lhj.studycafe_kiosk.order.exception.InappropriateCouponException;
 import lhj.studycafe_kiosk.order.exception.InvalidCouponException;
@@ -41,5 +43,11 @@ public class OrderExControllerAdvice {
     @ExceptionHandler
     public OrderFailResponse changeOrderIsUsedFail(IllegalStateException e) {
         return new OrderFailResponse("주문", e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public OrderCancelFailResponse changeOrderIsUsedFail(AlreadyRefundException e) {
+        return new OrderCancelFailResponse("주문", e.getMessage());
     }
 }

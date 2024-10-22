@@ -8,8 +8,10 @@ import lhj.studycafe_kiosk.item.ItemRepository;
 import lhj.studycafe_kiosk.item.exception.NotExistItemException;
 import lhj.studycafe_kiosk.member.MemberRepository;
 import lhj.studycafe_kiosk.order.dto.ChangeOrderIsUsedResponse;
+import lhj.studycafe_kiosk.order.dto.OrderRefundResponse;
 import lhj.studycafe_kiosk.order.dto.OrderRequest;
 import lhj.studycafe_kiosk.order.dto.OrderResponse;
+import lhj.studycafe_kiosk.order.exception.AlreadyRefundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -61,6 +63,22 @@ public class OrderController {
         return new ResponseEntity(changeOrderIsUsedResponse, HttpStatus.ACCEPTED);
     }
 
+    @PostMapping("/{orderId}")
+    public HttpEntity<OrderRefundResponse> cancelOrder(@PathVariable("orderId") Long orderId) {
+
+        Order order = orderRepository.getOrder(orderId);
+
+        validateAlreadyRefund(order);
+
+        int refundRate = orderService.getRefundRate(order);
+        orderService.getRefund(refundRate, order);
+        if (refundRate == 0) {
+            return new ResponseEntity(new OrderRefundResponse("주문취소", "환불이 불가합니다."), HttpStatus.OK);
+        } else {
+            return new ResponseEntity(new OrderRefundResponse("주문취소", refundRate + "% 환불 가능합니다."), HttpStatus.OK);
+        }
+    }
+
     private void validateState(Order order) {
 
         if (order.getItem().getItemType() == ItemType.DAILY || order.getItem().getItemType() == ItemType.CHARGE || order.isUsed()) {
@@ -91,5 +109,11 @@ public class OrderController {
         }
 
         couponService.changeCouponStatus(couponId);
+    }
+
+    private void validateAlreadyRefund(Order order) {
+        if (order.getOrderStatus() == OrderStatus.CANCELED) {
+            throw new AlreadyRefundException("이미 환불된 이용권입니다.");
+        }
     }
 }

@@ -8,12 +8,16 @@ import lhj.studycafe_kiosk.order.exception.ExpiredCouponException;
 import lhj.studycafe_kiosk.order.exception.InappropriateCouponException;
 import lhj.studycafe_kiosk.order.exception.NotYetCouponException;
 import lhj.studycafe_kiosk.order.exception.UsedCouponException;
+import lhj.studycafe_kiosk.subscription.SubscriptionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +28,7 @@ public class OrderService {
     private final CouponRepository couponRepository;
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
+    private final SubscriptionRepository subscriptionRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     public Long orderItem(Long memberId, Long itemId, Long couponId) {
@@ -47,6 +52,59 @@ public class OrderService {
 
     public void changeOrderIsUsed(Order order) {
         orderRepository.updateOrderIsUsed(order);
+    }
+
+    public int getRefundRate(Order order) {
+
+        if (!order.isUsed() && checkWithin7Days(order)) {
+            return 100; // 100% 환불 가능
+        }
+
+        Item item = order.getItem();
+        if (item.getItemType() == ItemType.DAILY) {
+            return 0; // 환불 불가
+        } else if (item.getItemType() == ItemType.CHARGE) {
+            if (checkWithin7Days(order) && checkWithin30Percent(order)) {
+                return 50; // 50% 환불 가능
+            } else {
+                return 0; // 환불 불가
+            }
+        } else {
+            if (checkWithin3Days(order)) {
+                return 70; // 70% 환불 가능
+            } else if (checkWithin7Days(order)) {
+                return 50; // 50% 환불 가능
+            } else {
+                return 0; // 환불 불가
+            }
+        }
+    }
+
+    public void getRefund(int refundRate, Order order) {
+
+        if (refundRate == 100) {
+            order.refundFull();
+        } else if (refundRate > 0) {
+            order.refundPartial(refundRate);
+        }
+    }
+
+    private boolean checkWithin30Percent(Order order) {
+        Subscription subscription = subscriptionRepository.getSubscriptionByOrder(order);
+
+        Item item = subscription.getOrder().getItem();
+        long itemSecond = item.getDuration().getSeconds();
+        long leftSecond = subscription.getLeftTime().getSeconds();
+
+        return leftSecond / itemSecond * 100 < 30;
+    }
+
+    private boolean checkWithin7Days(Order order) {
+        return LocalDateTime.now().minusDays(7).isBefore(order.getOrderDatetime());
+    }
+
+    private boolean checkWithin3Days(Order order) {
+        return LocalDateTime.now().minusDays(3).isBefore(order.getOrderDatetime());
     }
 
     private void validateUsableCoupon(Coupon coupon) {

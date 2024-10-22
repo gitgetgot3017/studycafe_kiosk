@@ -3,6 +3,7 @@ package lhj.studycafe_kiosk.subscription;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lhj.studycafe_kiosk.domain.Member;
+import lhj.studycafe_kiosk.domain.Order;
 import lhj.studycafe_kiosk.domain.Subscription;
 import org.springframework.stereotype.Repository;
 
@@ -28,5 +29,11 @@ public class SubscriptionRepository {
     public void updateSubscriptionStatus(Subscription subscription) {
 
         subscription.setIsValid(false);
+    }
+
+    public Subscription getSubscriptionByOrder(Order order) {
+        return em.createQuery("select s from Subscription s where s.order = :order", Subscription.class)
+                .setParameter("order", order)
+                .getSingleResult();
     }
 }
