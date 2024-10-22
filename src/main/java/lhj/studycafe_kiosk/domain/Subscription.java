@@ -46,4 +46,8 @@ public class Subscription {
     public void setSubscriptionInvalid() {
         isValid = false;
     }
+
+    public void startSubscription() {
+        startDateTime = LocalDateTime.now();
+    }
 }

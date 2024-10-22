@@ -29,8 +29,4 @@ public class OrderRepository {
     public Order getOrder(Long orderId) {
         return em.find(Order.class, orderId);
     }
-
-    public void updateOrderIsUsed(Order order) {
-        order.setUsed(true);
-    }
 }

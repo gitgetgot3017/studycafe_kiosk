@@ -26,14 +26,13 @@ public class SubscriptionRepository {
         em.persist(subscription);
     }
 
-    public void updateSubscriptionStatus(Subscription subscription) {
-
-        subscription.setSubscriptionInvalid();
-    }
-
     public Subscription getSubscriptionByOrder(Order order) {
         return em.createQuery("select s from Subscription s where s.order = :order", Subscription.class)
                 .setParameter("order", order)
                 .getSingleResult();
+    }
+
+    public Subscription getSubscription(Long subscriptionId) {
+        return em.find(Subscription.class, subscriptionId);
     }
 }

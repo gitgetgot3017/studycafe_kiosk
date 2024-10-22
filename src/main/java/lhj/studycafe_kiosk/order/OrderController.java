@@ -51,18 +51,6 @@ public class OrderController {
         return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);
     }
 
-    @PatchMapping("/{orderId}")
-    public HttpEntity<ChangeOrderIsUsedResponse> startUseRequest(@PathVariable("orderId") Long orderId) {
-
-        Order order = orderRepository.getOrder(orderId);
-
-        validateState(order);
-        orderService.changeOrderIsUsed(order);
-
-        ChangeOrderIsUsedResponse changeOrderIsUsedResponse = new ChangeOrderIsUsedResponse("주문", "이용권 사용 시작 처리하였습니다.");
-        return new ResponseEntity(changeOrderIsUsedResponse, HttpStatus.ACCEPTED);
-    }
-
     @PostMapping("/{orderId}")
     public HttpEntity<OrderRefundResponse> cancelOrder(@PathVariable("orderId") Long orderId) {
 
@@ -76,13 +64,6 @@ public class OrderController {
             return new ResponseEntity(new OrderRefundResponse("주문취소", "환불이 불가합니다."), HttpStatus.OK);
         } else {
             return new ResponseEntity(new OrderRefundResponse("주문취소", refundRate + "% 환불 가능합니다."), HttpStatus.OK);
-        }
-    }
-
-    private void validateState(Order order) {
-
-        if (order.getItem().getItemType() == ItemType.DAILY || order.getItem().getItemType() == ItemType.CHARGE || order.isUsed()) {
-            throw new IllegalStateException("이미 사용 시작된 이용권입니다.");
         }
     }
 

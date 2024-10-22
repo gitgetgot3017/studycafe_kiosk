@@ -45,22 +45,15 @@ public class OrderService {
 
         int orderPrice = calculateOrderPrice(item.getPrice(), item, coupon);
 
-        boolean isUsed = true;
-        if (item.getItemType() == ItemType.PERIOD || item.getItemType() == ItemType.FIXED) {
-            isUsed = false;
-        }
-        Order order = new Order(member, item, isUsed, orderPrice, coupon, LocalDateTime.now(), OrderStatus.ORDERED);
+        Order order = new Order(member, item, orderPrice, coupon, LocalDateTime.now(), OrderStatus.ORDERED);
         eventPublisher.publishEvent(new OrderEvent(this, member, item, order)); // 주문 이벤트 발생
         return orderRepository.saveOrder(order);
     }
 
-    public void changeOrderIsUsed(Order order) {
-        orderRepository.updateOrderIsUsed(order);
-    }
-
     public int getRefundRate(Order order) {
 
-        if (!order.isUsed() && checkWithin7Days(order)) {
+        Subscription subscription = subscriptionRepository.getSubscriptionByOrder(order);
+        if (subscription.getStartDateTime() == null && checkWithin7Days(order)) {
             return 100; // 100% 환불 가능
         }
 
@@ -99,24 +92,6 @@ public class OrderService {
         subscription.setSubscriptionInvalid();
     }
 
-    private boolean checkWithin30Percent(Order order) {
-        Subscription subscription = subscriptionRepository.getSubscriptionByOrder(order);
-
-        Item item = subscription.getOrder().getItem();
-        long itemSecond = item.getDuration().getSeconds();
-        long leftSecond = subscription.getLeftTime().getSeconds();
-
-        return leftSecond / itemSecond * 100 < 30;
-    }
-
-    private boolean checkWithin7Days(Order order) {
-        return LocalDateTime.now().minusDays(7).isBefore(order.getOrderDatetime());
-    }
-
-    private boolean checkWithin3Days(Order order) {
-        return LocalDateTime.now().minusDays(3).isBefore(order.getOrderDatetime());
-    }
-
     private void validateUsableCoupon(Coupon coupon) {
 
         LocalDateTime curDateTime = LocalDateTime.now();
@@ -151,5 +126,23 @@ public class OrderService {
         if (!item.getItemName().contains(String.valueOf(coupon.getRateOrHour()))) {
             throw new InappropriateCouponException("쿠폰 적용 대상이 아닙니다.");
         }
+    }
+
+    private boolean checkWithin30Percent(Order order) {
+        Subscription subscription = subscriptionRepository.getSubscriptionByOrder(order);
+
+        Item item = subscription.getOrder().getItem();
+        long itemSecond = item.getDuration().getSeconds();
+        long leftSecond = subscription.getLeftTime().getSeconds();
+
+        return leftSecond / itemSecond * 100 < 30;
+    }
+
+    private boolean checkWithin7Days(Order order) {
+        return LocalDateTime.now().minusDays(7).isBefore(order.getOrderDatetime());
+    }
+
+    private boolean checkWithin3Days(Order order) {
+        return LocalDateTime.now().minusDays(3).isBefore(order.getOrderDatetime());
     }
 }

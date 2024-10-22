@@ -85,7 +85,7 @@ public class SeatService {
         subscription.setLeftTime(remainderTime);
 
         if (remainderTime == Duration.ZERO || remainderTime.isNegative()) {
-            subscriptionService.changeSubscriptionStatus(subscription);
+            subscriptionService.changeSubscriptionInvalid(subscription);
         }
 
         return remainderTime;

@@ -37,8 +37,12 @@ public class SubscriptionService {
         subscriptionRepository.saveSubscription(subscription);
     }
 
-    public void changeSubscriptionStatus(Subscription subscription) {
+    public void changeSubscriptionInvalid(Subscription subscription) {
 
-        subscriptionRepository.updateSubscriptionStatus(subscription);
+        subscription.setSubscriptionInvalid();
+    }
+
+    public void changeSubscriptionStart(Subscription subscription) {
+        subscription.startSubscription();
     }
 }
