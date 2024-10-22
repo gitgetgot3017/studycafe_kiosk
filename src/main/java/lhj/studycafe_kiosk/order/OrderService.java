@@ -35,9 +35,13 @@ public class OrderService {
 
         Member member = memberRepository.getMember(memberId);
         Item item = itemRepository.getItem(itemId).get();
-        Coupon coupon = couponRepository.getCoupon(couponId).get();
-
-        validateUsableCoupon(coupon); // 사용 가능한 쿠폰인지 검증
+        Coupon coupon;
+        if (couponId == null) { // 쿠폰을 사용하지 않는 경우
+            coupon = null;
+        } else {
+            coupon = couponRepository.getCoupon(couponId).get();
+            validateUsableCoupon(coupon); // 사용 가능한 쿠폰인지 검증
+        }
 
         int orderPrice = calculateOrderPrice(item.getPrice(), item, coupon);
 
@@ -45,7 +49,7 @@ public class OrderService {
         if (item.getItemType() == ItemType.PERIOD || item.getItemType() == ItemType.FIXED) {
             isUsed = false;
         }
-        Order order = new Order(member, item, isUsed, orderPrice, LocalDateTime.now(), OrderStatus.ORDERED);
+        Order order = new Order(member, item, isUsed, orderPrice, coupon, LocalDateTime.now(), OrderStatus.ORDERED);
         eventPublisher.publishEvent(new OrderEvent(this, member, item, order)); // 주문 이벤트 발생
         return orderRepository.saveOrder(order);
     }
@@ -115,10 +119,6 @@ public class OrderService {
 
     private void validateUsableCoupon(Coupon coupon) {
 
-        if (coupon.getId() == null) { // 쿠폰을 사용하지 않은 경우 검증 대상이 아님
-            return;
-        }
-
         LocalDateTime curDateTime = LocalDateTime.now();
 
         if (coupon.isUsed()) {
@@ -132,7 +132,7 @@ public class OrderService {
 
     private int calculateOrderPrice(int itemPrice, Item item, Coupon coupon) {
 
-        if (coupon.getId() == null) { // 쿠폰을 사용하지 않는 경우
+        if (coupon == null) { // 쿠폰을 사용하지 않는 경우
             return itemPrice;
         }
 
