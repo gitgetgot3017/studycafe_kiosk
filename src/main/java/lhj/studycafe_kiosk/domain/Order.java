@@ -33,12 +33,13 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
-    public Order(Member member, Item item, boolean isUsed, int price, LocalDateTime orderDatetime) {
+    public Order(Member member, Item item, boolean isUsed, int price, LocalDateTime orderDatetime, OrderStatus orderStatus) {
         this.member = member;
         this.item = item;
         this.isUsed = isUsed;
         this.price = price;
         this.orderDatetime = orderDatetime;
+        this.orderStatus = orderStatus;
     }
 
     public void setUsed(boolean used) {

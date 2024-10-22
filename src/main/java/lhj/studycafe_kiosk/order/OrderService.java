@@ -45,7 +45,7 @@ public class OrderService {
         if (item.getItemType() == ItemType.PERIOD || item.getItemType() == ItemType.FIXED) {
             isUsed = false;
         }
-        Order order = new Order(member, item, isUsed, orderPrice, LocalDateTime.now());
+        Order order = new Order(member, item, isUsed, orderPrice, LocalDateTime.now(), OrderStatus.ORDERED);
         eventPublisher.publishEvent(new OrderEvent(this, member, item, order)); // 주문 이벤트 발생
         return orderRepository.saveOrder(order);
     }
