@@ -28,16 +28,21 @@ public class Order {
 
     private int price;
 
+    @OneToOne
+    @JoinColumn(name = "coupon_id")
+    private Coupon coupon;
+
     private LocalDateTime orderDatetime;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
-    public Order(Member member, Item item, boolean isUsed, int price, LocalDateTime orderDatetime, OrderStatus orderStatus) {
+    public Order(Member member, Item item, boolean isUsed, int price, Coupon coupon, LocalDateTime orderDatetime, OrderStatus orderStatus) {
         this.member = member;
         this.item = item;
         this.isUsed = isUsed;
         this.price = price;
+        this.coupon = coupon;
         this.orderDatetime = orderDatetime;
         this.orderStatus = orderStatus;
     }
