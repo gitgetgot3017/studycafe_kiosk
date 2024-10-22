@@ -43,7 +43,7 @@ public class Subscription {
         this.leftTime = leftTime;
     }
 
-    public void setIsValid(boolean isValid) {
-        this.isValid = isValid;
+    public void setSubscriptionInvalid() {
+        isValid = false;
     }
 }

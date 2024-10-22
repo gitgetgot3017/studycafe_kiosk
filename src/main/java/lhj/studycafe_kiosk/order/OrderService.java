@@ -82,11 +82,17 @@ public class OrderService {
 
     public void getRefund(int refundRate, Order order) {
 
+        if (refundRate == 0) {
+            return;
+        }
+
         if (refundRate == 100) {
             order.refundFull();
         } else if (refundRate > 0) {
             order.refundPartial(refundRate);
         }
+        Subscription subscription = subscriptionRepository.getSubscriptionByOrder(order);
+        subscription.setSubscriptionInvalid();
     }
 
     private boolean checkWithin30Percent(Order order) {

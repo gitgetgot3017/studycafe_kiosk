@@ -28,7 +28,7 @@ public class SubscriptionRepository {
 
     public void updateSubscriptionStatus(Subscription subscription) {
 
-        subscription.setIsValid(false);
+        subscription.setSubscriptionInvalid();
     }
 
     public Subscription getSubscriptionByOrder(Order order) {
