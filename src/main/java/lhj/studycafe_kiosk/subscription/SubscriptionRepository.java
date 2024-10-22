@@ -16,7 +16,7 @@ public class SubscriptionRepository {
     EntityManager em;
 
     public Subscription getRepresentativeSubscription(Member member) {
-        return em.createQuery("select s from Subscription s where s.member = :member and s.isRepresentative = :isRepresentative", Subscription.class)
+        return em.createQuery("select s from Subscription s where s.order.member = :member and s.isRepresentative = :isRepresentative", Subscription.class)
                 .setParameter("member", member)
                 .setParameter("isRepresentative", true)
                 .getSingleResult();
