@@ -51,7 +51,8 @@ public class Order {
     }
 
     public void refundPartial(int refundRate) {
-        price *= (100 - refundRate) / 100;
+        System.out.println((double) (100 - refundRate) / 100);
+        price *= (double) (100 - refundRate) / 100;
         orderStatus = OrderStatus.CANCELED;
     }
 }
