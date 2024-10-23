@@ -50,8 +50,15 @@ public class Order {
     }
 
     public void refundPartial(int refundRate) {
-        System.out.println((double) (100 - refundRate) / 100);
         price *= (double) (100 - refundRate) / 100;
+        orderStatus = OrderStatus.CANCELED;
+    }
+
+    public void refundPartialConsiderCoupon(int refundRate) {
+        int originPaid = item.getPrice() * refundRate / 100;
+        int unpaid = item.getPrice() - price;
+        int refundPrice =  originPaid - unpaid;
+        price -= refundPrice;
         orderStatus = OrderStatus.CANCELED;
     }
 }

@@ -7,7 +7,6 @@ import lhj.studycafe_kiosk.domain.*;
 import lhj.studycafe_kiosk.item.ItemRepository;
 import lhj.studycafe_kiosk.item.exception.NotExistItemException;
 import lhj.studycafe_kiosk.member.MemberRepository;
-import lhj.studycafe_kiosk.order.dto.ChangeOrderIsUsedResponse;
 import lhj.studycafe_kiosk.order.dto.OrderRefundResponse;
 import lhj.studycafe_kiosk.order.dto.OrderRequest;
 import lhj.studycafe_kiosk.order.dto.OrderResponse;
@@ -52,14 +51,15 @@ public class OrderController {
     }
 
     @PostMapping("/{orderId}")
-    public HttpEntity<OrderRefundResponse> cancelOrder(@PathVariable("orderId") Long orderId) {
+    public HttpEntity<OrderRefundResponse> cancelOrder(@SessionAttribute("loginMember") Long memberId, @PathVariable("orderId") Long orderId) {
 
         Order order = orderRepository.getOrder(orderId);
+        Member member = memberRepository.getMember(memberId);
 
         validateAlreadyRefund(order);
 
         int refundRate = orderService.getRefundRate(order);
-        orderService.getRefund(refundRate, order);
+        orderService.getRefundConsiderCoupon(member, order, refundRate);
         if (refundRate == 0) {
             return new ResponseEntity(new OrderRefundResponse("주문취소", "환불이 불가합니다."), HttpStatus.OK);
         } else {

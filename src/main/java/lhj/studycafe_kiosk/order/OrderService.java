@@ -4,20 +4,15 @@ import lhj.studycafe_kiosk.coupon.CouponRepository;
 import lhj.studycafe_kiosk.domain.*;
 import lhj.studycafe_kiosk.item.ItemRepository;
 import lhj.studycafe_kiosk.member.MemberRepository;
-import lhj.studycafe_kiosk.order.exception.ExpiredCouponException;
-import lhj.studycafe_kiosk.order.exception.InappropriateCouponException;
-import lhj.studycafe_kiosk.order.exception.NotYetCouponException;
-import lhj.studycafe_kiosk.order.exception.UsedCouponException;
+import lhj.studycafe_kiosk.order.exception.*;
 import lhj.studycafe_kiosk.subscription.SubscriptionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -77,16 +72,40 @@ public class OrderService {
         }
     }
 
-    public void getRefund(int refundRate, Order order) {
+    public void getRefundConsiderCoupon(Member member, Order order, int refundRate) {
 
-        if (refundRate == 0) {
+        if (refundRate == 0) { // 환불 불가한 경우
             return;
         }
 
-        if (refundRate == 100) {
-            order.refundFull();
-        } else if (refundRate > 0) {
-            order.refundPartial(refundRate);
+        Coupon coupon = order.getCoupon();
+        if (coupon == null) { // 쿠폰을 사용하지 않고 결제한 경우
+            if (refundRate == 100) {
+                order.refundFull();
+            } else if (refundRate > 0) {
+                order.refundPartial(refundRate);
+            }
+        }
+        else { // 쿠폰을 사용해서 결제한 경우
+            if (coupon.getName().contains("가입")) {
+                throw new ImpossibleRefundException("증정된 쿠폰으로 구입한 이용권은 환불 불가합니다.");
+            }
+            else if (coupon.getName().contains("생일")) {
+                if (refundRate == 100) {
+                    order.refundFull();
+                } else if (refundRate > 0) {
+                    order.refundPartialConsiderCoupon(refundRate);
+                }
+                coupon.reEnableCoupon();
+            }
+            else if (coupon.getName().contains("구매")) {
+                if (refundRate == 100) {
+                    order.refundFull();
+                } else if (refundRate > 0) {
+                    order.refundPartialConsiderCoupon(refundRate);
+                }
+                decisionReEnableCoupon(member, order, coupon);
+            }
         }
         Subscription subscription = subscriptionRepository.getSubscriptionByOrder(order);
         subscription.setSubscriptionInvalid();
@@ -144,5 +163,51 @@ public class OrderService {
 
     private boolean checkWithin3Days(Order order) {
         return LocalDateTime.now().minusDays(3).isBefore(order.getOrderDatetime());
+    }
+
+    private void decisionReEnableCoupon(Member member, Order order, Coupon coupon) {
+
+        Optional<Long> opCumulativeAmount = orderRepository.getCumulativeAmount(member);
+        Long cumulativeAmount = 0L;
+        if (opCumulativeAmount.isPresent()) {
+            cumulativeAmount = opCumulativeAmount.get();
+        }
+
+        int orderPrice = order.getPrice();
+        int exceptOrderPrice = cumulativeAmount.intValue() - orderPrice;
+
+        int stdDiscountRate = 0;
+        if (300_000 <= orderPrice) {
+            if (orderPrice < 500_000) {
+                stdDiscountRate = 3;
+            } else if (orderPrice < 1_000_000) {
+                stdDiscountRate = 5;
+            } else if (orderPrice < 1_500_000) {
+                stdDiscountRate = 7;
+            } else if (stdDiscountRate < 2_000_000) {
+                stdDiscountRate = 10;
+            } else {
+                stdDiscountRate = 15;
+            }
+        }
+
+        int discountRate = 0;
+        if (300_000 <= exceptOrderPrice) {
+            if (exceptOrderPrice < 500_000) {
+                discountRate = 3;
+            } else if (exceptOrderPrice < 1_000_000) {
+                discountRate = 5;
+            } else if (exceptOrderPrice < 1_500_000) {
+                discountRate = 7;
+            } else if (exceptOrderPrice < 2_000_000) {
+                discountRate = 10;
+            } else {
+                discountRate = 15;
+            }
+        }
+
+        if (discountRate == stdDiscountRate) {
+            coupon.reEnableCoupon();
+        }
     }
 }

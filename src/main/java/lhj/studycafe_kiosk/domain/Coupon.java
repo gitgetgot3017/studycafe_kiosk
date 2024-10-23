@@ -67,4 +67,8 @@ public class Coupon {
         this.isUsed = isUsed;
         this.usageDateTime = usageDateTime;
     }
+
+    public void reEnableCoupon() {
+        isUsed = false;
+    }
 }

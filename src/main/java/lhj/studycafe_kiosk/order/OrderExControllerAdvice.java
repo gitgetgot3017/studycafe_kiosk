@@ -2,10 +2,7 @@ package lhj.studycafe_kiosk.order;
 
 import lhj.studycafe_kiosk.order.dto.OrderCancelFailResponse;
 import lhj.studycafe_kiosk.order.dto.OrderFailResponse;
-import lhj.studycafe_kiosk.order.exception.AlreadyRefundException;
-import lhj.studycafe_kiosk.order.exception.ImproperRequestException;
-import lhj.studycafe_kiosk.order.exception.InappropriateCouponException;
-import lhj.studycafe_kiosk.order.exception.InvalidCouponException;
+import lhj.studycafe_kiosk.order.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -47,7 +44,13 @@ public class OrderExControllerAdvice {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
-    public OrderCancelFailResponse changeOrderIsUsedFail(AlreadyRefundException e) {
+    public OrderCancelFailResponse alreadyRefundFail(AlreadyRefundException e) {
+        return new OrderCancelFailResponse("주문", e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public OrderCancelFailResponse impossibleRefundFail(ImpossibleRefundException e) {
         return new OrderCancelFailResponse("주문", e.getMessage());
     }
 }
