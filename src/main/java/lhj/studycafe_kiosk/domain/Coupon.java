@@ -36,6 +36,8 @@ public class Coupon {
 
     private LocalDateTime usageDateTime;
 
+    private CouponStatus couponStatus;
+
     public Coupon(Member member, String name, CouponType couponType, int rateOrHour, boolean isUsed, LocalDateTime startDatetime, LocalDateTime endDatetime, LocalDateTime issueDatetime, LocalDateTime usageDateTime) {
         this.member = member;
         this.name = name;
