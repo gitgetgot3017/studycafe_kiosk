@@ -73,4 +73,8 @@ public class Coupon {
     public void reEnableCoupon() {
         isUsed = false;
     }
+
+    public void disableCoupon() {
+        couponStatus = CouponStatus.CANCELED;
+    }
 }

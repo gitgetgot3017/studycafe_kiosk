@@ -45,4 +45,11 @@ public class CouponRepository {
         Coupon coupon = getCoupon(couponId).get();
         coupon.changeCouponStatus(true, LocalDateTime.now());
     }
+
+    public Coupon getSpecificCoupon(Member member, int discountRate) {
+        return em.createQuery("select c from Coupon c where c.member = :member and c.name like concat('%', :discountRate, '%')", Coupon.class)
+                .setParameter("member", member)
+                .setParameter("discountRate", discountRate)
+                .getSingleResult();
+    }
 }

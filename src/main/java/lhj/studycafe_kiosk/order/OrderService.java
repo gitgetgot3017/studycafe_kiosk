@@ -206,8 +206,10 @@ public class OrderService {
             }
         }
 
-        if (discountRate == stdDiscountRate) {
-            coupon.reEnableCoupon();
+        coupon.reEnableCoupon();
+        if (discountRate != stdDiscountRate) { // 쿠폰 발급 취소
+            Coupon specificCoupon = couponRepository.getSpecificCoupon(member, stdDiscountRate);
+            specificCoupon.disableCoupon();
         }
     }
 }
