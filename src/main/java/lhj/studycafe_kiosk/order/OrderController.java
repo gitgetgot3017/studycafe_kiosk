@@ -7,10 +7,13 @@ import lhj.studycafe_kiosk.domain.*;
 import lhj.studycafe_kiosk.item.ItemRepository;
 import lhj.studycafe_kiosk.item.exception.NotExistItemException;
 import lhj.studycafe_kiosk.member.MemberRepository;
+import lhj.studycafe_kiosk.member.exception.NotExistMemberException;
 import lhj.studycafe_kiosk.order.dto.OrderRefundResponse;
 import lhj.studycafe_kiosk.order.dto.OrderRequest;
 import lhj.studycafe_kiosk.order.dto.OrderResponse;
+import lhj.studycafe_kiosk.order.dto.OrderHistoryResponse;
 import lhj.studycafe_kiosk.order.exception.AlreadyRefundException;
+import lhj.studycafe_kiosk.order.exception.NotExistOrderException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -19,6 +22,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -67,6 +72,23 @@ public class OrderController {
         }
     }
 
+    @GetMapping
+    public HttpEntity<List<OrderHistoryResponse>> showOrders(@SessionAttribute("loginMember") Long memberId) {
+
+        Member member = memberRepository.getMember(memberId);
+        if (member == null) {
+            throw new NotExistMemberException("존재하지 않는 회원입니다.");
+        }
+
+        List<Order> orders = orderRepository.getOrders(member);
+        if (orders.isEmpty()) {
+            throw new NotExistOrderException("주문 내역이 존재하지 않습니다.");
+        } else {
+            List<OrderHistoryResponse> orderHistoryResponses = changeAllOrderToOrderHistoryResponse(orders);
+            return new ResponseEntity<>(orderHistoryResponses, HttpStatus.OK);
+        }
+    }
+
     private void validateOrderRequest(OrderRequest orderRequest) {
 
         Optional<Item> opItem = itemRepository.getItem(orderRequest.getItemId());
@@ -96,5 +118,23 @@ public class OrderController {
         if (order.getOrderStatus() == OrderStatus.CANCELED) {
             throw new AlreadyRefundException("이미 환불된 이용권입니다.");
         }
+    }
+
+    private List<OrderHistoryResponse> changeAllOrderToOrderHistoryResponse(List<Order> orders) {
+        List<OrderHistoryResponse> orderHistoryResponses = new ArrayList<>();
+        for (Order order : orders) {
+            orderHistoryResponses.add(changeOrderToOrderHistoryResponse(order));
+        }
+        return orderHistoryResponses;
+    }
+
+    private OrderHistoryResponse changeOrderToOrderHistoryResponse(Order order) {
+        return new OrderHistoryResponse(
+                order.getId(),
+                order.getMember().getName(),
+                order.getItem().getItemName(),
+                order.getPrice(),
+                order.getCoupon().getName(),
+                order.getOrderDatetime());
     }
 }

@@ -1,7 +1,10 @@
 package lhj.studycafe_kiosk.order;
 
+import lhj.studycafe_kiosk.member.dto.FindMemberFailResponse;
+import lhj.studycafe_kiosk.member.exception.NotExistMemberException;
 import lhj.studycafe_kiosk.order.dto.OrderCancelFailResponse;
 import lhj.studycafe_kiosk.order.dto.OrderFailResponse;
+import lhj.studycafe_kiosk.order.dto.ShowOrderFailResponse;
 import lhj.studycafe_kiosk.order.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -52,5 +55,17 @@ public class OrderExControllerAdvice {
     @ExceptionHandler
     public OrderCancelFailResponse impossibleRefundFail(ImpossibleRefundException e) {
         return new OrderCancelFailResponse("주문", e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public ShowOrderFailResponse notExistOrderFail(NotExistOrderException e) {
+        return new ShowOrderFailResponse("주문", e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public FindMemberFailResponse notExistMemberFail(NotExistMemberException e) {
+        return new FindMemberFailResponse("주문", e.getMessage());
     }
 }

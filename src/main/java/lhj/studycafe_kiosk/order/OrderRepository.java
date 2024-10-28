@@ -7,6 +7,7 @@ import lhj.studycafe_kiosk.domain.Order;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.List;
 
 @Repository
 public class OrderRepository {
@@ -28,5 +29,11 @@ public class OrderRepository {
 
     public Order getOrder(Long orderId) {
         return em.find(Order.class, orderId);
+    }
+
+    public List<Order> getOrders(Member member) {
+        return em.createQuery("select o from Order o where o.member = :member", Order.class)
+                .setParameter("member", member)
+                .getResultList();
     }
 }
