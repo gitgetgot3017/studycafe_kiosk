@@ -45,4 +45,10 @@ public class SubscriptionService {
     public void changeSubscriptionStart(Subscription subscription) {
         subscription.startSubscription();
     }
+
+    public void changeSubscription(Subscription beforeSubscription, Subscription afterSubscription) {
+
+        beforeSubscription.setSubscriptionNotRepresentative();
+        afterSubscription.setSubscriptionRepresentative();
+    }
 }

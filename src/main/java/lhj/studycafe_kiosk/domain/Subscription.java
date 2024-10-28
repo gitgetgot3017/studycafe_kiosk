@@ -50,4 +50,12 @@ public class Subscription {
     public void startSubscription() {
         startDateTime = LocalDateTime.now();
     }
+
+    public void setSubscriptionNotRepresentative() {
+        isRepresentative = false;
+    }
+
+    public void setSubscriptionRepresentative() {
+        isRepresentative = true;
+    }
 }
