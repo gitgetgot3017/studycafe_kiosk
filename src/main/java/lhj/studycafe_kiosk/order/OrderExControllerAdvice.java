@@ -2,6 +2,7 @@ package lhj.studycafe_kiosk.order;
 
 import lhj.studycafe_kiosk.member.dto.FindMemberFailResponse;
 import lhj.studycafe_kiosk.member.exception.NotExistMemberException;
+import lhj.studycafe_kiosk.order.dto.GuestsOrderFailResponse;
 import lhj.studycafe_kiosk.order.dto.OrderCancelFailResponse;
 import lhj.studycafe_kiosk.order.dto.OrderFailResponse;
 import lhj.studycafe_kiosk.order.dto.ShowOrderFailResponse;
@@ -67,5 +68,11 @@ public class OrderExControllerAdvice {
     @ExceptionHandler
     public FindMemberFailResponse notExistMemberFail(NotExistMemberException e) {
         return new FindMemberFailResponse("주문", e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public GuestsOrderFailResponse notDailyJoinFail(NotDailyJoinException e) {
+        return new GuestsOrderFailResponse("주문", e.getMessage());
     }
 }

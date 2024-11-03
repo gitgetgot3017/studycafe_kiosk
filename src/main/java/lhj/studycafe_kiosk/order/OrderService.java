@@ -45,6 +45,15 @@ public class OrderService {
         return orderRepository.saveOrder(order);
     }
 
+    public Long orderItemGuest(Long itemId, Long couponId) {
+
+        Item item = itemRepository.getItem(itemId).get();
+
+        Order order = new Order(null, item, item.getPrice(), null, LocalDateTime.now(), OrderStatus.ORDERED);
+        eventPublisher.publishEvent(new OrderEvent(this, null, item, order)); // 주문 이벤트 발생
+        return orderRepository.saveOrder(order);
+    }
+
     public int getRefundRate(Order order) {
 
         Subscription subscription = subscriptionRepository.getSubscriptionByOrder(order);

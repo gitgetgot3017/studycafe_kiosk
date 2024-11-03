@@ -8,11 +8,9 @@ import lhj.studycafe_kiosk.item.ItemRepository;
 import lhj.studycafe_kiosk.item.exception.NotExistItemException;
 import lhj.studycafe_kiosk.member.MemberRepository;
 import lhj.studycafe_kiosk.member.exception.NotExistMemberException;
-import lhj.studycafe_kiosk.order.dto.OrderRefundResponse;
-import lhj.studycafe_kiosk.order.dto.OrderRequest;
-import lhj.studycafe_kiosk.order.dto.OrderResponse;
-import lhj.studycafe_kiosk.order.dto.OrderHistoryResponse;
+import lhj.studycafe_kiosk.order.dto.*;
 import lhj.studycafe_kiosk.order.exception.AlreadyRefundException;
+import lhj.studycafe_kiosk.order.exception.NotDailyJoinException;
 import lhj.studycafe_kiosk.order.exception.NotExistOrderException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
@@ -53,6 +51,20 @@ public class OrderController {
         handleCouponUsage(orderRequest.getCouponId()); // 쿠폰 사용 완료 처리
 
         return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/guest")
+    public HttpEntity<GuestOrderResponse> orderItemGuest(@RequestBody @Validated OrderRequest orderRequest) {
+
+        validateGuestOrderRequest(orderRequest);
+
+        Long orderId = orderService.orderItemGuest(orderRequest.getItemId(), orderRequest.getCouponId());
+
+        Item item = itemRepository.getItem(orderRequest.getItemId()).get();
+        Order order = orderRepository.getOrder(orderId);
+
+        GuestOrderResponse guestOrderResponse = new GuestOrderResponse(orderId, item.getItemName(), order.getPrice(), LocalDateTime.now());
+        return new ResponseEntity<>(guestOrderResponse, HttpStatus.CREATED);
     }
 
     @PostMapping("/{orderId}")
@@ -102,6 +114,19 @@ public class OrderController {
         Optional<Coupon> opCoupon = couponRepository.getCoupon(orderRequest.getCouponId());
         if (opCoupon.isEmpty()) {
             throw new NotExistCouponException("존재하지 않는 쿠폰 ID를 입력하셨습니다.");
+        }
+    }
+
+    private void validateGuestOrderRequest(OrderRequest orderRequest) {
+
+        Optional<Item> opItem = itemRepository.getItem(orderRequest.getItemId());
+        if (opItem.isEmpty()) {
+            throw new NotExistItemException("존재하지 않는 상품 ID를 입력하셨습니다.");
+        }
+
+        Item item = opItem.get();
+        if (!(item.getItemType() == ItemType.DAILY)) {
+            throw new NotDailyJoinException("일일권이 아닌 경우에는 회원가입이 필요합니다.");
         }
     }
 
