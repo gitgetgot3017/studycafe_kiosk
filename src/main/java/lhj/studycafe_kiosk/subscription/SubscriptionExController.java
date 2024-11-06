@@ -1,6 +1,6 @@
 package lhj.studycafe_kiosk.subscription;
 
-import lhj.studycafe_kiosk.subscription.dto.SubscriptionChangeFailResponse;
+import lhj.studycafe_kiosk.subscription.dto.SubscriptionFailResponse;
 import lhj.studycafe_kiosk.subscription.exception.NotExistSubscriptionException;
 import lhj.studycafe_kiosk.subscription.exception.SubscriptionChangeException;
 import org.springframework.http.HttpStatus;
@@ -14,19 +14,19 @@ public class SubscriptionExController {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
-    public SubscriptionChangeFailResponse changeSubscriptionFail(ServletRequestBindingException e) {
-        return new SubscriptionChangeFailResponse("이용권 변경", "필드 검증에 실패하였습니다.");
+    public SubscriptionFailResponse changeSubscriptionFail(ServletRequestBindingException e) {
+        return new SubscriptionFailResponse("이용권 변경", "필드 검증에 실패하였습니다.");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
-    public SubscriptionChangeFailResponse notExistSubscriptionFail(NotExistSubscriptionException e) {
-        return new SubscriptionChangeFailResponse("이용권 변경", e.getMessage());
+    public SubscriptionFailResponse notExistSubscriptionFail(NotExistSubscriptionException e) {
+        return new SubscriptionFailResponse("이용권", e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
-    public SubscriptionChangeFailResponse subscriptionChangeFail(SubscriptionChangeException e) {
-        return new SubscriptionChangeFailResponse("이용권 변경", e.getMessage());
+    public SubscriptionFailResponse subscriptionChangeFail(SubscriptionChangeException e) {
+        return new SubscriptionFailResponse("이용권 변경", e.getMessage());
     }
 }

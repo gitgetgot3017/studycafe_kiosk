@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class SubscriptionChangeFailResponse {
+public class SubscriptionFailResponse {
 
     private String domain;
     private String message;
