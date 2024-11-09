@@ -28,11 +28,14 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private MemberGrade memberGrade;
 
-    public Member(String name, String phone, String password, LocalDate birth) {
+    private boolean optionalClause;
+
+    public Member(String name, String phone, String password, LocalDate birth, boolean optionalClause) {
         this.name = name;
         this.phone = phone;
         this.password = password;
         this.birth = birth;
+        this.optionalClause = optionalClause;
     }
 
     public void changeGeneralInfo(String name, LocalDate birth) {

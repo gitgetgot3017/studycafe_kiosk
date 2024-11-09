@@ -103,7 +103,7 @@ public class MemberController {
 
     private Member changeJoinRequestToMember(JoinRequest joinRequest) {
 
-        return new Member(joinRequest.getName(), joinRequest.getPhone(), joinRequest.getPassword(), joinRequest.getBirth());
+        return new Member(null, joinRequest.getPhone(), joinRequest.getPassword(), null, joinRequest.isOptionalClause());
     }
 
     private Long validateLoginUser(LoginRequest loginRequest) {
