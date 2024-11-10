@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class SubscriptionListResponse {
 
+    private Long subscriptionId;
+
     private String itemName;
 
     private boolean isRepresentative;

@@ -41,11 +41,11 @@ public class SubscriptionController {
     }
 
     @PatchMapping
-    public HttpEntity<SubscriptionChangeResponse> changeSubscription(@RequestBody @Validated SubscriptionChangeRequest subscriptionChangeRequest) {
+    public HttpEntity<SubscriptionChangeResponse> changeSubscription(@SessionAttribute("loginMember") Long memberId, @RequestBody @Validated SubscriptionChangeRequest subscriptionChangeRequest) {
 
         Subscription beforeSubscription = subscriptionRepository.getSubscription(subscriptionChangeRequest.getBeforeSubscriptionId());
         Subscription afterSubscription = subscriptionRepository.getSubscription(subscriptionChangeRequest.getAfterSubscriptionId());
-        Member member = memberRepository.getMember(31L);
+        Member member = memberRepository.getMember(memberId);
 
         validateChangeability(member, beforeSubscription, afterSubscription);
         subscriptionService.changeSubscription(beforeSubscription, afterSubscription);
@@ -120,6 +120,7 @@ public class SubscriptionController {
     private SubscriptionListResponse changeSubscriptionToSubscriptionListResponse(Subscription subscription) {
 
         return new SubscriptionListResponse(
+                subscription.getId(),
                 subscription.getOrder().getItem().getItemName(),
                 subscription.isRepresentative(),
                 subscription.getStartDateTime(),
