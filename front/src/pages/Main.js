@@ -50,13 +50,34 @@ function Main() {
             });
     }
 
+    function logout() {
+
+        let result = window.confirm("로그아웃 하시겠습니까?");
+
+        if (!result) {
+            return;
+        }
+
+        axios.post("/members/logout")
+            .then(() => {{
+                alert("성공적으로 로그아웃 하였습니다.");
+                window.location.href = "/members/login";
+            }})
+            .catch((error) => {
+                console.error("로그아웃 중 에러 발생:", error.response ? error.response.data : error.message);
+                if (error.response) {
+                    console.error("에러 상태 코드:", error.response.status);
+                }
+            });
+    }
+
     return (
         <div className="bg-light">
             {/* Top Section with Logout Button */}
             <div className="container mt-4">
                 <div className="d-flex justify-content-between align-items-center">
                     <h2 className="fw-bold">LHJ STUDYCAFE</h2>
-                    <button className="btn btn-secondary btn-sm">로그아웃</button>
+                    <button className="btn btn-secondary btn-sm" onClick={logout}>로그아웃</button>
                 </div>
             </div>
 
