@@ -4,18 +4,23 @@ import lhj.studycafe_kiosk.domain.Member;
 import lhj.studycafe_kiosk.domain.Subscription;
 import lhj.studycafe_kiosk.member.MemberRepository;
 import lhj.studycafe_kiosk.order.dto.ChangeOrderIsUsedResponse;
+import lhj.studycafe_kiosk.subscription.dto.RepresentativeSubscriptionResponse;
 import lhj.studycafe_kiosk.subscription.dto.SubscriptionChangeRequest;
 import lhj.studycafe_kiosk.subscription.dto.SubscriptionChangeResponse;
 import lhj.studycafe_kiosk.subscription.dto.SubscriptionListResponse;
 import lhj.studycafe_kiosk.subscription.exception.NotExistSubscriptionException;
 import lhj.studycafe_kiosk.subscription.exception.SubscriptionChangeException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,6 +71,18 @@ public class SubscriptionController {
         }
 
         return new ResponseEntity(subscriptionListResponses, HttpStatus.OK);
+    }
+
+    @GetMapping("/representative")
+    public HttpEntity<RepresentativeSubscriptionResponse> showRepresentativeSubscription(@SessionAttribute("loginMember") Long memberId) {
+
+        try {
+            Member member = memberRepository.getMember(memberId);
+            Subscription subscription = subscriptionRepository.getRepresentativeSubscription(member);
+            return new ResponseEntity(changeSubscriptionToRepresentativeSubscriptionDto(subscription), HttpStatus.OK);
+        } catch (EmptyResultDataAccessException e) {
+            throw new NotExistSubscriptionException("보유 중인 이용권이 존재하지 않습니다.");
+        }
     }
 
     private void validateState(Subscription subscription) {
@@ -126,5 +143,15 @@ public class SubscriptionController {
                 subscription.getStartDateTime(),
                 subscription.getEndDateTime(),
                 subscription.getLeftTime());
+    }
+
+    private RepresentativeSubscriptionResponse changeSubscriptionToRepresentativeSubscriptionDto(Subscription subscription) {
+        return new RepresentativeSubscriptionResponse(subscription.getOrder().getItem().getItemName(), changeDurationToString(subscription.getLeftTime()));
+    }
+
+    private String changeDurationToString(Duration leftTime) {
+        LocalDateTime endDateTime = LocalDateTime.now().plusSeconds(leftTime.getSeconds());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분 ss초");
+        return endDateTime.format(formatter);
     }
 }
