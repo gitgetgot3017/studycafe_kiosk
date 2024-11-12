@@ -5,6 +5,8 @@ import jakarta.persistence.PersistenceContext;
 import lhj.studycafe_kiosk.domain.Seat;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public class SeatRepository {
 
@@ -22,5 +24,10 @@ public class SeatRepository {
 
     public void updateSeat(Seat seat) {
         seat.changeSeatState(null, null);
+    }
+
+    public List<Seat> getOccupiedSeats() {
+        return em.createQuery("select s from Seat s where s.member is not null")
+                .getResultList();
     }
 }

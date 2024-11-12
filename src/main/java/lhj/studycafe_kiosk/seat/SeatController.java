@@ -3,10 +3,7 @@ package lhj.studycafe_kiosk.seat;
 import lhj.studycafe_kiosk.domain.Member;
 import lhj.studycafe_kiosk.domain.Seat;
 import lhj.studycafe_kiosk.member.MemberRepository;
-import lhj.studycafe_kiosk.seat.dto.UserOutSeatResponse;
-import lhj.studycafe_kiosk.seat.dto.SeatChangeRequest;
-import lhj.studycafe_kiosk.seat.dto.SeatChangeSuccessResponse;
-import lhj.studycafe_kiosk.seat.dto.SeatResponse;
+import lhj.studycafe_kiosk.seat.dto.*;
 import lhj.studycafe_kiosk.seat.exception.EmptySeatOutException;
 import lhj.studycafe_kiosk.seat.exception.InvalidSeatChangeException;
 import lhj.studycafe_kiosk.seat.exception.NotExistSeatException;
@@ -19,6 +16,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -69,6 +68,15 @@ public class SeatController {
         return new ResponseEntity<>(outSeatResponse, HttpStatus.ACCEPTED);
     }
 
+    @GetMapping("/occupied")
+    public HttpEntity<List<OccupiedSeatResponse>> showSeats(@SessionAttribute(value = "loginMember", required = false) Long memberId) {
+
+        List<Seat> unusableSeats = seatRepository.getOccupiedSeats();
+
+        List<OccupiedSeatResponse> occupiedSeats = getOccupiedSeats(unusableSeats, memberId);
+        return new ResponseEntity<>(occupiedSeats, HttpStatus.OK);
+    }
+
     private void validateUsableSeat(Seat seat) {
 
         if (seat == null) {
@@ -110,5 +118,14 @@ public class SeatController {
         long leftHour = duration.toHours() % 24;
         long leftMinute = duration.toMinutes() % 60;
         return String.format("이용 기간이 %d일 %d시간 %d분 남았습니다.", leftDay, leftHour, leftMinute);
+    }
+
+    private List<OccupiedSeatResponse> getOccupiedSeats(List<Seat> seats, Long memberId) {
+
+        List<OccupiedSeatResponse> occupiedSeats = new ArrayList();
+        for (Seat seat : seats) {
+            occupiedSeats.add(new OccupiedSeatResponse(seat.getId(), seat.getMember().getId() == memberId));
+        }
+        return occupiedSeats;
     }
 }

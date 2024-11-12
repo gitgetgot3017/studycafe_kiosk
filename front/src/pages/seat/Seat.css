@@ -1,0 +1,84 @@
+/* General styles */
+body {
+    background-color: #2d3e50; /* 색상 통일 */
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+    height: 1000px;
+}
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #1c2b3a;
+}
+header h2 {
+    margin: 0;
+}
+.icon {
+    width: 24px;
+    height: 24px;
+}
+/* Legend styles */
+.legend {
+    display: flex;
+    gap: 15px;
+    margin: 20px 0;
+}
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.legend-color {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+}
+
+/* Custom styles */
+.room {
+    border: 2px solid #333;
+    padding: 20px;
+    margin: 15px;
+    border-radius: 8px;
+    background-color: #273848;
+}
+.seat {
+    width: 40px;
+    height: 40px;
+    margin: 5px;
+    background-color: #6c757d;
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.vertical-row .seat {
+    margin-top: 8px;
+}
+.horizontal-row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.seat.my-seat { background-color: #66ccff; }
+.seat.occupied { background-color: orange; }
+/*.seat.fixed { background-color: #70d36a; }*/
+/*.seat.soon-out { background-color: #ff4d4d; }*/
+/*.seat.day-pass { background-color: #d3ad70; }*/
+/*.seat.long-term { background-color: #66b3ff; }*/
+
+.seat-map-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #2d3e50; /* 색상 통일 */
+    border-radius: 15px;
+    justify-content: space-between;
+}
