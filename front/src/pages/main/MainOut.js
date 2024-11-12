@@ -36,7 +36,7 @@ function MainOut() {
                     <p className="mb-1">{endDateTime}</p>
 
                     <div className="buttons">
-                        <div className="button">좌석 선택</div>
+                        <a href="/seats" className="button" style={{textDecorationLine: "none"}}>좌석 선택</a>
                         <div className="button">연장하기</div>
                     </div>
                 </div>

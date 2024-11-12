@@ -1,6 +1,6 @@
 import './App.css';
 import { Routes, Route, Link } from 'react-router-dom';
-import Main from './pages/Main';
+import Main from './pages/main/Main';
 import Login from './pages/member/Login';
 import Join from './pages/member/Join';
 import Seat from './pages/seat/Seat';
