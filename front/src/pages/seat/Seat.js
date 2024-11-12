@@ -1,9 +1,11 @@
 import './Seat.css';
 import {useState, useEffect} from "react";
+import {useNavigate} from "react-router-dom";
 import axios from "axios";
 
-function Seat() {
+function Seat(props) {
 
+    let navigate = useNavigate();
     let [seats, setSeats] = useState([null, "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]);
 
     useEffect(() => {
@@ -27,6 +29,26 @@ function Seat() {
             });
     }, []);
 
+    function chooseSeat(seatId) {
+        if (seats[seatId] === "occupied") {
+            alert("이미 사용 중인 좌석입니다.");
+            return;
+        }
+
+        axios.post("/seats/" + seatId)
+            .then(() => {{
+                alert("해당 좌석을 선택하시겠습니까?");
+                props.setUserInOut(true);
+                navigate("/");
+            }})
+            .catch((error) => {
+                console.error("좌석 선택 중 에러 발생:", error.response ? error.response.data : error.message);
+                if (error.response) {
+                    console.error("에러 상태 코드:", error.response.status);
+                }
+            });
+    }
+
     return (
         <div className="bg-dark text-white">
             <div className="container seat-map-container">
@@ -40,7 +62,7 @@ function Seat() {
                         <span>사용가능</span>
                     </div>
                     <div className="legend-item">
-                        <div className="legend-color" style={{backgroundColor: "#ff99cc"}}></div>
+                        <div className="legend-color" style={{backgroundColor: "orange"}}></div>
                         <span>사용중</span>
                     </div>
                     {/*<div className="legend-item">*/}
@@ -70,7 +92,7 @@ function Seat() {
                                 <div className="horizontal-row">
                                     {
                                         [1,2,3,4,5,6,7,8,9,10].map(function(seatId) {
-                                            return <div className={`seat ${seats[seatId]}`}>{seatId}</div>;
+                                            return <div className={`seat ${seats[seatId]}`} onClick={() => chooseSeat(seatId)}>{seatId}</div>;
                                         })
                                     }
                                 </div>
@@ -81,7 +103,7 @@ function Seat() {
                                 <div className="horizontal-row">
                                     {
                                         [11,12,13,14,15,16,17,18,19,20].map(function (seatId) {
-                                            return <div className={`seat ${seats[seatId]}`}>{seatId}</div>;
+                                            return <div className={`seat ${seats[seatId]}`} onClick={() => chooseSeat(seatId)}>{seatId}</div>;
                                         })
                                     }
                                 </div>
@@ -93,7 +115,7 @@ function Seat() {
                             <div className="horizontal-row flex-wrap">
                                 {
                                     [21,22,23,24,25,26,27,28,29,30,31,32,33,34,35].map(function (seatId) {
-                                        return <div className={`seat ${seats[seatId]}`}>{seatId}</div>;
+                                        return <div className={`seat ${seats[seatId]}`} onClick={() => chooseSeat(seatId)}>{seatId}</div>;
                                     })
                                 }
                             </div>
@@ -104,7 +126,7 @@ function Seat() {
                     <div className="room d-flex flex-column align-items-center vertical-row" style={{height: "100%"}}>
                         {
                             [41,42,43,44,45].map(function (seatId) {
-                                return <div className={`seat ${seats[seatId]}`}>{seatId}</div>;
+                                return <div className={`seat ${seats[seatId]}`} onClick={() => chooseSeat(seatId)}>{seatId}</div>;
                             })
                         }
                     </div>
