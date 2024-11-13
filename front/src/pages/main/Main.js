@@ -1,8 +1,11 @@
 import axios from "axios";
 import MainIn from './MainIn';
 import MainOut from './MainOut';
+import {useSelector} from "react-redux";
 
-function Main(props) {
+function Main() {
+
+    let state = useSelector((state) => {return state});
 
     function logout() {
 
@@ -40,7 +43,7 @@ function Main(props) {
                 <button className="btn btn-outline-dark btn-sm">LHJ STUDYCAFE 대방점</button>
             </div>
 
-            { props.userInOut ? <MainIn></MainIn> : <MainOut></MainOut> }
+            { state.userInOut ? <MainIn></MainIn> : <MainOut></MainOut> }
 
             {/* Auto-login Switch and Ticket Purchase */}
             <div className="container mt-4 text-center">

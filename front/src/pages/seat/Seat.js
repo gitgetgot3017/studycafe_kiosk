@@ -1,10 +1,13 @@
 import './Seat.css';
 import {useState, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
+import {useDispatch} from "react-redux";
+import {changeUserInOut} from "../../store";
 import axios from "axios";
 
-function Seat(props) {
+function Seat() {
 
+    let dispatch = useDispatch();
     let navigate = useNavigate();
     let [seats, setSeats] = useState([null, "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]);
 
@@ -38,7 +41,7 @@ function Seat(props) {
         axios.post("/seats/" + seatId)
             .then(() => {{
                 alert("해당 좌석을 선택하시겠습니까?");
-                props.setUserInOut(true);
+                dispatch(changeUserInOut());
                 navigate("/");
             }})
             .catch((error) => {
