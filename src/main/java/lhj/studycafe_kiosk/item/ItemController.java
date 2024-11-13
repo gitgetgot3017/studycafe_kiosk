@@ -35,7 +35,7 @@ public class ItemController {
         return new ResponseEntity<>(itemRegResponse, HttpStatus.CREATED);
     }
 
-    @GetMapping
+    @GetMapping("/detail")
     public HttpEntity<List<ItemInfoResponse>> findItems(@RequestParam("itemType") ItemType itemType) {
 
         List<Item> items = itemRepository.getItems(itemType);

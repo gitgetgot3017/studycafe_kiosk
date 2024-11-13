@@ -71,7 +71,7 @@ function Main() {
                     <input className="form-check-input" type="checkbox" id="autoLogin" />
                     <label className="form-check-label ms-2" htmlFor="autoLogin">로그인 시 좌석표 바로가기</label>
                 </div>
-                <button className="btn btn-dark w-100">이용권 구매</button>
+                <a href="/items" className="btn btn-dark w-100">이용권 구매</a>
             </div>
 
             {/* Bottom Navigation */}
