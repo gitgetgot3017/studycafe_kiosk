@@ -106,7 +106,7 @@ public class SeatService {
     private Duration getUsageTime(Member member) {
         Duration usageTime;
         try {
-            UsageStatus usageStatus = usageStatusRepository.getUsageStatus(member);
+            UsageStatus usageStatus = usageStatusRepository.getUsageStatusIn(member);
             usageTime = Duration.between(LocalDateTime.now(), usageStatus.getUserDateTime());
         } catch (EmptyResultDataAccessException e) {
             throw new UserNotInException("입실 처리를 하지 않았습니다.");

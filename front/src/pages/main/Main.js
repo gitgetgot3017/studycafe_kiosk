@@ -1,11 +1,31 @@
 import axios from "axios";
 import MainIn from './MainIn';
 import MainOut from './MainOut';
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import {useEffect} from "react";
+import {changeUserInOut} from "../../store";
 
 function Main() {
 
+    let dispatch = useDispatch();
     let state = useSelector((state) => {return state});
+
+    useEffect(() => {
+       axios.get("/usage-status")
+           .then((result) => {
+               if (result.data.usageStatus === "IN") {
+                   dispatch(changeUserInOut(true));
+               } else {
+                   dispatch(changeUserInOut(false));
+               }
+       })
+           .catch((error) => {
+               console.error("입퇴실 정보 가져오는 중 에러 발생:", error.response ? error.response.data : error.message);
+               if (error.response) {
+                   console.error("에러 상태 코드:", error.response.status);
+               }
+           });
+    }, []);
 
     function logout() {
 

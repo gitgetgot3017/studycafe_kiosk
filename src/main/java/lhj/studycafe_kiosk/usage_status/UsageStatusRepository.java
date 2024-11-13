@@ -17,11 +17,19 @@ public class UsageStatusRepository {
         em.persist(usageStatus);
     }
 
-    public UsageStatus getUsageStatus(Member member) {
+    public UsageStatus getUsageStatusIn(Member member) {
         return em.createQuery("select u from UsageStatus u where u.member = :member and u.userInOut = :userInOut order by u.userDateTime desc", UsageStatus.class)
                 .setParameter("member", member)
                 .setParameter("userInOut", UserInOut.IN)
                 .setFirstResult(0)
+                .getSingleResult();
+    }
+
+    public UsageStatus getUsageStatus(Member member) {
+        return em.createQuery("select u from UsageStatus  u where u.member = :member order by u.userDateTime desc", UsageStatus.class)
+                .setParameter("member", member)
+                .setFirstResult(0)
+                .setMaxResults(1)
                 .getSingleResult();
     }
 }

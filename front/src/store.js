@@ -4,8 +4,8 @@ let userInOut = createSlice({
     name: 'userInOut',
     initialState: false,
     reducers: {
-        changeUserInOut(state) {
-            return !state;
+        changeUserInOut(state, action) {
+            return state = action.payload;
         }
     }
 })
