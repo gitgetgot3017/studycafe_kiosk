@@ -18,6 +18,8 @@ function ItemDetail() {
 
     let [tab, setTab] = useState("daily");
 
+    let [price, setPrice] = useState("0");
+
     return (
         <div className="bg-dark d-flex align-items-center justify-content-center" style={{height: "100vh", backgroundColor: "#f8f9fa", color: "#495057"}}>
             <div className="container" style={{backgroundColor: "#ffffff", padding: "30px", borderRadius: "10px", boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1"}}>
@@ -62,10 +64,10 @@ function ItemDetail() {
                 </div>
 
                 {/* 이용권 박스들 (세로로 배치) */}
-                <Price tab={tab}></Price>
+                <Price tab={tab} setPrice={setPrice}></Price>
 
                 {/* 결제하기 버튼 */}
-                <button className="btn btn-primary w-100">oo원 결제하기</button>
+                <button className="btn btn-primary w-100">{price}원 결제하기</button>
             </div>
 
             {/* 환불 규정 및 이용권 안내 모달 */}
@@ -125,22 +127,22 @@ function Price(props) {
     if (props.tab === "DAILY") {
         return (
             <div className="d-flex flex-column overflow-auto mb-4 scroll-container box">
-                <div className="product-box mb-3 card">
+                <div className="product-box mb-3 card" onClick={() => {props.setPrice("4,000")}}>
                     <p className="text-center">2시간 4,000원</p>
                 </div>
-                <div className="product-box mb-3 card">
+                <div className="product-box mb-3 card" onClick={() => {props.setPrice("6,000")}}>
                     <p className="text-center">4시간 6,000원</p>
                 </div>
-                <div className="product-box mb-3 card">
+                <div className="product-box mb-3 card" onClick={() => {props.setPrice("8,000")}}>
                     <p className="text-center">6시간 8,000원</p>
                 </div>
-                <div className="product-box mb-3 card">
+                <div className="product-box mb-3 card" onClick={() => {props.setPrice("9,000")}}>
                     <p className="text-center">8시간 9,000원</p>
                 </div>
-                <div className="product-box mb-3 card">
+                <div className="product-box mb-3 card" onClick={() => {props.setPrice("1,000")}}>
                     <p className="text-center">10시간 11,000원</p>
                 </div>
-                <div className="product-box mb-3 card">
+                <div className="product-box mb-3 card" onClick={() => {props.setPrice("12,000")}}>
                     <p className="text-center">12시간 12,000원</p>
                 </div>
             </div>
@@ -149,25 +151,22 @@ function Price(props) {
     else if (props.tab === "CHARGE") {
         return (
             <div className="d-flex flex-column overflow-auto mb-4 scroll-container box">
-                <div className="product-box mb-3 card">
+                <div className="product-box mb-3 card" onClick={() => {props.setPrice("39,000")}}>
                     <p className="text-center">30시간(60일) 39,000원</p>
                 </div>
-                <div className="product-box mb-3 card">
+                <div className="product-box mb-3 card" onClick={() => {props.setPrice("59,000")}}>
                     <p className="text-center">50시간(90일) 59,000원</p>
                 </div>
-                <div className="product-box mb-3 card">
+                <div className="product-box mb-3 card" onClick={() => {props.setPrice("79,000")}}>
                     <p className="text-center">100시간(45일) 79,000원</p>
                 </div>
-                <div className="product-box mb-3 card">
+                <div className="product-box mb-3 card" onClick={() => {props.setPrice("119,000")}}>
                     <p className="text-center">100시간(180일) 119,000원</p>
                 </div>
-                <div className="product-box mb-3 card">
-                    <p className="text-center">100시간(180일) 119,000원</p>
-                </div>
-                <div className="product-box mb-3 card">
+                <div className="product-box mb-3 card" onClick={() => {props.setPrice("129,000")}}>
                     <p className="text-center">200시간(45일) 112,900원</p>
                 </div>
-                <div className="product-box mb-3 card">
+                <div className="product-box mb-3 card" onClick={() => {props.setPrice("200,000")}}>
                     <p className="text-center">200시간(180일) 200,000원</p>
                 </div>
             </div>
@@ -176,16 +175,16 @@ function Price(props) {
     else if (props.tab === "PERIOD") {
         return (
             <div className="d-flex flex-column overflow-auto mb-4 scroll-container box">
-                <div className="product-box mb-3 card">
+                <div className="product-box mb-3 card" onClick={() => {props.setPrice("39,000")}}>
                     <p className="text-center">1주일 39,000원</p>
                 </div>
-                <div className="product-box mb-3 card">
+                <div className="product-box mb-3 card" onClick={() => {props.setPrice("69,000")}}>
                     <p className="text-center">2주일 69,000원</p>
                 </div>
-                <div className="product-box mb-3 card">
+                <div className="product-box mb-3 card" onClick={() => {props.setPrice("119,000")}}>
                     <p className="text-center">4주일 119,000원</p>
                 </div>
-                <div className="product-box mb-3 card">
+                <div className="product-box mb-3 card" onClick={() => {props.setPrice("209,000")}}>
                     <p className="text-center">8주일 209,000원</p>
                 </div>
             </div>
@@ -194,13 +193,13 @@ function Price(props) {
     else if (props.tab === "FIXED") {
         return (
             <div className="d-flex flex-column overflow-auto mb-4 scroll-container box">
-                <div className="product-box mb-3 card">
+                <div className="product-box mb-3 card" onClick={() => {props.setPrice("99,000")}}>
                     <p className="text-center">2주일 99,000원</p>
                 </div>
-                <div className="product-box mb-3 card">
+                <div className="product-box mb-3 card" onClick={() => {props.setPrice("169,000")}}>
                     <p className="text-center">4주일 169,000</p>
                 </div>
-                <div className="product-box mb-3 card">
+                <div className="product-box mb-3 card" onClick={() => {props.setPrice("319,000")}}>
                     <p className="text-center">8주일 319,000</p>
                 </div>
             </div>
