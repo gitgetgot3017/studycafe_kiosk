@@ -24,9 +24,6 @@ function ItemDetail() {
         <div className="bg-dark d-flex align-items-center justify-content-center" style={{height: "100vh", backgroundColor: "#f8f9fa", color: "#495057"}}>
             <div className="container" style={{backgroundColor: "#ffffff", padding: "30px", borderRadius: "10px", boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1"}}>
 
-                {/* 상품 제목과 설명 */}
-                <h2 className="text-primary mb-2">상품 상세 페이지</h2>
-
                 {/* 탭 메뉴 */}
                 <ul className="nav nav-pills mb-3" id="productTabs" role="tablist">
                     <li className="nav-item" role="presentation" onClick={() => {setTab("DAILY")}}>
@@ -60,7 +57,7 @@ function ItemDetail() {
                 {/* 이용권 선택 및 좌석표 보기 */}
                 <div className="d-flex justify-content-between mb-4">
                     <span className="font-weight-bold">이용권 선택</span>
-                    <a href="#" className="text-primary">좌석표 보기</a>
+                    <a href="/seats" className="text-primary seats">좌석표 보기</a>
                 </div>
 
                 {/* 이용권 박스들 (세로로 배치) */}

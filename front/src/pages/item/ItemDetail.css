@@ -9,3 +9,8 @@
 .box {
     max-height: 300px;
 }
+
+.seats {
+    text-decoration: none;
+    color: rgb(73, 80, 87) !important;
+}
