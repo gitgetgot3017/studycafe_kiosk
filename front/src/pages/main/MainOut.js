@@ -6,14 +6,15 @@ function MainOut() {
 
     let [itemName, setItemName] = useState("");
     let [endDateTime, setEndDateTime] = useState("");
+    let [itemType, setItemType] = useState("");
     let [subscriptions, setSubscriptions] = useState([]);
-    let [beforeSubscriptionId, setBeforeSubscriptionId] = useState();
 
     useEffect(() => {
         axios.get("/subscriptions/representative")
             .then((result) => {
                 setItemName(result.data.itemName);
                 setEndDateTime(result.data.endDateTime);
+                setItemType(result.data.itemType);
             })
             .catch((error) => {
                 console.error("메인 컴포넌트 - 유저 정보 가져오는 중 에러 발생:", error.response ? error.response.data : error.message);
@@ -51,7 +52,7 @@ function MainOut() {
 
                     <div className="buttons">
                         <a href="/seats" className="button" style={{textDecorationLine: "none"}}>좌석 선택</a>
-                        <div className="button">연장하기</div>
+                        <a href={"/items/detail?itemType=" + itemType} className="button" style={{textDecorationLine: "none"}}>연장하기</a>
                     </div>
                 </div>
             </div>

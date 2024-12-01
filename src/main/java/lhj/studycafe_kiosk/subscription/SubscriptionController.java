@@ -145,7 +145,7 @@ public class SubscriptionController {
 
     private RepresentativeSubscriptionResponse changeSubscriptionToRepresentativeSubscriptionDto(Subscription subscription) {
         Item item = subscription.getOrder().getItem();
-        return new RepresentativeSubscriptionResponse(item.getItemName(), gerFormattedEndDateTime(item.getItemType(), subscription.getEndDateTime(), subscription.getLeftTime()));
+        return new RepresentativeSubscriptionResponse(item.getItemName(), gerFormattedEndDateTime(item.getItemType(), subscription.getEndDateTime(), subscription.getLeftTime()), item.getItemType());
     }
 
     private String gerFormattedEndDateTime(ItemType itemType, LocalDateTime endDateTime, Duration leftTime) {
