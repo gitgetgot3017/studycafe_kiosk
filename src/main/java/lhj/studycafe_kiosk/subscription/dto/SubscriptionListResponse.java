@@ -20,5 +20,5 @@ public class SubscriptionListResponse {
 
     private LocalDateTime endDateTime;
 
-    private Duration leftTime;
+    private String leftTime;
 }

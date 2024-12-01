@@ -50,11 +50,11 @@ public class SubscriptionController {
     @PatchMapping
     public HttpEntity<SubscriptionChangeResponse> changeSubscription(@SessionAttribute("loginMember") Long memberId, @RequestBody @Validated SubscriptionChangeRequest subscriptionChangeRequest) {
 
-        Subscription beforeSubscription = subscriptionRepository.getSubscription(subscriptionChangeRequest.getBeforeSubscriptionId());
-        Subscription afterSubscription = subscriptionRepository.getSubscription(subscriptionChangeRequest.getAfterSubscriptionId());
         Member member = memberRepository.getMember(memberId);
+        Subscription beforeSubscription = subscriptionRepository.getRepresentativeSubscription(member);
+        Subscription afterSubscription = subscriptionRepository.getSubscription(subscriptionChangeRequest.getAfterSubscriptionId());
 
-        validateChangeability(member, beforeSubscription, afterSubscription);
+        validateChangeability(member, afterSubscription);
         subscriptionService.changeSubscription(beforeSubscription, afterSubscription);
 
         SubscriptionChangeResponse subscriptionChangeResponse = new SubscriptionChangeResponse("이용권", "이용권 변경에 성공하였습니다.");
@@ -94,11 +94,7 @@ public class SubscriptionController {
         }
     }
 
-    private void validateChangeability(Member member, Subscription beforeSubscription, Subscription afterSubscription) {
-
-        // beforeSubscription에 대한 검증
-        validateExistSubscription(beforeSubscription);
-        validateMySubscription(member, beforeSubscription);
+    private void validateChangeability(Member member, Subscription afterSubscription) {
 
         // afterSubscription에 대한 검증
         validateExistSubscription(afterSubscription);
@@ -144,7 +140,7 @@ public class SubscriptionController {
                 subscription.isRepresentative(),
                 subscription.getStartDateTime(),
                 subscription.getEndDateTime(),
-                subscription.getLeftTime());
+                getFormattedLeftTime(subscription.getLeftTime()));
     }
 
     private RepresentativeSubscriptionResponse changeSubscriptionToRepresentativeSubscriptionDto(Subscription subscription) {

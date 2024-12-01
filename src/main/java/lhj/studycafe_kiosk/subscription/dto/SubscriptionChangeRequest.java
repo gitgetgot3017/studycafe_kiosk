@@ -7,8 +7,5 @@ import lombok.Getter;
 public class SubscriptionChangeRequest {
 
     @NotNull
-    private Long beforeSubscriptionId;
-
-    @NotNull
     private Long afterSubscriptionId;
 }
