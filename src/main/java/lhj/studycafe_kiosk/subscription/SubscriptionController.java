@@ -1,5 +1,7 @@
 package lhj.studycafe_kiosk.subscription;
 
+import lhj.studycafe_kiosk.domain.Item;
+import lhj.studycafe_kiosk.domain.ItemType;
 import lhj.studycafe_kiosk.domain.Member;
 import lhj.studycafe_kiosk.domain.Subscription;
 import lhj.studycafe_kiosk.member.MemberRepository;
@@ -146,12 +148,29 @@ public class SubscriptionController {
     }
 
     private RepresentativeSubscriptionResponse changeSubscriptionToRepresentativeSubscriptionDto(Subscription subscription) {
-        return new RepresentativeSubscriptionResponse(subscription.getOrder().getItem().getItemName(), changeDurationToString(subscription.getLeftTime()));
+        Item item = subscription.getOrder().getItem();
+        return new RepresentativeSubscriptionResponse(item.getItemName(), gerFormattedEndDateTime(item.getItemType(), subscription.getEndDateTime(), subscription.getLeftTime()));
     }
 
-    private String changeDurationToString(Duration leftTime) {
-        LocalDateTime endDateTime = LocalDateTime.now().plusSeconds(leftTime.getSeconds());
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분 ss초");
-        return endDateTime.format(formatter);
+    private String gerFormattedEndDateTime(ItemType itemType, LocalDateTime endDateTime, Duration leftTime) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분 ss초까지");
+
+        String result = endDateTime.format(formatter);
+        if (itemType == ItemType.CHARGE) {
+            result += " (" + getFormattedLeftTime(leftTime) + " 남음)";
+        }
+        return result;
+    }
+
+    private String getFormattedLeftTime(Duration leftTime) {
+
+        long seconds = leftTime.getSeconds();
+
+        long hour = (int)(seconds / 3600);
+        long minute = (int) ((seconds % 3600) / 60);
+        long second = seconds % 60;
+
+        return hour + "시간 " + minute + "분 " + second + "초";
     }
 }
