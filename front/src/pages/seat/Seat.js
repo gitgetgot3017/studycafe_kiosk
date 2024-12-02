@@ -1,13 +1,10 @@
 import './Seat.css';
 import {useState, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
-import {useDispatch} from "react-redux";
-import {changeUserInOut} from "../../store";
 import axios from "axios";
 
 function Seat() {
 
-    let dispatch = useDispatch();
     let navigate = useNavigate();
     let [seats, setSeats] = useState([null, "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]);
 
@@ -38,18 +35,43 @@ function Seat() {
             return;
         }
 
-        axios.post("/seats/" + seatId)
-            .then(() => {{
-                alert("해당 좌석을 선택하시겠습니까?");
-                dispatch(changeUserInOut());
-                navigate("/");
-            }})
-            .catch((error) => {
-                console.error("좌석 선택 중 에러 발생:", error.response ? error.response.data : error.message);
-                if (error.response) {
-                    console.error("에러 상태 코드:", error.response.status);
-                }
-            });
+        if (seats[seatId] === "my-seat") {
+            alert("이미 나의 좌석입니다.");
+            return;
+        }
+
+        let flag = false;
+        if (seats.find((seat) => {
+            if (seat === "my-seat") {
+                flag = true;
+            }
+        }));
+
+        if (flag) { // 좌석을 변경하는 경우
+            alert("해당 좌석으로 변경하시겠습니까?");
+            axios.patch("/seats", {afterSeatId: seatId})
+                .then(() => {{
+                    navigate("/");
+                }})
+                .catch((error) => {
+                    console.error("좌석 변경 중 에러 발생:", error.response ? error.response.data : error.message);
+                    if (error.response) {
+                        console.error("에러 상태 코드:", error.response.status);
+                    }
+                });
+        } else { // 좌석을 선택하는 경우
+            alert("해당 좌석을 선택하시겠습니까?");
+            axios.post("/seats/" + seatId)
+                .then(() => {{
+                    navigate("/");
+                }})
+                .catch((error) => {
+                    console.error("좌석 선택 중 에러 발생:", error.response ? error.response.data : error.message);
+                    if (error.response) {
+                        console.error("에러 상태 코드:", error.response.status);
+                    }
+                });
+        }
     }
 
     return (

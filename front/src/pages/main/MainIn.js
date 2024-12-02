@@ -95,7 +95,7 @@ function MainIn() {
             {/* Navigation Options */}
             <div className="container mt-4">
                 <div className="d-flex justify-content-between">
-                    <a href="#" className="text-decoration-none">자리이동</a>
+                    <a href="/seats" className="text-decoration-none">자리이동</a>
                     <a href={"/items/detail?itemType=" + itemType} className="text-decoration-none">이용연장</a>
                 </div>
             </div>

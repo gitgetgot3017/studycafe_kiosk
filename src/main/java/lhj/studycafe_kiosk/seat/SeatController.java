@@ -44,14 +44,14 @@ public class SeatController {
     @PatchMapping
     public HttpEntity<SeatChangeSuccessResponse> changeSeat(@SessionAttribute("loginMember") Long memberId, @RequestBody @Validated SeatChangeRequest seatChangeRequest) {
 
-        Seat beforeSeat = seatRepository.getSeat(seatChangeRequest.getBeforeSeatId());
-        Seat afterSeat = seatRepository.getSeat(seatChangeRequest.getAfterSeatId());
         Member member = memberRepository.getMember(memberId);
+        Seat beforeSeat = seatRepository.getMySeat(member);
+        Seat afterSeat = seatRepository.getSeat(seatChangeRequest.getAfterSeatId());
 
         validateChangeability(member, beforeSeat, afterSeat);
         seatService.changeSeat(beforeSeat, afterSeat);
 
-        SeatChangeSuccessResponse seatChangeSuccessResponse = new SeatChangeSuccessResponse("좌석 이동을 완료하였습니다.", seatChangeRequest.getBeforeSeatId(), seatChangeRequest.getAfterSeatId());
+        SeatChangeSuccessResponse seatChangeSuccessResponse = new SeatChangeSuccessResponse("좌석 이동을 완료하였습니다.", beforeSeat.getId(), seatChangeRequest.getAfterSeatId());
         return new ResponseEntity(seatChangeSuccessResponse, HttpStatus.ACCEPTED);
     }
 
@@ -98,21 +98,18 @@ public class SeatController {
         }
     }
 
-    private void validateIsMySeat(Member member, Seat beforeSeat) {
+    private void validateIsMySeat(Member member, Seat seat) {
 
-        if (beforeSeat.getMember() == null) {
+        if (seat.getMember() == null) {
             throw new EmptySeatOutException("이미 빈 좌석입니다.");
         }
 
-        if (!beforeSeat.getMember().equals(member)) {
+        if (!seat.getMember().equals(member)) {
             throw new InvalidSeatChangeException("현재 나의 좌석이 아닙니다.");
         }
     }
 
     private void validateChangeability(Member member, Seat beforeSeat, Seat afterSeat) {
-
-        // 현재 나의 좌석인지 검증
-        validateIsMySeat(member, beforeSeat);
 
         // 이동 가능한 좌석인지 검증
         validateUsableSeat(afterSeat);

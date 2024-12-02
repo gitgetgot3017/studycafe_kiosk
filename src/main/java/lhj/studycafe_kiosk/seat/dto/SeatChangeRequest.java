@@ -7,8 +7,5 @@ import lombok.Getter;
 public class SeatChangeRequest {
 
     @NotNull
-    private Long beforeSeatId;
-
-    @NotNull
     private Long afterSeatId;
 }
