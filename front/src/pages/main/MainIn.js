@@ -10,6 +10,7 @@ function MainIn() {
     let [myEntranceCode, setMyEntranceCode] = useState("");
     let [itemName, setItemName] = useState("");
     let [endDateTime, setEndDateTime] = useState("");
+    let [itemType, setItemType] = useState("");
 
     let dispatch = useDispatch();
 
@@ -32,6 +33,7 @@ function MainIn() {
             .then((result) => {{
                 setItemName(result.data.itemName);
                 setEndDateTime(result.data.endDateTime);
+                setItemType(result.data.itemType);
             }})
             .catch((error) => {
                 console.error("대표 이용권 조회 중 에러 발생:", error.response ? error.response.data : error.message);
@@ -94,7 +96,7 @@ function MainIn() {
             <div className="container mt-4">
                 <div className="d-flex justify-content-between">
                     <a href="#" className="text-decoration-none">자리이동</a>
-                    <a href="#" className="text-decoration-none">이용연장</a>
+                    <a href={"/items/detail?itemType=" + itemType} className="text-decoration-none">이용연장</a>
                 </div>
             </div>
 
