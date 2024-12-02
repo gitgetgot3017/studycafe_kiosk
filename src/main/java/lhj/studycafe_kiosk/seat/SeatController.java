@@ -77,6 +77,16 @@ public class SeatController {
         return new ResponseEntity<>(occupiedSeats, HttpStatus.OK);
     }
 
+    @GetMapping("/me")
+    public HttpEntity<MySeatResponse> getMySeat(@SessionAttribute("loginMember") Long memberId) {
+
+        Member member = memberRepository.getMember(memberId);
+        Seat mySeat = seatRepository.getMySeat(member);
+
+        MySeatResponse mySeatResponse = new MySeatResponse(mySeat.getId(), getEntranceCode(member));
+        return new ResponseEntity<>(mySeatResponse, HttpStatus.OK);
+    }
+
     private void validateUsableSeat(Seat seat) {
 
         if (seat == null) {
@@ -127,5 +137,12 @@ public class SeatController {
             occupiedSeats.add(new OccupiedSeatResponse(seat.getId(), seat.getMember().getId() == memberId));
         }
         return occupiedSeats;
+    }
+
+    private String getEntranceCode(Member member) {
+
+        String phone = member.getPhone();
+        String password = member.getPassword();
+        return phone.substring(phone.length() - 4) + " | " + password.substring(0, 2);
     }
 }

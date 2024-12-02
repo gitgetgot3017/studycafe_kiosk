@@ -2,6 +2,7 @@ package lhj.studycafe_kiosk.seat;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import lhj.studycafe_kiosk.domain.Member;
 import lhj.studycafe_kiosk.domain.Seat;
 import org.springframework.stereotype.Repository;
 
@@ -29,5 +30,11 @@ public class SeatRepository {
     public List<Seat> getOccupiedSeats() {
         return em.createQuery("select s from Seat s where s.member is not null")
                 .getResultList();
+    }
+
+    public Seat getMySeat(Member member) {
+        return em.createQuery("select s from Seat s where s.member = :member", Seat.class)
+                .setParameter("member", member)
+                .getSingleResult();
     }
 }
