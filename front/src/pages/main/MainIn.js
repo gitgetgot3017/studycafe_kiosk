@@ -1,5 +1,7 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
+import {useDispatch} from "react-redux";
+import {changeUserInOut} from "../../store";
 
 function MainIn() {
 
@@ -7,6 +9,8 @@ function MainIn() {
     let [myEntranceCode, setMyEntranceCode] = useState("");
     let [itemName, setItemName] = useState("");
     let [endDateTime, setEndDateTime] = useState("");
+
+    let dispatch = useDispatch();
 
     useEffect(() => {
 
@@ -97,7 +101,24 @@ function MainIn() {
                     <p className="text-muted mb-1">{itemName}</p>
                     <p className="mb-1">{endDateTime}</p>
                     <p className="mt-3">입실코드 <strong>{myEntranceCode}</strong></p>
-                    <button className="btn btn-outline-primary mt-3">퇴실하기</button>
+                    <button className="btn btn-outline-primary mt-3" onClick={() => {
+                        let result = window.confirm("퇴실 처리하시겠습니까?");
+                        if (!result) {
+                            return;
+                        }
+
+                        axios.patch("/seats/" + mySeatNum)
+                            .then(() => {
+                                alert("퇴실 처리가 완료되었습니다.");
+                                dispatch(changeUserInOut(false));
+                            })
+                            .catch((error) => {
+                                console.error("퇴실 처리 중 에러 발생:", error.response ? error.response.data : error.message);
+                                if (error.response) {
+                                    console.error("에러 상태 코드:", error.response.status);
+                                }
+                            });
+                    }}>퇴실하기</button>
                 </div>
             </div>
 
