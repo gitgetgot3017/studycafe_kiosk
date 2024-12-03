@@ -11,8 +11,20 @@ let userInOut = createSlice({
 })
 export let { changeUserInOut } = userInOut.actions;
 
+let login = createSlice({
+    name: 'login',
+    initialState: false,
+    reducers: {
+        changeLoginStatus(state, action) {
+            return state = action.payload;
+        }
+    }
+})
+export let { changeLoginStatus } = login.actions;
+
 export default configureStore({
     reducer: {
-        userInOut: userInOut.reducer
+        userInOut: userInOut.reducer,
+        login: login.reducer
     }
 })

@@ -33,6 +33,7 @@ public class MainController {
 
         if (memberId == null) {
             mainInOutResponse.setMainInOut(false);
+            mainInOutResponse.setLogin(false);
             return new ResponseEntity<>(mainInOutResponse, HttpStatus.OK);
         }
         Member member = memberRepository.getMember(memberId);
@@ -48,6 +49,7 @@ public class MainController {
             mainInOutResponse.setMainInOut(false);
         }
 
+        mainInOutResponse.setLogin(true);
         return new ResponseEntity<>(mainInOutResponse, HttpStatus.OK);
     }
 }
