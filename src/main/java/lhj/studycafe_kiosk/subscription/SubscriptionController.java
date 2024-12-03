@@ -5,6 +5,7 @@ import lhj.studycafe_kiosk.domain.ItemType;
 import lhj.studycafe_kiosk.domain.Member;
 import lhj.studycafe_kiosk.domain.Subscription;
 import lhj.studycafe_kiosk.member.MemberRepository;
+import lhj.studycafe_kiosk.member.exception.NotLoginException;
 import lhj.studycafe_kiosk.order.dto.ChangeOrderIsUsedResponse;
 import lhj.studycafe_kiosk.subscription.dto.RepresentativeSubscriptionResponse;
 import lhj.studycafe_kiosk.subscription.dto.SubscriptionChangeRequest;
@@ -76,7 +77,11 @@ public class SubscriptionController {
     }
 
     @GetMapping("/representative")
-    public HttpEntity<RepresentativeSubscriptionResponse> showRepresentativeSubscription(@SessionAttribute("loginMember") Long memberId) {
+    public HttpEntity<RepresentativeSubscriptionResponse> showRepresentativeSubscription(@SessionAttribute(value = "loginMember", required = false) Long memberId) {
+
+        if (memberId == null) {
+            throw new NotLoginException("일일권 외에는 로그인이 필요합니다.");
+        }
 
         try {
             Member member = memberRepository.getMember(memberId);

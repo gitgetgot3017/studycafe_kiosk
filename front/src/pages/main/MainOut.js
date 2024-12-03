@@ -7,16 +7,19 @@ function MainOut() {
     let [itemName, setItemName] = useState("");
     let [endDateTime, setEndDateTime] = useState("");
     let [itemType, setItemType] = useState("");
+    let [ownSubscription, setOwnSubscription] = useState(false);
     let [subscriptions, setSubscriptions] = useState([]);
 
     useEffect(() => {
         axios.get("/subscriptions/representative")
             .then((result) => {
+                setOwnSubscription(true);
                 setItemName(result.data.itemName);
                 setEndDateTime(result.data.endDateTime);
                 setItemType(result.data.itemType);
             })
             .catch((error) => {
+                setOwnSubscription(false);
                 console.error("메인 컴포넌트 - 유저 정보 가져오는 중 에러 발생:", error.response ? error.response.data : error.message);
                 if (error.response) {
                     console.error("에러 상태 코드:", error.response.status);
@@ -32,27 +35,40 @@ function MainOut() {
                 <div className="card shadow rounded-4 text-center p-4">
                     <div className="d-flex justify-content-between mb-3">
                         <span className="text-muted">이용 정보</span>
-                        <a className="text-decoration-none" data-bs-toggle="modal" data-bs-target="#subscriptionListModal"
-                           onClick={() => {
-                            axios.get("/subscriptions")
-                                .then((result) => {{
-                                    setSubscriptions(result.data);
-                                }})
-                                .catch((error) => {
-                                    console.error("이용권 조회 중 에러 발생:", error.response ? error.response.data : error.message);
-                                    if (error.response) {
-                                        console.error("에러 상태 코드:", error.response.status);
-                                    }
-                                });
-                        }}>이용권 변경</a>
+                        {
+                            ownSubscription ?
+                            <a className="text-decoration-none" data-bs-toggle="modal"
+                            data-bs-target="#subscriptionListModal"
+                            onClick={() => {
+                                axios.get("/subscriptions")
+                                    .then((result) => {
+                                        {
+                                            setSubscriptions(result.data);
+                                        }
+                                    })
+                                    .catch((error) => {
+                                        console.error("이용권 조회 중 에러 발생:", error.response ? error.response.data : error.message);
+                                        if (error.response) {
+                                            console.error("에러 상태 코드:", error.response.status);
+                                        }
+                                    });
+                            }}>이용권 변경</a> :
+                            null
+                        }
                     </div>
                     <p className="badge bg-primary mb-1">이용전</p>
                     <p className="text-muted mb-1">{itemName}</p>
                     <p className="mb-1">{endDateTime}</p>
 
                     <div className="buttons">
-                        <a href="/seats" className="button" style={{textDecorationLine: "none"}}>좌석 선택</a>
-                        <a href={"/items/detail?itemType=" + itemType} className="button" style={{textDecorationLine: "none"}}>연장하기</a>
+                        {
+                            ownSubscription ?
+                            <>
+                                <a href="/seats" className="button" style={{textDecorationLine: "none"}}>좌석 선택</a>
+                                <a href={"/items/detail?itemType=" + itemType} className="button" style={{textDecorationLine: "none"}}>연장하기</a>
+                            </> :
+                            null
+                        }
                     </div>
                 </div>
             </div>

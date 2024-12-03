@@ -11,9 +11,9 @@ function Main() {
     let state = useSelector((state) => {return state});
 
     useEffect(() => {
-       axios.get("/usage-status")
+       axios.get("/main")
            .then((result) => {
-               if (result.data.usageStatus === "IN") {
+               if (result.data.mainInOut === true) {
                    dispatch(changeUserInOut(true));
                } else {
                    dispatch(changeUserInOut(false));
