@@ -19,7 +19,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -93,12 +95,13 @@ public class OrderController {
         }
 
         List<Order> orders = orderRepository.getOrders(member);
+        List<OrderHistoryResponse> orderHistoryResponses;
         if (orders.isEmpty()) {
-            throw new NotExistOrderException("주문 내역이 존재하지 않습니다.");
+            orderHistoryResponses = new ArrayList<>();
         } else {
-            List<OrderHistoryResponse> orderHistoryResponses = changeAllOrderToOrderHistoryResponse(orders);
-            return new ResponseEntity<>(orderHistoryResponses, HttpStatus.OK);
+            orderHistoryResponses = changeAllOrderToOrderHistoryResponse(orders);
         }
+        return new ResponseEntity<>(orderHistoryResponses, HttpStatus.OK);
     }
 
     private void validateOrderRequest(OrderRequest orderRequest) {
@@ -156,10 +159,14 @@ public class OrderController {
     private OrderHistoryResponse changeOrderToOrderHistoryResponse(Order order) {
         return new OrderHistoryResponse(
                 order.getId(),
-                order.getMember().getName(),
                 order.getItem().getItemName(),
                 order.getPrice(),
-                order.getCoupon().getName(),
-                order.getOrderDatetime());
+                gerFormattedEndDateTime(order.getOrderDatetime()));
+    }
+
+    private String gerFormattedEndDateTime(LocalDateTime dateTime) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분 ss초");
+        return dateTime.format(formatter);
     }
 }

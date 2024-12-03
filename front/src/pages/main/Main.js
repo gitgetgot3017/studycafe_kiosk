@@ -21,7 +21,7 @@ function Main() {
                    dispatch(changeUserInOut(false));
                }
                dispatch(changeLoginStatus(result.data.login));
-       })
+            })
            .catch((error) => {
                console.error("입퇴실 정보 가져오는 중 에러 발생:", error.response ? error.response.data : error.message);
                if (error.response) {
@@ -84,25 +84,25 @@ function Main() {
             {/* Bottom Navigation */}
             <nav className="navbar fixed-bottom navbar-light bg-light border-top">
                 <div className="container d-flex justify-content-around">
-                    <a href="#" className="text-center text-dark">
+                    <a href="/seats" className="text-center text-dark">
                         <i className="bi bi-house"></i>
-                        <p className="small mb-0">지점정보</p>
-                    </a>
-                    <a href="#" className="text-center text-dark">
-                        <i className="bi bi-book"></i>
                         <p className="small mb-0">스터디존</p>
                     </a>
                     <a href="#" className="text-center text-dark">
-                        <i className="bi bi-journal"></i>
+                        <i className="bi bi-book"></i>
                         <p className="small mb-0">게시판</p>
                     </a>
                     <a href="#" className="text-center text-dark">
-                        <i className="bi bi-person"></i>
+                        <i className="bi bi-list"></i>
                         <p className="small mb-0">투표</p>
                     </a>
+                    <a href="/orders" className="text-center text-dark">
+                        <i className="bi bi-journal"></i>
+                        <p className="small mb-0">주문내역 조회</p>
+                    </a>
                     <a href="#" className="text-center text-dark">
-                        <i className="bi bi-list"></i>
-                        <p className="small mb-0">메뉴</p>
+                        <i className="bi bi-person"></i>
+                        <p className="small mb-0">회원정보 변경</p>
                     </a>
                 </div>
             </nav>
