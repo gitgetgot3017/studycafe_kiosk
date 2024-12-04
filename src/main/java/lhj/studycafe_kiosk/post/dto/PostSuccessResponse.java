@@ -5,9 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class PostResponse {
+public class PostSuccessResponse {
 
-    private String content;
-    private String postDateTime;
-    private boolean reflect;
+    private String message;
 }

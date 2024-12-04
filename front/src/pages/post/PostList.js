@@ -5,11 +5,12 @@ import {changeLoginStatus, changeUserInOut} from "../../store";
 function PostList() {
 
     let [posts, setPosts] = useState([]);
+    let [postCnt, setPostCnt] = useState(posts.length);
+    let [content, setContent] = useState("");
 
     useEffect(() => {
         axios.get("/posts")
             .then((result) => {
-                console.log(result.data);
                 setPosts(result.data);
             })
             .catch((error) => {
@@ -18,7 +19,7 @@ function PostList() {
                     console.error("에러 상태 코드:", error.response.status);
                 }
             });
-    }, []);
+    }, [postCnt]);
 
     return (
         <div className="bg-dark d-flex align-items-center justify-content-center" style={{height: "100vh", color: "#495057"}}>
@@ -55,9 +56,30 @@ function PostList() {
                 <div className="post-form mt-4">
                     <form>
                         <div className="mb-3">
-                            <textarea className="form-control" id="content" rows="3" placeholder="요구사항을 입력하세요"></textarea>
+                            <textarea onChange={(e) => {setContent(e.target.value);}} className="form-control" id="content" rows="3" placeholder="요구사항을 입력하세요"></textarea>
                         </div>
-                        <button type="submit" className="btn btn-primary w-100">등록</button>
+                        <button type="button" className="btn btn-primary w-100" onClick={() => {
+                            if (content === "") {
+                                alert("게시글의 내용을 입력해주세요.");
+                                return;
+                            }
+
+                            axios.post("/posts", {
+                                content: content
+                                }, {
+                                    headers: { "Content-Type": "application/json" }
+                                })
+                                .then(() => {
+                                    setPostCnt(postCnt + 1);
+                                    window.location.href = "/posts";
+                                })
+                                .catch((error) => {
+                                    console.error("게시글 등록 중 에러 발생:", error.response ? error.response.data : error.message);
+                                    if (error.response) {
+                                        console.error("에러 상태 코드:", error.response.status);
+                                    }
+                                });
+                        }}>등록</button>
                     </form>
                 </div>
             </div>

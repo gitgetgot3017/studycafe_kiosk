@@ -2,11 +2,13 @@ package lhj.studycafe_kiosk.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class Post {
 
     @Id
@@ -23,4 +25,11 @@ public class Post {
     private LocalDateTime postDateTime;
 
     private boolean reflect;
+
+    public Post(Member member, String content, LocalDateTime postDateTime, boolean reflect) {
+        this.member = member;
+        this.content = content;
+        this.postDateTime = postDateTime;
+        this.reflect = reflect;
+    }
 }
