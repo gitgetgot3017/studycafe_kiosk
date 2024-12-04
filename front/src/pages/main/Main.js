@@ -88,7 +88,7 @@ function Main() {
                         <i className="bi bi-house"></i>
                         <p className="small mb-0">스터디존</p>
                     </a>
-                    <a href="#" className="text-center text-dark">
+                    <a href="/posts" className="text-center text-dark">
                         <i className="bi bi-book"></i>
                         <p className="small mb-0">게시판</p>
                     </a>

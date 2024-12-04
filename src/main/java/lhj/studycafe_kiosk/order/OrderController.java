@@ -161,10 +161,10 @@ public class OrderController {
                 order.getId(),
                 order.getItem().getItemName(),
                 order.getPrice(),
-                gerFormattedEndDateTime(order.getOrderDatetime()));
+                getFormattedEndDateTime(order.getOrderDatetime()));
     }
 
-    private String gerFormattedEndDateTime(LocalDateTime dateTime) {
+    private String getFormattedEndDateTime(LocalDateTime dateTime) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분 ss초");
         return dateTime.format(formatter);
