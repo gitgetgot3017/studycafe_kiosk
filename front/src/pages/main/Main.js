@@ -103,7 +103,7 @@ function Main() {
                                 <i className="bi bi-journal"></i>
                                 <p className="small mb-0">주문내역 조회</p>
                             </a>
-                            <a href="#" className="text-center text-dark">
+                            <a href="/members/info" className="text-center text-dark">
                                 <i className="bi bi-person"></i>
                                 <p className="small mb-0">회원정보 변경</p>
                             </a>

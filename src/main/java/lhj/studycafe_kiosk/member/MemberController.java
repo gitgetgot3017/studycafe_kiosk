@@ -66,8 +66,8 @@ public class MemberController {
         return new ResponseEntity<>(logoutResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/{memberId}")
-    public HttpEntity<MemberInfoResponse> getMemberInfo(@PathVariable("memberId") Long memberId) {
+    @GetMapping
+    public HttpEntity<MemberInfoResponse> getMemberInfo(@SessionAttribute("loginMember") Long memberId) {
 
         Member member = memberRepository.getMember(memberId);
         if (member == null) {

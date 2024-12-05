@@ -22,9 +22,21 @@ let login = createSlice({
 })
 export let { changeLoginStatus } = login.actions;
 
+let memberInfo = createSlice({
+    name: 'memberInfo',
+    initialState: [],
+    reducers: {
+        getMemberInfo(state, action) {
+            return state = action.payload;
+        }
+    }
+})
+export let { getMemberInfo } = memberInfo.actions;
+
 export default configureStore({
     reducer: {
         userInOut: userInOut.reducer,
-        login: login.reducer
+        login: login.reducer,
+        memberInfo:memberInfo.reducer
     }
 })
