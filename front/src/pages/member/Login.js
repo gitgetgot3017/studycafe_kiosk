@@ -5,7 +5,7 @@ function Login() {
 
     let [phone, setPhone] = useState('');
     let [password, setPassword] = useState('');
-    let [loginSuccess, setLoginSuccess] = useState(true);
+    let [loginSuccess, setLoginSuccess] = useState("");
 
     function handleSubmit(e) {
         e.preventDefault(); // 폼의 기본 제출 방지
