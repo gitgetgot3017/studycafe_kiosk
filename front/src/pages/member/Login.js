@@ -23,7 +23,7 @@ function Login() {
                 console.error("로그인 중 에러 발생:", error.response ? error.response.data : error.message);
                 if (error.response) {
                     console.error("에러 상태 코드:", error.response.status);
-                    setLoginSuccess(false);
+                    setLoginSuccess(error.response.data.message);
                 }
             });
     };
@@ -39,7 +39,7 @@ function Login() {
                     <div className="mb-3">
                         <input type="password" id="password" name="password" className="form-control" placeholder="비밀번호 (숫자 6자리)" required onChange={(e) => {setPassword(e.target.value)}} />
                     </div>
-                    { !loginSuccess ? <div style={{color: "red"}}>해당 회원은 존재하지 않습니다.</div> : null }
+                    <div style={{color: "red"}}>{loginSuccess}</div>
                     <div className="mb-3 form-check">
                         <input type="checkbox" id="remember" name="remember" className="form-check-input" />
                         <label htmlFor="remember" className="form-check-label">로그인 상태 유지</label>
