@@ -10,6 +10,9 @@ import OrderList from './pages/order/OrderList';
 import PostList from './pages/post/PostList';
 import CouponList from './pages/coupon/CouponList';
 import ChangeInfoMain from './pages/member/ChangeInfoMain';
+import ChangeInfoGeneral from './pages/member/ChangeInfoGeneral';
+import ChangeInfoPhone from './pages/member/ChangeInfoPhone';
+import ChangeInfoPassword from './pages/member/ChangeInfoPassword';
 
 function App() {
 
@@ -26,6 +29,9 @@ function App() {
             <Route path="/posts" element={<PostList></PostList>} />
             <Route path="/coupons" element={<CouponList></CouponList>} />
             <Route path="/members/info" element={<ChangeInfoMain></ChangeInfoMain>} />
+            <Route path="/members/info/general" element={<ChangeInfoGeneral></ChangeInfoGeneral>} />
+            <Route path="/members/info/phone" element={<ChangeInfoPhone></ChangeInfoPhone>} />
+            <Route path="/members/info/password" element={<ChangeInfoPassword></ChangeInfoPassword>} />
         </Routes>
     </div>
   );

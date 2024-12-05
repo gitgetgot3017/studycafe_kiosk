@@ -78,8 +78,8 @@ public class MemberController {
         return new ResponseEntity<>(memberInfoResponse, HttpStatus.OK);
     }
 
-    @PatchMapping("/{memberId}")
-    public HttpEntity<ChangeMemberInfoResponse> changeMemberInfo(@PathVariable("memberId") Long memberId, @RequestParam("type") String type, @RequestBody ChangeMemberInfoRequest changeMemberInfoRequest) {
+    @PatchMapping
+    public HttpEntity<ChangeMemberInfoResponse> changeMemberInfo(@SessionAttribute("loginMember") Long memberId, @RequestParam("type") String type, @RequestBody ChangeMemberInfoRequest changeMemberInfoRequest) {
 
         if (!type.equals("general") && !type.equals("phone") && !type.equals("password")) {
             throw new IllegalArgumentException("잘못된 쿼리 파라미터를 요청하였습니다.");
