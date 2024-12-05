@@ -107,7 +107,7 @@ function Main() {
                                 <i className="bi bi-person"></i>
                                 <p className="small mb-0">회원정보 변경</p>
                             </a>
-                            <a href="#" className="text-center text-dark">
+                            <a href="/coupons" className="text-center text-dark">
                                 <i className="bi bi-person"></i>
                                 <p className="small mb-0">쿠폰함</p>
                             </a>

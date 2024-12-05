@@ -16,7 +16,7 @@ public class CouponInfoResponse {
     private CouponType couponType;
     private int rateOrHour;
     private boolean isUsed;
-    private LocalDateTime startDatetime;
-    private LocalDateTime endDatetime;
-    private LocalDateTime issueDatetime;
+    private String startDatetime;
+    private String endDatetime;
+    private String issueDatetime;
 }

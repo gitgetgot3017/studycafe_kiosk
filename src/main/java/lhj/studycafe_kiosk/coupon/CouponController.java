@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +25,7 @@ public class CouponController {
     private final CouponRepository couponRepository;
 
     @GetMapping
-    public HttpEntity<List<CouponInfoResponse>> issueCoupon(@RequestParam("used") String used, @SessionAttribute("loginMember") Long memberId) {
+    public HttpEntity<List<CouponInfoResponse>> issueCoupon(@RequestParam(value = "used", defaultValue = "false") String used, @SessionAttribute("loginMember") Long memberId) {
 
         Member member = memberRepository.getMember(memberId);
 
@@ -34,16 +36,18 @@ public class CouponController {
             coupons = couponRepository.getExpiredCoupon(member);
         }
 
+        List<CouponInfoResponse> couponInfoResponses;
         if (coupons.isEmpty()) {
-            throw new NotExistCouponException("쿠폰이 존재하지 않습니다.");
+            couponInfoResponses = new ArrayList<>();
+        } else {
+            couponInfoResponses = changeAllCouponToCouponInfoResponse(coupons);
         }
-        List<CouponInfoResponse> couponInfoResponses = changeAllCouponToCouponInfoResponse(coupons);
         return new ResponseEntity<>(couponInfoResponses, HttpStatus.OK);
     }
 
     private CouponInfoResponse changeCouponToCouponInfoResponse(Coupon coupon) {
 
-        return new CouponInfoResponse(coupon.getMember(), coupon.getName(), coupon.getCouponType(), coupon.getRateOrHour(), coupon.isUsed(), coupon.getStartDatetime(), coupon.getEndDatetime(), coupon.getIssueDatetime());
+        return new CouponInfoResponse(coupon.getMember(), coupon.getName(), coupon.getCouponType(), coupon.getRateOrHour(), coupon.isUsed(), getFormattedEndDateTime(coupon.getStartDatetime()), getFormattedEndDateTime(coupon.getEndDatetime()), getFormattedEndDateTime(coupon.getIssueDatetime()));
     }
 
     private List<CouponInfoResponse> changeAllCouponToCouponInfoResponse(List<Coupon> coupons) {
@@ -53,5 +57,11 @@ public class CouponController {
             couponInfoResponses.add(changeCouponToCouponInfoResponse(coupon));
         }
         return couponInfoResponses;
+    }
+
+    private String getFormattedEndDateTime(LocalDateTime dateTime) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분 ss초");
+        return dateTime.format(formatter);
     }
 }

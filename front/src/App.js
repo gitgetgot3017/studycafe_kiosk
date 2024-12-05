@@ -8,6 +8,7 @@ import ItemList from './pages/item/ItemList';
 import ItemDetail from './pages/item/ItemDetail';
 import OrderList from './pages/order/OrderList';
 import PostList from './pages/post/PostList';
+import CouponList from './pages/coupon/CouponList';
 
 function App() {
 
@@ -22,6 +23,7 @@ function App() {
             <Route path="/items/detail" element={<ItemDetail></ItemDetail>} />
             <Route path="/orders" element={<OrderList></OrderList>} />
             <Route path="/posts" element={<PostList></PostList>} />
+            <Route path="/coupons" element={<CouponList></CouponList>} />
         </Routes>
     </div>
   );
