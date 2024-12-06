@@ -52,4 +52,11 @@ public class MemberRepository {
         return em.createQuery("select m from Member m", Member.class)
                 .getResultList();
     }
+
+    public Member getExistMember(String subPhone, String subPassword) {
+        return em.createQuery("select m from Member m where function('RIGHT', m.phone, 4) = :subPhone and function('LEFT', m.password, 2) = :subPassword", Member.class)
+                .setParameter("subPhone", subPhone)
+                .setParameter("subPassword", subPassword)
+                .getSingleResult();
+    }
 }

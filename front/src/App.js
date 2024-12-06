@@ -1,6 +1,8 @@
 import './App.css';
 import { Routes, Route, Link } from 'react-router-dom';
 import Main from './pages/main/Main';
+import KioskEntrance from './pages/main/KioskEntrance';
+import KioskLeave from './pages/main/KioskLeave';
 import Login from './pages/member/Login';
 import Join from './pages/member/Join';
 import Seat from './pages/seat/Seat';
@@ -20,6 +22,8 @@ function App() {
     <div className="App">
         <Routes>
             <Route path="/" element={<Main></Main>} />
+            <Route path="/main/entrance" element={<KioskEntrance></KioskEntrance>} />
+            <Route path="/main/leave" element={<KioskLeave></KioskLeave>} />
             <Route path="/members/login" element={<Login></Login>} />
             <Route path="/members/join" element={<Join></Join>} />
             <Route path="/seats" element={<Seat></Seat>} />
