@@ -42,13 +42,13 @@ public class MemberController {
     @PostMapping("/login")
     public HttpEntity<LoginResponse> login(@RequestBody @Validated LoginRequest loginRequest, HttpServletRequest request) {
 
-        Long memberId = validateLoginUser(loginRequest);
+        Member member = validateLoginUser(loginRequest);
 
         // 로그인 성공 처리
         HttpSession session = request.getSession();
-        session.setAttribute("loginMember", memberId);
+        session.setAttribute("loginMember", member.getId());
 
-        LoginResponse loginResponse = new LoginResponse("로그인이 성공적으로 완료되었습니다.", memberId);
+        LoginResponse loginResponse = new LoginResponse("로그인이 성공적으로 완료되었습니다.", member.getId(), member.getGrade());
         return new ResponseEntity<>(loginResponse, HttpStatus.ACCEPTED);
     }
 
@@ -106,13 +106,13 @@ public class MemberController {
         return new Member(null, joinRequest.getPhone(), joinRequest.getPassword(), null, joinRequest.isOptionalClause());
     }
 
-    private Long validateLoginUser(LoginRequest loginRequest) {
+    private Member validateLoginUser(LoginRequest loginRequest) {
 
-        Optional<Long> opMemberId = memberService.login(loginRequest.getPhone(), loginRequest.getPassword());
-        if (opMemberId.isEmpty()) {
+        Optional<Member> opMember = memberService.login(loginRequest.getPhone(), loginRequest.getPassword());
+        if (opMember.isEmpty()) {
             throw new LoginFailException("전화번호 혹은 비밀번호를 잘못 입력하셨습니다.");
         }
-        return opMemberId.get();
+        return opMember.get();
     }
 
     private MemberInfoResponse changeMemberToMemberInfoResponse(Member member) {

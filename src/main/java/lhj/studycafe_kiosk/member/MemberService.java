@@ -30,14 +30,14 @@ public class MemberService {
         return memberRepository.getJoinMember(phone).size() > 0;
     }
 
-    public Optional<Long> login(String phone, String password) {
+    public Optional<Member> login(String phone, String password) {
 
         List<Member> member = memberRepository.getLoginMember(phone, password);
 
         if (member.isEmpty()) {
             return Optional.empty();
         }
-        return Optional.of(member.get(0).getId());
+        return Optional.of(member.get(0));
     }
 
     public void changeMemberInfo(Long memberId, String type, ChangeMemberInfoRequest changeMemberInfoRequest) {

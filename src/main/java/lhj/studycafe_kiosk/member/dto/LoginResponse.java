@@ -1,5 +1,6 @@
 package lhj.studycafe_kiosk.member.dto;
 
+import lhj.studycafe_kiosk.domain.MemberGrade;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -9,4 +10,5 @@ public class LoginResponse {
 
     private String message;
     private Long id;
+    private MemberGrade grade;
 }

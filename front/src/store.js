@@ -33,10 +33,22 @@ let memberInfo = createSlice({
 })
 export let { getMemberInfo } = memberInfo.actions;
 
+let memberGrade = createSlice({
+    name: 'memberGrade',
+    initialState: '',
+    reducers: {
+        changeMemberGrade(state, action) {
+            return state = action.payload;
+        }
+    }
+})
+export let { changeMemberGrade } = memberGrade.actions;
+
 export default configureStore({
     reducer: {
         userInOut: userInOut.reducer,
         login: login.reducer,
-        memberInfo:memberInfo.reducer
+        memberInfo: memberInfo.reducer,
+        memberGrade: memberGrade.reducer
     }
 })

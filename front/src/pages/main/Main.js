@@ -84,32 +84,42 @@ function Main() {
             {/* Bottom Navigation */}
             <nav className="navbar fixed-bottom navbar-light bg-light border-top">
                 <div className="container d-flex justify-content-around">
-                    <a href="/seats" className="text-center text-dark">
+                    <a href="/seats" className="text-center text-dark" style={{textDecoration: "none"}}>
                         <i className="bi bi-house"></i>
                         <p className="small mb-0">스터디존</p>
                     </a>
-                    <a href="/posts" className="text-center text-dark">
+                    <a href="/posts" className="text-center text-dark" style={{textDecoration: "none"}}>
                         <i className="bi bi-book"></i>
                         <p className="small mb-0">게시판</p>
                     </a>
-                    <a href="#" className="text-center text-dark">
+                    <a href="#" className="text-center text-dark" style={{textDecoration: "none"}}>
                         <i className="bi bi-list"></i>
                         <p className="small mb-0">투표</p>
                     </a>
                     {
                         state.login ?
                         <>
-                            <a href="/orders" className="text-center text-dark">
+                            <a href="/orders" className="text-center text-dark" style={{textDecoration: "none"}}>
                                 <i className="bi bi-journal"></i>
                                 <p className="small mb-0">주문내역 조회</p>
                             </a>
-                            <a href="/members/info" className="text-center text-dark">
+                            <a href="/members/info" className="text-center text-dark" style={{textDecoration: "none"}}>
                                 <i className="bi bi-person"></i>
                                 <p className="small mb-0">회원정보 변경</p>
                             </a>
-                            <a href="/coupons" className="text-center text-dark">
+                            <a href="/coupons" className="text-center text-dark" style={{textDecoration: "none"}}>
                                 <i className="bi bi-person"></i>
                                 <p className="small mb-0">쿠폰함</p>
+                            </a>
+                        </> :
+                        null
+                    }
+                    {
+                        state.memberGrade === "MANAGER" ?
+                        <>
+                            <a onClick={() => navigate("/items/detail?itemType=DAILY")} className="text-center text-dark" style={{textDecoration: "none"}}>
+                                <i className="bi bi-list"></i>
+                                <p className="small mb-0">상품 관리</p>
                             </a>
                         </> :
                         null

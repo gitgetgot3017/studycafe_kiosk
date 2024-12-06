@@ -1,7 +1,14 @@
 import axios from 'axios';
-import {useState, useEffect} from "react";
+import {useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {changeMemberGrade} from "../../store";
+import {useNavigate} from "react-router-dom";
 
 function Login() {
+
+    let navigate = useNavigate();
+    let dispatch = useDispatch();
+    let state = useSelector((state) => {return state});
 
     let [phone, setPhone] = useState('');
     let [password, setPassword] = useState('');
@@ -16,8 +23,9 @@ function Login() {
         }, {
             headers: { "Content-Type": "application/json" }
         })
-            .then(() => {
-                window.location.href = "/"; // 로그인 성공 시 메인 페이지로 이동
+            .then((result) => {
+                dispatch(changeMemberGrade(result.data.grade));
+                navigate("/"); // 로그인 성공 시 메인 페이지로 이동
             })
             .catch((error) => {
                 console.error("로그인 중 에러 발생:", error.response ? error.response.data : error.message);

@@ -26,7 +26,7 @@ public class Member {
     private LocalDate birth;
 
     @Enumerated(EnumType.STRING)
-    private MemberGrade memberGrade;
+    private MemberGrade grade;
 
     private boolean optionalClause;
 
