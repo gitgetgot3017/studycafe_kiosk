@@ -22,11 +22,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,6 +41,7 @@ public class SeatController {
     private final UsageStatusRepository usageStatusRepository;
     private final TaskScheduler taskScheduler;
 
+    private Map<Long, ScheduledFuture<?>> taskReservations = new ConcurrentHashMap<>();
 
     @PostMapping("/{seatId}")
     public HttpEntity<SeatResponse> chooseSeat(@SessionAttribute("loginMember") Long memberId, @PathVariable("seatId") Long seatId) {
@@ -52,13 +54,31 @@ public class SeatController {
         seatService.chooseSeat(member, seat);
 
         // 기간권의 경우 좌석 선택 후 10분 내에 입실하지 않으면 vacate 처리됨
-        if (subscription.getOrder().getItem().getItemType() == ItemType.PERIOD) {
+        ItemType itemType = subscription.getOrder().getItem().getItemType();
+        if (itemType == ItemType.PERIOD) {
             Instant executionTime = Instant.now().plus(10, ChronoUnit.MINUTES);
             taskScheduler.schedule(new SeatCheckTask(member, usageStatusRepository, seatService), executionTime);
         }
 
+        // (모든 이용권에 대해) 좌석을 vacate하는 작업 등록하기
+        registerVacateSeat(subscription.getLeftTime(), itemType, member);
+
         SeatResponse seatResponse = new SeatResponse("좌석 선택이 완료되었습니다.", seatId);
         return new ResponseEntity(seatResponse, HttpStatus.ACCEPTED);
+    }
+
+    private void registerVacateSeat(Duration leftTime, ItemType itemType, Member member) {
+
+        long seconds = leftTime.getSeconds();
+        if (itemType == ItemType.CHARGE || itemType == ItemType.PERIOD) {
+            if (seconds > 24 * 60 * 60) {
+                seconds = 24 * 60 * 60;
+            }
+        }
+
+        Instant executionTime = Instant.now().plus(seconds, ChronoUnit.SECONDS);
+        ScheduledFuture<?> taskReservation = taskScheduler.schedule(new VacateSeatTask(member, seatService), executionTime);
+        taskReservations.put(member.getId(), taskReservation);
     }
 
     @PatchMapping
