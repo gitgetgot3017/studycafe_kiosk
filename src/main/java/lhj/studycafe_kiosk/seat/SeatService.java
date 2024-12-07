@@ -113,4 +113,9 @@ public class SeatService {
         }
         return usageTime;
     }
+
+    @Transactional
+    public void vacateSeat(Member member) {
+        seatRepository.vacateSeat(member);
+    }
 }

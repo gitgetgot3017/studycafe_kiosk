@@ -1,22 +1,31 @@
 package lhj.studycafe_kiosk.seat;
 
+import lhj.studycafe_kiosk.domain.ItemType;
 import lhj.studycafe_kiosk.domain.Member;
 import lhj.studycafe_kiosk.domain.Seat;
+import lhj.studycafe_kiosk.domain.Subscription;
 import lhj.studycafe_kiosk.member.MemberRepository;
 import lhj.studycafe_kiosk.seat.dto.*;
 import lhj.studycafe_kiosk.seat.exception.EmptySeatOutException;
 import lhj.studycafe_kiosk.seat.exception.InvalidSeatChangeException;
 import lhj.studycafe_kiosk.seat.exception.NotExistSeatException;
 import lhj.studycafe_kiosk.seat.exception.NotUsableSeatException;
+import lhj.studycafe_kiosk.subscription.SubscriptionRepository;
+import lhj.studycafe_kiosk.usage_status.UsageStatusRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -27,15 +36,26 @@ public class SeatController {
     private final SeatService seatService;
     private final SeatRepository seatRepository;
     private final MemberRepository memberRepository;
+    private final SubscriptionRepository subscriptionRepository;
+    private final UsageStatusRepository usageStatusRepository;
+    private final TaskScheduler taskScheduler;
+
 
     @PostMapping("/{seatId}")
     public HttpEntity<SeatResponse> chooseSeat(@SessionAttribute("loginMember") Long memberId, @PathVariable("seatId") Long seatId) {
 
         Seat seat = seatRepository.getSeat(seatId);
         Member member = memberRepository.getMember(memberId);
+        Subscription subscription = subscriptionRepository.getRepresentativeSubscription(member);
 
         validateUsableSeat(seat);
         seatService.chooseSeat(member, seat);
+
+        // 기간권의 경우 좌석 선택 후 10분 내에 입실하지 않으면 vacate 처리됨
+        if (subscription.getOrder().getItem().getItemType() == ItemType.PERIOD) {
+            Instant executionTime = Instant.now().plus(10, ChronoUnit.MINUTES);
+            taskScheduler.schedule(new SeatCheckTask(member, usageStatusRepository, seatService), executionTime);
+        }
 
         SeatResponse seatResponse = new SeatResponse("좌석 선택이 완료되었습니다.", seatId);
         return new ResponseEntity(seatResponse, HttpStatus.ACCEPTED);
