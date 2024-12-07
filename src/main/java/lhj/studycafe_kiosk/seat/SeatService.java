@@ -6,9 +6,9 @@ import lhj.studycafe_kiosk.subscription.SubscriptionService;
 import lhj.studycafe_kiosk.subscription.exception.ExpiredSubscriptionException;
 import lhj.studycafe_kiosk.subscription.exception.NotExistSubscriptionException;
 import lhj.studycafe_kiosk.usage_status.UsageStatusRepository;
+import lhj.studycafe_kiosk.usage_status.UsageStatusService;
 import lhj.studycafe_kiosk.usage_status.exception.UserNotInException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +24,7 @@ public class SeatService {
     private final SubscriptionService subscriptionService;
     private final SubscriptionRepository subscriptionRepository;
     private final SeatRepository seatRepository;
+    private final UsageStatusService usageStatusService;
     private final UsageStatusRepository usageStatusRepository;
 
     public void chooseSeat(Member member, Seat seat) {
@@ -66,7 +67,7 @@ public class SeatService {
 
         // 좌석 퇴실에 대한 UsageStatus 남기기
         Subscription subscription = getSubscription(member);
-        usageStatusRepository.saveUsageStatus(new UsageStatus(subscription, member, UserInOut.OUT, LocalDateTime.now()));
+        usageStatusService.recordUsageStatus(new UsageStatus(subscription, member, UserInOut.OUT, LocalDateTime.now()));
 
         // 남은 시간 보여주기
         Item item = subscription.getOrder().getItem();

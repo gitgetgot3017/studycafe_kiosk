@@ -14,6 +14,7 @@ import lhj.studycafe_kiosk.seat.exception.NotExistSeatException;
 import lhj.studycafe_kiosk.subscription.SubscriptionRepository;
 import lhj.studycafe_kiosk.subscription.exception.NotExistSubscriptionException;
 import lhj.studycafe_kiosk.usage_status.UsageStatusRepository;
+import lhj.studycafe_kiosk.usage_status.UsageStatusService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpEntity;
@@ -30,6 +31,7 @@ import java.time.LocalDateTime;
 public class MainController {
 
     private final MemberRepository memberRepository;
+    private final UsageStatusService usageStatusService;
     private final UsageStatusRepository usageStatusRepository;
     private final SubscriptionRepository subscriptionRepository;
     private final SeatRepository seatRepository;
@@ -83,7 +85,7 @@ public class MainController {
         }
 
         // 입실 처리(usage_status에 IN 기록 남기기)
-        usageStatusRepository.saveUsageStatus(new UsageStatus(subscription, member, UserInOut.IN, LocalDateTime.now()));
+        usageStatusService.recordUsageStatus(new UsageStatus(subscription, member, UserInOut.IN, LocalDateTime.now()));
         return new ResponseEntity(new EntranceSuccessRequest("입실 완료하였습니다."), HttpStatus.OK);
     }
 
