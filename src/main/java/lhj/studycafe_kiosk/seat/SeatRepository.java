@@ -3,6 +3,7 @@ package lhj.studycafe_kiosk.seat;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lhj.studycafe_kiosk.domain.Member;
+import lhj.studycafe_kiosk.domain.ScheduledTask;
 import lhj.studycafe_kiosk.domain.Seat;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,5 +44,9 @@ public class SeatRepository {
         em.createQuery("update Seat s set s.member = null, s.endDateTime = null where s.member = :member")
                 .setParameter("member", member)
                 .executeUpdate();
+    }
+
+    public void saveScheduledTask(ScheduledTask scheduledTask) {
+        em.persist(scheduledTask);
     }
 }

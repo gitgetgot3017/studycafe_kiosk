@@ -1,9 +1,6 @@
 package lhj.studycafe_kiosk.seat;
 
-import lhj.studycafe_kiosk.domain.ItemType;
-import lhj.studycafe_kiosk.domain.Member;
-import lhj.studycafe_kiosk.domain.Seat;
-import lhj.studycafe_kiosk.domain.Subscription;
+import lhj.studycafe_kiosk.domain.*;
 import lhj.studycafe_kiosk.member.MemberRepository;
 import lhj.studycafe_kiosk.seat.dto.*;
 import lhj.studycafe_kiosk.seat.exception.EmptySeatOutException;
@@ -22,12 +19,16 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
+
+import static lhj.studycafe_kiosk.domain.TaskType.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -58,6 +59,7 @@ public class SeatController {
         if (itemType == ItemType.PERIOD) {
             Instant executionTime = Instant.now().plus(10, ChronoUnit.MINUTES);
             taskScheduler.schedule(new SeatCheckTask(member, usageStatusRepository, seatService), executionTime);
+            registerScheduledTask(member, LocalDateTime.ofInstant(executionTime, ZoneId.of("Asia/Seoul")), ENTRACELIMIT);
         }
 
         // (모든 이용권에 대해) 좌석을 vacate하는 작업 등록하기
@@ -79,6 +81,11 @@ public class SeatController {
         Instant executionTime = Instant.now().plus(seconds, ChronoUnit.SECONDS);
         ScheduledFuture<?> taskReservation = taskScheduler.schedule(new VacateSeatTask(member, seatService), executionTime);
         taskReservations.put(member.getId(), taskReservation);
+        registerScheduledTask(member, LocalDateTime.ofInstant(executionTime, ZoneId.of("Asia/Seoul")), VACATESEAT);
+    }
+
+    private void registerScheduledTask(Member member, LocalDateTime executionTime, TaskType type) {
+        seatService.registerScheduledTask(new ScheduledTask(member, executionTime, type));
     }
 
     @PatchMapping

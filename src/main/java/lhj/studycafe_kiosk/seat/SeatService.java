@@ -117,4 +117,8 @@ public class SeatService {
     public void vacateSeat(Member member) {
         seatRepository.vacateSeat(member);
     }
+
+    public void registerScheduledTask(ScheduledTask scheduledTask) {
+        seatRepository.saveScheduledTask(scheduledTask);
+    }
 }
