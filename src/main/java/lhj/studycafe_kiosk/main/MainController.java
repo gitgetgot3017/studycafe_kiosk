@@ -22,6 +22,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/main")
@@ -80,6 +82,8 @@ public class MainController {
             throw new NotExistSeatException("좌석을 선택해주세요.");
         }
 
+        // 입실 처리(usage_status에 IN 기록 남기기)
+        usageStatusRepository.saveUsageStatus(new UsageStatus(subscription, member, UserInOut.IN, LocalDateTime.now()));
         return new ResponseEntity(new EntranceSuccessRequest("입실 완료하였습니다."), HttpStatus.OK);
     }
 

@@ -52,7 +52,6 @@ public class SeatService {
         }
 
         seat.changeSeatState(member, endDateTime);
-        usageStatusRepository.saveUsageStatus(new UsageStatus(subscription, member, UserInOut.IN, curDateTime));
     }
 
     public void changeSeat(Seat beforeSeat, Seat afterSeat) {
