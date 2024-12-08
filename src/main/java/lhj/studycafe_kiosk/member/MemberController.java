@@ -4,10 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lhj.studycafe_kiosk.domain.Member;
 import lhj.studycafe_kiosk.member.dto.*;
-import lhj.studycafe_kiosk.member.exception.ChangeMemberInfoException;
-import lhj.studycafe_kiosk.member.exception.DuplicatePhoneException;
-import lhj.studycafe_kiosk.member.exception.LoginFailException;
-import lhj.studycafe_kiosk.member.exception.NotExistMemberException;
+import lhj.studycafe_kiosk.member.exception.*;
+import lhj.studycafe_kiosk.seat.exception.EmptySeatOutException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -31,12 +29,33 @@ public class MemberController {
     public HttpEntity<JoinResponse> join(@RequestBody @Validated JoinRequest joinRequest) {
 
         validateDuplicatePhone(joinRequest.getPhone());
+        validateDuplicateMemberInfo(joinRequest.getPhone(), joinRequest.getPassword());
 
         Member member = changeJoinRequestToMember(joinRequest);
         memberService.join(member);
 
         JoinResponse joinResponse = new JoinResponse("회원가입이 성공적으로 완료되었습니다.", member.getId());
         return new ResponseEntity<>(joinResponse, HttpStatus.CREATED);
+    }
+
+    private void validateDuplicatePhone(String phone) {
+
+        if (memberService.existPhone(phone)) {
+            throw new DuplicatePhoneException("이미 등록된 휴대폰 번호입니다.");
+        }
+    }
+
+    // 전화번호 뒤 4자리 + 비밀번호 앞 2자리가 같은 회원을 방지하지 위함
+    private void validateDuplicateMemberInfo(String phone, String password) {
+
+        try {
+            String subPhone = phone.substring(phone.length() - 4); // 전화번호 뒤 4자리 추출
+            String subPassword = password.substring(0, 2); // 비밀번호 앞 2자리 추출
+            memberRepository.getExistMember(subPhone, subPassword);
+            throw new DuplicateMemberException("비밀번호를 변경해주세요.");
+        } catch (EmptySeatOutException e) {
+            // 전화번호 뒤 4자리 + 비밀번호 앞 2자리가 같은 회원이 존재하지 않는 경우. 즉, 회원가입 가능한 경우
+        }
     }
 
     @PostMapping("/login")
@@ -92,13 +111,6 @@ public class MemberController {
 
         ChangeMemberInfoResponse changeMemberInfoResponse = new ChangeMemberInfoResponse("회원 정보 수정이 정상적으로 완료되었습니다.", memberId);
         return new ResponseEntity<>(changeMemberInfoResponse, HttpStatus.ACCEPTED);
-    }
-
-    private void validateDuplicatePhone(String phone) {
-
-        if (memberService.existPhone(phone)) {
-            throw new DuplicatePhoneException("이미 등록된 휴대폰 번호입니다.");
-        }
     }
 
     private Member changeJoinRequestToMember(JoinRequest joinRequest) {

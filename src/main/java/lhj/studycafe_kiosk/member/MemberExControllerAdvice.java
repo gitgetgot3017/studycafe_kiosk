@@ -22,8 +22,8 @@ public class MemberExControllerAdvice {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler
-    public JoinFailResponse joinFail(DuplicatePhoneException e) {
+    @ExceptionHandler({DuplicatePhoneException.class, DuplicateMemberException.class})
+    public JoinFailResponse joinFail(RuntimeException e) {
         return new JoinFailResponse("회원가입", e.getMessage());
     }
 
