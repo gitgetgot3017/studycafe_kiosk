@@ -6,7 +6,6 @@ import lhj.studycafe_kiosk.domain.Member;
 import lhj.studycafe_kiosk.domain.ScheduledTask;
 import lhj.studycafe_kiosk.domain.Seat;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -48,5 +47,17 @@ public class SeatRepository {
 
     public void saveScheduledTask(ScheduledTask scheduledTask) {
         em.persist(scheduledTask);
+    }
+
+    public List<ScheduledTask> getAllScheduledTask() {
+        return em.createQuery("select s from ScheduledTask s", ScheduledTask.class)
+                .getResultList();
+    }
+
+    public void deleteScheduledTask(Long scheduledTaskId) {
+        ScheduledTask scheduledTask = em.find(ScheduledTask.class, scheduledTaskId);
+        if (scheduledTask != null) {
+           em.remove(scheduledTask);
+       }
     }
 }

@@ -121,4 +121,8 @@ public class SeatService {
     public void registerScheduledTask(ScheduledTask scheduledTask) {
         seatRepository.saveScheduledTask(scheduledTask);
     }
+
+    public void removeScheduledTask(ScheduledTask scheduledTask) {
+        seatRepository.deleteScheduledTask(scheduledTask.getId());
+    }
 }
