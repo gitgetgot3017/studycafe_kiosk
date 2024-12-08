@@ -58,7 +58,7 @@ public class SeatController {
         ItemType itemType = subscription.getOrder().getItem().getItemType();
         if (itemType == ItemType.PERIOD) {
             Instant executionTime = Instant.now().plus(10, ChronoUnit.MINUTES);
-            taskScheduler.schedule(new SeatCheckTask(member, usageStatusRepository, seatService), executionTime);
+            taskScheduler.schedule(new EnterCheckTask(member, usageStatusRepository, seatService), executionTime);
             registerScheduledTask(member, LocalDateTime.ofInstant(executionTime, ZoneId.of("Asia/Seoul")), ENTRACELIMIT);
         }
 

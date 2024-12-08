@@ -1,7 +1,7 @@
 package lhj.studycafe_kiosk;
 
 import lhj.studycafe_kiosk.domain.ScheduledTask;
-import lhj.studycafe_kiosk.seat.SeatCheckTask;
+import lhj.studycafe_kiosk.seat.EnterCheckTask;
 import lhj.studycafe_kiosk.seat.SeatRepository;
 import lhj.studycafe_kiosk.seat.SeatService;
 import lhj.studycafe_kiosk.seat.VacateSeatTask;
@@ -35,7 +35,7 @@ public class ScheduledTaskRecovery {
 
             if (scheduledTask.getType() == ENTRACELIMIT) {
                 taskScheduler.schedule(
-                    new SeatCheckTask(scheduledTask.getMember(), usageStatusRepository, seatService),
+                    new EnterCheckTask(scheduledTask.getMember(), usageStatusRepository, seatService),
                     scheduledTask.getExecutionTime().atZone(ZoneId.of("Asia/Seoul")).toInstant());
             } else {
                 taskScheduler.schedule(

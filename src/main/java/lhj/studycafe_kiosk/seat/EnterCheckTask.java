@@ -6,13 +6,13 @@ import lhj.studycafe_kiosk.domain.UserInOut;
 import lhj.studycafe_kiosk.usage_status.UsageStatusRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
 
-public class SeatCheckTask implements Runnable {
+public class EnterCheckTask implements Runnable {
 
     private final Member member;
     private final UsageStatusRepository usageStatusRepository;
     private final SeatService seatService;
 
-    public SeatCheckTask(Member member, UsageStatusRepository usageStatusRepository, SeatService seatService) {
+    public EnterCheckTask(Member member, UsageStatusRepository usageStatusRepository, SeatService seatService) {
         this.member = member;
         this.usageStatusRepository = usageStatusRepository;
         this.seatService = seatService;
