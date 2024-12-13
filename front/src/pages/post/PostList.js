@@ -46,6 +46,18 @@ function PostList() {
                                         <div className="col-3" style={{fontWeight: "bold"}}>확인</div>
                                         <div className="col-9">{post.reflect ? 'O' : null}</div>
                                     </div>
+                                    {
+                                        post.mine ?
+                                        <div className="row mt-2">
+                                            <div className="row mt-2">
+                                                <div className="col-12 d-flex justify-content-center">
+                                                    <button className="btn btn-sm btn-primary me-2">수정</button>
+                                                    <button className="btn btn-sm btn-danger">삭제</button>
+                                                </div>
+                                            </div>
+                                        </div> :
+                                        null
+                                    }
                                 </div>
                             );
                         })

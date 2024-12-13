@@ -28,25 +28,25 @@ public class PostController {
     private final MemberRepository memberRepository;
 
     @GetMapping
-    public HttpEntity<List<PostResponse>> getPosts() {
+    public HttpEntity<List<PostResponse>> getPosts(@SessionAttribute(value = "loginMember", required = false) Long memberId) {
 
         List<Post> posts = postRepository.getPosts();
 
-        List<PostResponse> postResponses = changeAllPostToPostResponse(posts);
+        List<PostResponse> postResponses = changeAllPostToPostResponse(posts, memberId);
         return new ResponseEntity<>(postResponses, HttpStatus.OK);
     }
 
-    private List<PostResponse> changeAllPostToPostResponse(List<Post> posts) {
+    private List<PostResponse> changeAllPostToPostResponse(List<Post> posts, Long memberId) {
 
         List<PostResponse> postResponses = new ArrayList<>();
         for (Post post : posts) {
-            postResponses.add(changePostToPostResponse(post));
+            postResponses.add(changePostToPostResponse(post, memberId));
         }
         return postResponses;
     }
 
-    private PostResponse changePostToPostResponse(Post post) {
-        return new PostResponse(post.getContent(), getFormattedEndDateTime(post.getPostDateTime()), post.isReflect());
+    private PostResponse changePostToPostResponse(Post post, Long memberId) {
+        return new PostResponse(post.getContent(), getFormattedEndDateTime(post.getPostDateTime()), post.isReflect(), post.getMember().getId().equals(memberId));
     }
 
     private String getFormattedEndDateTime(LocalDateTime dateTime) {

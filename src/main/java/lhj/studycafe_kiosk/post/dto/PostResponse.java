@@ -10,4 +10,5 @@ public class PostResponse {
     private String content;
     private String postDateTime;
     private boolean reflect;
+    private boolean mine;
 }
