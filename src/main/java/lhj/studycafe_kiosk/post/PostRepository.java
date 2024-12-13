@@ -15,11 +15,19 @@ public class PostRepository {
     EntityManager em;
 
     public List<Post> getPosts() {
-        return em.createQuery("select p from Post p", Post.class)
+        return em.createQuery("select p from Post p where p.shown = true", Post.class)
                 .getResultList();
+    }
+
+    public Post getPost(Long postId) {
+        return em.find(Post.class, postId);
     }
 
     public void savePost(Post post) {
         em.persist(post);
+    }
+
+    public void hidePost(Post post) {
+        post.hidePost();
     }
 }

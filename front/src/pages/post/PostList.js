@@ -52,7 +52,27 @@ function PostList() {
                                             <div className="row mt-2">
                                                 <div className="col-12 d-flex justify-content-center">
                                                     <button className="btn btn-sm btn-primary me-2">수정</button>
-                                                    <button className="btn btn-sm btn-danger">삭제</button>
+                                                    <button className="btn btn-sm btn-danger" onClick={() => {
+                                                        let result = window.confirm("정말로 게시글을 삭제하시겠습니까?");
+                                                        if (!result) {
+                                                            return;
+                                                        }
+
+                                                        let newPosts = [...posts];
+                                                        newPosts = newPosts.filter((newPost) => {return newPost.postId !== post.postId})
+                                                        setPosts(newPosts);
+
+                                                        axios.delete("/posts/" + post.postId)
+                                                            .then(() => {{
+                                                                alert("게시글이 삭제되었습니다!");
+                                                            }})
+                                                            .catch((error) => {
+                                                                console.error("게시글 숨김 처리 중 에러 발생:", error.response ? error.response.data : error.message);
+                                                                if (error.response) {
+                                                                    console.error("에러 상태 코드:", error.response.status);
+                                                                }
+                                                            });
+                                                    }}>삭제</button>
                                                 </div>
                                             </div>
                                         </div> :

@@ -46,7 +46,7 @@ public class PostController {
     }
 
     private PostResponse changePostToPostResponse(Post post, Long memberId) {
-        return new PostResponse(post.getContent(), getFormattedEndDateTime(post.getPostDateTime()), post.isReflect(), post.getMember().getId().equals(memberId));
+        return new PostResponse(post.getId(), post.getContent(), getFormattedEndDateTime(post.getPostDateTime()), post.isReflect(), post.getMember().getId().equals(memberId));
     }
 
     private String getFormattedEndDateTime(LocalDateTime dateTime) {
@@ -59,10 +59,16 @@ public class PostController {
     public HttpEntity<PostSuccessResponse> post(@SessionAttribute("loginMember") Long memberId, @RequestBody PostRequest postRequest) {
 
         Member member = memberRepository.getMember(memberId);
-        Post post = new Post(member, postRequest.getContent(), LocalDateTime.now(), false);
+        Post post = new Post(member, postRequest.getContent(), LocalDateTime.now(), false, true);
         postService.savePost(post);
 
         PostSuccessResponse postSuccessResponse = new PostSuccessResponse("게시글이 정상적으로 등록되었습니다.");
         return new ResponseEntity(postSuccessResponse, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/{postId}")
+    public void deletePost(@PathVariable("postId") Long postId) {
+        Post post = postRepository.getPost(postId);
+        postService.deletePost(post);
     }
 }

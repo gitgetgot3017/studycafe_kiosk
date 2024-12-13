@@ -7,6 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class PostResponse {
 
+    private Long postId;
     private String content;
     private String postDateTime;
     private boolean reflect;

@@ -26,10 +26,17 @@ public class Post {
 
     private boolean reflect;
 
-    public Post(Member member, String content, LocalDateTime postDateTime, boolean reflect) {
+    private boolean shown;
+
+    public Post(Member member, String content, LocalDateTime postDateTime, boolean reflect, boolean shown) {
         this.member = member;
         this.content = content;
         this.postDateTime = postDateTime;
         this.reflect = reflect;
+        this.shown = shown;
+    }
+
+    public void hidePost() {
+        shown = false;
     }
 }

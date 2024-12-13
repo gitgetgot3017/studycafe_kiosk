@@ -15,4 +15,8 @@ public class PostService {
     public void savePost(Post post) {
         postRepository.savePost(post);
     }
+
+    public void deletePost(Post post) {
+        postRepository.hidePost(post);
+    }
 }
