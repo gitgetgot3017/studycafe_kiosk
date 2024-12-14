@@ -136,6 +136,9 @@ function Price(props) {
     if (props.tab === "DAILY") {
         return (
             <div className="d-flex flex-column overflow-auto mb-4 scroll-container box">
+                <div className="product-box mb-3 card" onClick={() => {props.setPrice("3,000"); props.setType("일일권 1시간");}}>
+                    <p className="text-center">1시간 3,000원</p>
+                </div>
                 <div className="product-box mb-3 card" onClick={() => {props.setPrice("4,000"); props.setType("일일권 2시간");}}>
                     <p className="text-center">2시간 4,000원</p>
                 </div>
