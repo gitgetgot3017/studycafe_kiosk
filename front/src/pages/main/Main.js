@@ -92,7 +92,7 @@ function Main() {
                         <i className="bi bi-book"></i>
                         <p className="small mb-0">게시판</p>
                     </a>
-                    <a href="#" className="text-center text-dark" style={{textDecoration: "none"}}>
+                    <a href="/votes" className="text-center text-dark" style={{textDecoration: "none"}}>
                         <i className="bi bi-list"></i>
                         <p className="small mb-0">투표</p>
                     </a>

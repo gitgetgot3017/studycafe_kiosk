@@ -11,6 +11,7 @@ import ItemDetail from './pages/item/ItemDetail';
 import OrderList from './pages/order/OrderList';
 import Order from './pages/order/Order';
 import PostList from './pages/post/PostList';
+import Vote from './pages/vote/Vote';
 import CouponList from './pages/coupon/CouponList';
 import ChangeInfoMain from './pages/member/ChangeInfoMain';
 import ChangeInfoGeneral from './pages/member/ChangeInfoGeneral';
@@ -33,6 +34,7 @@ function App() {
             <Route path="/orders" element={<OrderList></OrderList>} />
             <Route path="/orders/summary" element={<Order></Order>} />
             <Route path="/posts" element={<PostList></PostList>} />
+            <Route path="/votes" element={<Vote></Vote>} />
             <Route path="/coupons" element={<CouponList></CouponList>} />
             <Route path="/members/info" element={<ChangeInfoMain></ChangeInfoMain>} />
             <Route path="/members/info/general" element={<ChangeInfoGeneral></ChangeInfoGeneral>} />

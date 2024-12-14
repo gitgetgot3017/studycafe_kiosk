@@ -1,8 +1,10 @@
 package lhj.studycafe_kiosk.domain;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
 @Entity
+@Getter
 public class VoteTitle {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
