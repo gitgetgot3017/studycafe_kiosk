@@ -1,8 +1,7 @@
 package lhj.studycafe_kiosk.vote;
 
-import lhj.studycafe_kiosk.domain.VoteOption;
-import lhj.studycafe_kiosk.domain.VoteTitle;
-import lhj.studycafe_kiosk.domain.VoteTitleWithOptions;
+import lhj.studycafe_kiosk.domain.*;
+import lhj.studycafe_kiosk.vote.dto.VoteRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,14 +23,27 @@ public class VoteService {
 
         List<VoteTitleWithOptions> voteTitleWithOptions = new ArrayList<>();
         for (VoteTitle voteTitle : voteTitles) {
+            List<Long> voteOptionIds = new ArrayList<>();
             List<String> contents = new ArrayList<>();
             for (VoteOption voteOption : voteOptions) {
                 if (voteTitle.getId() == voteOption.getVoteTitle().getId()) {
+                    voteOptionIds.add(voteOption.getId());
                     contents.add(voteOption.getContent());
                 }
             }
-            voteTitleWithOptions.add(new VoteTitleWithOptions(voteTitle.getTitle(), contents, voteTitle.isMultiple()));
+            voteTitleWithOptions.add(new VoteTitleWithOptions(voteTitle.getId(), voteOptionIds, voteTitle.getTitle(), contents, voteTitle.isMultiple()));
         }
         return voteTitleWithOptions;
+    }
+
+    public void vote(Member member, VoteRequest voteRequest) {
+
+        Long voteTitleId = voteRequest.getVoteTitleId();
+        VoteTitle voteTitle = voteRepository.getVoteTitle(voteTitleId);
+
+        for (Long voteOptionId : voteRequest.getVoteOptionIds()) {
+            VoteOption voteOption = voteRepository.getVoteOption(voteOptionId);
+            voteRepository.saveVote(new Vote(voteTitle, voteOption, member));
+        }
     }
 }

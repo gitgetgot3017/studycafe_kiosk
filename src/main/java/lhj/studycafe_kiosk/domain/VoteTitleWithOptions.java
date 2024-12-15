@@ -9,6 +9,8 @@ import java.util.List;
 @AllArgsConstructor
 public class VoteTitleWithOptions {
 
+    private Long voteTitleId;
+    private List<Long> voteOptionIds;
     private String voteTitle;
     private List<String> contents;
     private boolean isMultiple;
