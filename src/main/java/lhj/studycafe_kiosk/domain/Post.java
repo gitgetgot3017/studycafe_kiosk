@@ -39,4 +39,8 @@ public class Post {
     public void hidePost() {
         shown = false;
     }
+
+    public void changeContent(String content) {
+        this.content = content;
+    }
 }

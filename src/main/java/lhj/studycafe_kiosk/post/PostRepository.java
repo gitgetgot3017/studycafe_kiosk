@@ -30,4 +30,8 @@ public class PostRepository {
     public void hidePost(Post post) {
         post.hidePost();
     }
+
+    public void updatePost(Post post, String newContent) {
+        post.changeContent(newContent);
+    }
 }

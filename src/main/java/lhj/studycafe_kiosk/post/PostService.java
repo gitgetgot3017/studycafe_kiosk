@@ -19,4 +19,8 @@ public class PostService {
     public void deletePost(Post post) {
         postRepository.hidePost(post);
     }
+
+    public void modifyPost(Post post, String newContent) {
+        postRepository.updatePost(post, newContent);
+    }
 }

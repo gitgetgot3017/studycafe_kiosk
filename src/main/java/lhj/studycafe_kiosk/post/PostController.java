@@ -4,6 +4,7 @@ package lhj.studycafe_kiosk.post;
 import lhj.studycafe_kiosk.domain.Member;
 import lhj.studycafe_kiosk.domain.Post;
 import lhj.studycafe_kiosk.member.MemberRepository;
+import lhj.studycafe_kiosk.post.dto.ModifyPostRequest;
 import lhj.studycafe_kiosk.post.dto.PostRequest;
 import lhj.studycafe_kiosk.post.dto.PostResponse;
 import lhj.studycafe_kiosk.post.dto.PostSuccessResponse;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -70,5 +72,12 @@ public class PostController {
     public void deletePost(@PathVariable("postId") Long postId) {
         Post post = postRepository.getPost(postId);
         postService.deletePost(post);
+    }
+
+    @PatchMapping("/{postId}")
+    public void modifyPost(@PathVariable("postId") Long postId, @RequestBody @Validated ModifyPostRequest modifyPostRequest) {
+
+        Post post = postRepository.getPost(postId);
+        postService.modifyPost(post, modifyPostRequest.getContent());
     }
 }
