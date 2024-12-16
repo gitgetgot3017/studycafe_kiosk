@@ -88,6 +88,7 @@ function Vote() {
                                                 alert("투표 완료하였습니다!");
                                             }})
                                             .catch((error) => {
+                                                alert(error.response.data.message);
                                                 console.error("투표 중 에러 발생:", error.response ? error.response.data : error.message);
                                                 if (error.response) {
                                                     console.error("에러 상태 코드:", error.response.status);

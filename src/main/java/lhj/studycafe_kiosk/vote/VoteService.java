@@ -2,7 +2,9 @@ package lhj.studycafe_kiosk.vote;
 
 import lhj.studycafe_kiosk.domain.*;
 import lhj.studycafe_kiosk.vote.dto.VoteRequest;
+import lhj.studycafe_kiosk.vote.exception.AlreadyVoteException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,9 +43,19 @@ public class VoteService {
         Long voteTitleId = voteRequest.getVoteTitleId();
         VoteTitle voteTitle = voteRepository.getVoteTitle(voteTitleId);
 
+        validateVoteYn(member, voteTitle); // 투표 전, 이미 투표를 했는지 검증
+
         for (Long voteOptionId : voteRequest.getVoteOptionIds()) {
             VoteOption voteOption = voteRepository.getVoteOption(voteOptionId);
             voteRepository.saveVote(new Vote(voteTitle, voteOption, member));
+        }
+    }
+
+    private void validateVoteYn(Member member, VoteTitle voteTitle) {
+
+        List<Vote> votes = voteRepository.getVoteYn(member, voteTitle);
+        if (!votes.isEmpty()) {
+            throw new AlreadyVoteException("[" + voteTitle.getTitle() + "] 주제에 대해 이미 투표 완료하였습니다!");
         }
     }
 }

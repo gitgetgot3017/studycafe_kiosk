@@ -2,6 +2,7 @@ package lhj.studycafe_kiosk.vote;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import lhj.studycafe_kiosk.domain.Member;
 import lhj.studycafe_kiosk.domain.Vote;
 import lhj.studycafe_kiosk.domain.VoteOption;
 import lhj.studycafe_kiosk.domain.VoteTitle;
@@ -35,5 +36,12 @@ public class VoteRepository {
 
     public void saveVote(Vote vote) {
         em.persist(vote);
+    }
+
+    public List<Vote> getVoteYn(Member member, VoteTitle voteTitle) {
+        return em.createQuery("select v from Vote v where v.member = :member and v.voteTitle = :voteTitle", Vote.class)
+                .setParameter("member", member)
+                .setParameter("voteTitle", voteTitle)
+                .getResultList();
     }
 }
