@@ -3,7 +3,7 @@ import MainIn from './MainIn';
 import MainOut from './MainOut';
 import {useDispatch, useSelector} from "react-redux";
 import {useEffect} from "react";
-import {changeUserInOut, changeLoginStatus} from "../../store";
+import {changeUserInOut, changeLoginStatus, changeMemberGrade} from "../../store";
 import {useNavigate} from "react-router-dom";
 
 function Main() {
@@ -15,12 +15,9 @@ function Main() {
     useEffect(() => {
        axios.get("/main")
            .then((result) => {
-               if (result.data.mainInOut === true) {
-                   dispatch(changeUserInOut(true));
-               } else {
-                   dispatch(changeUserInOut(false));
-               }
+               dispatch(changeUserInOut(result.data.mainInOut));
                dispatch(changeLoginStatus(result.data.login));
+               dispatch(changeMemberGrade(result.data.memberGrade));
             })
            .catch((error) => {
                console.error("입퇴실 정보 가져오는 중 에러 발생:", error.response ? error.response.data : error.message);

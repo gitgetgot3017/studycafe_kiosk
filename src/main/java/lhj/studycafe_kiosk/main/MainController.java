@@ -60,6 +60,7 @@ public class MainController {
         }
 
         mainInOutResponse.setLogin(true);
+        mainInOutResponse.setMemberGrade(member.getGrade());
         return new ResponseEntity<>(mainInOutResponse, HttpStatus.OK);
     }
 
