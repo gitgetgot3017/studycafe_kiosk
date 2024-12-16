@@ -5,7 +5,7 @@ import axios from "axios";
 function Vote() {
 
     let [voteTitleWithOptions, setVoteTitleWithOptions] = useState([]);
-    let [voteOptions, setVoteOptions] = useState([]);
+    let [voteOptions, setVoteOptions] = useState([[]]); // 2차원 배열, 하나의 투표 제목 당 하나의 1차원 배열을 가짐
 
     useEffect(() => {
         axios.get("/votes")
@@ -20,6 +20,10 @@ function Vote() {
             });
     }, []);
 
+    useEffect(() => {
+        setVoteOptions(Array.from({ length: voteTitleWithOptions.length }, () => []));
+    }, [voteTitleWithOptions]);
+
     return (
         <div>
             <div className="container">
@@ -33,17 +37,20 @@ function Vote() {
                                     <ul className="options">
                                         {
                                             vote.multiple ?
-                                            vote.contents.map(function(option) {
+                                            vote.contents.map(function(option, j) {
                                                 return (
                                                     <li key={option}>
                                                         <label>
                                                             <input type="checkbox" onChange={(e) => {
-                                                                let newVoteOptions = [...voteOptions];
+                                                                let newVoteOption = [...voteOptions[i]];
                                                                 if (e.target.checked) {
-                                                                    newVoteOptions.push(vote.voteOptionId[j]);
+                                                                    newVoteOption.push(vote.voteOptionIds[j]);
                                                                 } else {
-                                                                    newVoteOptions = newVoteOptions.filter((voteOptionId) => {return voteOptionId != vote.voteOptionId[j]});
+                                                                    newVoteOption = newVoteOption.filter((voteOptionId) => {return voteOptionId != vote.voteOptionIds[j]});
                                                                 }
+
+                                                                let newVoteOptions = [...voteOptions];
+                                                                newVoteOptions[i] = newVoteOption;
                                                                 setVoteOptions(newVoteOptions);
                                                             }}/>{option}
                                                         </label>
@@ -54,8 +61,10 @@ function Vote() {
                                                 return (
                                                     <li key={option}>
                                                         <label>
-                                                            <input type="radio" name="temperature" onClick={(e) => {
-                                                                setVoteOptions([vote.voteOptionId[j]]);
+                                                            <input type="radio" name="temperature" onClick={() => {
+                                                                let newVoteOptions = [...voteOptions];
+                                                                newVoteOptions[i] = [vote.voteOptionIds[j]]
+                                                                setVoteOptions(newVoteOptions);
                                                             }}/>{option}
                                                         </label>
                                                     </li>
@@ -64,19 +73,14 @@ function Vote() {
                                         }
                                     </ul>
                                     <button type="button" onClick={() => {
-                                        if (voteOptions.length === 0) {
+                                        if (voteOptions[i].length === 0) {
                                             alert("항목을 선택한 후 투표하기 버튼을 눌러주세요.");
                                             return;
                                         }
 
-
-                                        console.log(voteOptions);
-                                        return;
-
-
                                         axios.post("/votes", {
                                             voteTitleId: vote.voteTitleId,
-                                            voteOptionIds: voteOptions
+                                            voteOptionIds: voteOptions[i]
                                             }, {
                                                 headers: { "Content-Type": "application/json" }
                                             })

@@ -2,11 +2,11 @@ package lhj.studycafe_kiosk.vote.dto;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.Getter;
 
 import java.util.List;
 
-@Data // TODO: 커밋 전 코드 수정 필요
+@Getter
 public class VoteRequest {
 
     @NotNull
