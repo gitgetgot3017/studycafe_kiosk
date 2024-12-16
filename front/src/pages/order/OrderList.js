@@ -21,7 +21,7 @@ function OrderList() {
     return (
         <div className="bg-dark d-flex align-items-center justify-content-center" style={{height: "100vh", backgroundColor: "#f8f9fa", color: "#495057"}}>
             <div className="payment-container w-50" style={{backgroundColor: "#ffffff", padding: "30px", borderRadius: "10px", boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)"}}>
-                {/* 결제 내역 박스 (스크롤 가능한 영역) */}
+                <h2 className="text-center text-primary mb-4">나의 결제 정보</h2>
                 <div className="payment-box scroll-container" style={{backgroundColor: "#f1f3f5", borderRadius: "8px", padding: "20px", marginTop: "20px", maxHeight: "400px", overflowY: "auto"}}>
                     {
                         orderList.length === 0 ?
