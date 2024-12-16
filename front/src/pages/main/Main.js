@@ -92,23 +92,23 @@ function Main() {
                         <i className="bi bi-book"></i>
                         <p className="small mb-0">게시판</p>
                     </a>
-                    <a href="/votes" className="text-center text-dark" style={{textDecoration: "none"}}>
-                        <i className="bi bi-list"></i>
-                        <p className="small mb-0">투표</p>
-                    </a>
                     {
                         state.login ?
+                        <a href="/votes" className="text-center text-dark" style={{textDecoration: "none"}}>
+                            <i className="bi bi-list"></i>
+                            <p className="small mb-0">투표</p>
+                        </a> :
+                        null
+                    }
+                    {
+                        state.memberGrade === "MEMBER" ?
                         <>
                             <a href="/orders" className="text-center text-dark" style={{textDecoration: "none"}}>
                                 <i className="bi bi-journal"></i>
                                 <p className="small mb-0">주문내역 조회</p>
                             </a>
-                            <a href="/members/info" className="text-center text-dark" style={{textDecoration: "none"}}>
-                                <i className="bi bi-person"></i>
-                                <p className="small mb-0">회원정보 변경</p>
-                            </a>
                             <a href="/coupons" className="text-center text-dark" style={{textDecoration: "none"}}>
-                                <i className="bi bi-person"></i>
+                                <i className="bi bi-ticket"></i>
                                 <p className="small mb-0">쿠폰함</p>
                             </a>
                         </> :
@@ -118,10 +118,18 @@ function Main() {
                         state.memberGrade === "MANAGER" ?
                         <>
                             <a onClick={() => navigate("/items/detail?itemType=DAILY")} className="text-center text-dark" style={{textDecoration: "none"}}>
-                                <i className="bi bi-list"></i>
+                                <i className="bi bi-box"></i>
                                 <p className="small mb-0">상품 관리</p>
                             </a>
                         </> :
+                        null
+                    }
+                    {
+                        state.login ?
+                        <a href="/members/info" className="text-center text-dark" style={{textDecoration: "none"}}>
+                            <i className="bi bi-person"></i>
+                            <p className="small mb-0">회원정보 변경</p>
+                        </a> :
                         null
                     }
                 </div>
