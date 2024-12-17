@@ -21,17 +21,25 @@ public class Item {
     @Column(unique = true)
     private String itemName;
 
+    private Integer usageTime; // 이용 가능 시간(hour 단위) -> 일일권, 충전권에서 사용
+
+    private Integer usagePeriod; // 이용 가능 기간(day 단위) -> 충전권, 기간권, 고정석에서 사용
+
     private int price;
 
-    public Item(ItemType itemType, String itemName, int price) {
+    public Item(ItemType itemType, String itemName, Integer usageTime, Integer usagePeriod, int price) {
         this.itemType = itemType;
         this.itemName = itemName;
+        this.usageTime = usageTime;
+        this.usagePeriod = usagePeriod;
         this.price = price;
     }
 
     public void changeItem(Item changedItem) {
         this.itemType = changedItem.getItemType();
         this.itemName = changedItem.getItemName();
+        this.usageTime = changedItem.getUsageTime();
+        this.usagePeriod = changedItem.getUsagePeriod();
         this.price = changedItem.getPrice();
     }
 }
