@@ -114,7 +114,7 @@ function Main() {
                     {
                         state.memberGrade === "MANAGER" ?
                         <>
-                            <a onClick={() => navigate("/items/detail?itemType=DAILY")} className="text-center text-dark" style={{textDecoration: "none"}}>
+                            <a onClick={() => navigate("/items/manage")} className="text-center text-dark" style={{textDecoration: "none"}}>
                                 <i className="bi bi-box"></i>
                                 <p className="small mb-0">상품 관리</p>
                             </a>
