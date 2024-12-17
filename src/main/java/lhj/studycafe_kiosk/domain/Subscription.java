@@ -24,9 +24,9 @@ public class Subscription {
 
     private LocalDateTime startDateTime;
 
-    private LocalDateTime endDateTime;
+    private LocalDateTime endDateTime; // 일일권, 충전권, 기간권, 고정석에서 사용
 
-    private Duration leftTime;
+    private Duration leftTime; // 충전권에서만 사용
 
     private boolean isValid;
 

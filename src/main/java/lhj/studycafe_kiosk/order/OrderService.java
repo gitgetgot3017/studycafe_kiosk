@@ -11,6 +11,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -157,13 +158,31 @@ public class OrderService {
     }
 
     private boolean checkWithin30Percent(Order order) {
+
         Subscription subscription = subscriptionRepository.getSubscriptionByOrder(order);
-
         Item item = subscription.getOrder().getItem();
-        long itemSecond = item.getDuration().getSeconds();
-        long leftSecond = subscription.getLeftTime().getSeconds();
 
-        return leftSecond / itemSecond * 100 < 30;
+        long itemSecond = getItemSecond(item);
+        long leftSecond = getLeftSecond(item, subscription);
+        return (itemSecond - leftSecond) / itemSecond * 100 < 30;
+    }
+
+    private long getItemSecond(Item item) {
+
+        if (item.getItemType() == ItemType.DAILY || item.getItemType() == ItemType.CHARGE) {
+            return item.getUsageTime() * 60 * 60;
+        } else {
+            return item.getUsagePeriod() * 24 * 60 * 60;
+        }
+    }
+
+    private long getLeftSecond(Item item, Subscription subscription) {
+
+        if (item.getItemType() == ItemType.CHARGE) {
+            return subscription.getLeftTime().getSeconds();
+        } else {
+            return Duration.between(subscription.getStartDateTime(), subscription.getEndDateTime()).getSeconds();
+        }
     }
 
     private boolean checkWithin7Days(Order order) {

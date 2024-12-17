@@ -1,9 +1,6 @@
 package lhj.studycafe_kiosk.subscription;
 
-import lhj.studycafe_kiosk.domain.Item;
-import lhj.studycafe_kiosk.domain.Member;
-import lhj.studycafe_kiosk.domain.Order;
-import lhj.studycafe_kiosk.domain.Subscription;
+import lhj.studycafe_kiosk.domain.*;
 import lhj.studycafe_kiosk.subscription.exception.NotExistSubscriptionException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -30,11 +27,29 @@ public class SubscriptionService {
         } catch (EmptyResultDataAccessException e) {
             isRepresentative = true;
             startDateTime = LocalDateTime.now();
-            endDateTime = LocalDateTime.now().plusSeconds(item.getDuration().getSeconds());
+            endDateTime = getEndDateTime(startDateTime, item);
         }
 
-        Subscription subscription = new Subscription(order, isRepresentative, startDateTime, endDateTime, item.getDuration(), true);
+        Subscription subscription = new Subscription(order, isRepresentative, startDateTime, endDateTime, getLeftTime(item), true);
         subscriptionRepository.saveSubscription(subscription);
+    }
+
+    private LocalDateTime getEndDateTime(LocalDateTime startDateTime, Item item) {
+
+        if (item.getItemType() == ItemType.DAILY) {
+            return startDateTime.plusHours(item.getUsageTime());
+        } else {
+            return startDateTime.plusDays(item.getUsagePeriod());
+        }
+    }
+
+    private Duration getLeftTime(Item item) {
+
+        if (item.getItemType() == ItemType.CHARGE) {
+            return Duration.ofHours(item.getUsageTime());
+        } else {
+            return Duration.ZERO;
+        }
     }
 
     public void changeSubscriptionInvalid(Subscription subscription) {
