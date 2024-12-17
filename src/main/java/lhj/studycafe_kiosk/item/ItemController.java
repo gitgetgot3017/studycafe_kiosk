@@ -2,6 +2,7 @@ package lhj.studycafe_kiosk.item;
 
 import lhj.studycafe_kiosk.domain.Item;
 import lhj.studycafe_kiosk.domain.ItemType;
+import lhj.studycafe_kiosk.domain.ItemsPerItemType;
 import lhj.studycafe_kiosk.item.dto.*;
 import lhj.studycafe_kiosk.item.exception.DuplicateItemNameException;
 import lhj.studycafe_kiosk.item.exception.NoItemException;
@@ -89,5 +90,12 @@ public class ItemController {
     private Item changeItemChangeRequestToItem(ItemChangeRequest itemChangeRequest) {
 
         return new Item(itemChangeRequest.getItemType(), itemChangeRequest.getItemName(), itemChangeRequest.getDuration(), itemChangeRequest.getPrice());
+    }
+
+    @GetMapping("/manage")
+    public HttpEntity<List<ItemsPerItemType>> getItemCategory() {
+
+        List<ItemsPerItemType> itemsPerItemTypes = itemService.getItemCategory();
+        return new ResponseEntity<>(itemsPerItemTypes, HttpStatus.OK);
     }
 }

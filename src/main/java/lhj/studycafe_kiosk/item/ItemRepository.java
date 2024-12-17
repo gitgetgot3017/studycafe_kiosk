@@ -42,4 +42,9 @@ public class ItemRepository {
         Item item = em.find(Item.class, itemId);
         return Optional.ofNullable(item);
     }
+
+    public List<Item> getItemType() {
+        return em.createQuery("select i from Item i group by i.itemType", Item.class)
+                .getResultList();
+    }
 }

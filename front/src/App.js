@@ -8,6 +8,7 @@ import Join from './pages/member/Join';
 import Seat from './pages/seat/Seat';
 import ItemList from './pages/item/ItemList';
 import ItemDetail from './pages/item/ItemDetail';
+import ItemManage from "./pages/item/ItemManage";
 import OrderList from './pages/order/OrderList';
 import Order from './pages/order/Order';
 import PostList from './pages/post/PostList';
@@ -31,6 +32,7 @@ function App() {
             <Route path="/seats" element={<Seat></Seat>} />
             <Route path="/items" element={<ItemList></ItemList>} />
             <Route path="/items/detail" element={<ItemDetail></ItemDetail>} />
+            <Route path="/items/manage" element={<ItemManage></ItemManage>} />
             <Route path="/orders" element={<OrderList></OrderList>} />
             <Route path="/orders/summary" element={<Order></Order>} />
             <Route path="/posts" element={<PostList></PostList>} />
