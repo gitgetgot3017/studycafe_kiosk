@@ -70,7 +70,7 @@ public class ItemController {
 
     private Item changeItemRegRequestToItem(ItemRegRequest itemRegRequest) {
 
-        return new Item(itemRegRequest.getItemType(), itemRegRequest.getItemName(), itemRegRequest.getDuration(), itemRegRequest.getPrice());
+        return new Item(itemRegRequest.getItemType(), itemRegRequest.getItemName(), itemRegRequest.getPrice());
     }
 
     private ItemInfoResponse changeItemToItemInfoResponse(Item item) {
@@ -89,7 +89,7 @@ public class ItemController {
 
     private Item changeItemChangeRequestToItem(ItemChangeRequest itemChangeRequest) {
 
-        return new Item(itemChangeRequest.getItemType(), itemChangeRequest.getItemName(), itemChangeRequest.getDuration(), itemChangeRequest.getPrice());
+        return new Item(itemChangeRequest.getItemType(), itemChangeRequest.getItemName(), itemChangeRequest.getPrice());
     }
 
     @GetMapping("/manage")

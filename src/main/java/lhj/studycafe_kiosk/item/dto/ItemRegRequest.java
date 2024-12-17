@@ -13,8 +13,6 @@ public class ItemRegRequest {
     @NotNull
     private ItemType itemType;
 
-    private Duration duration;
-
     @NotBlank
     private String itemName;
 
