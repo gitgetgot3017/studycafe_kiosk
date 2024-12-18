@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
+import {useSelector} from "react-redux";
 
 function PostList() {
 
@@ -8,6 +9,8 @@ function PostList() {
     let [content, setContent] = useState("");
     let [modalContent, setModalContent] = useState("");
     let [modifyPostId, setModifyPostId] = useState(0);
+
+    let state = useSelector((state) => {return state});
 
     useEffect(() => {
         axios.get("/posts")
@@ -46,47 +49,51 @@ function PostList() {
                                     <div className="row">
                                         <div className="col-3" style={{fontWeight: "bold"}}>확인</div>
                                         <div className="col-9">
-                                            <input type="checkbox" checked={post.reflect} onChange={(e) => {
-                                                if (e.target.checked) {
-                                                    axios.post("/posts/" + post.postId + "/check")
-                                                        .then(() => {
-                                                            alert("확인 처리하였습니다!");
-                                                        })
-                                                        .catch((error) => {
-                                                            console.error("게시글 check 중 에러 발생:", error.response ? error.response.data : error.message);
-                                                            if (error.response) {
-                                                                console.error("에러 상태 코드:", error.response.status);
-                                                            }
-                                                        });
+                                            {
+                                                state.memberGrade === "MANAGER" ?
+                                                <input type="checkbox" checked={post.reflect} onChange={(e) => {
+                                                    if (e.target.checked) {
+                                                        axios.post("/posts/" + post.postId + "/check")
+                                                            .then(() => {
+                                                                alert("확인 처리하였습니다!");
+                                                            })
+                                                            .catch((error) => {
+                                                                console.error("게시글 check 중 에러 발생:", error.response ? error.response.data : error.message);
+                                                                if (error.response) {
+                                                                    console.error("에러 상태 코드:", error.response.status);
+                                                                }
+                                                            });
 
-                                                    let newPosts = [...posts];
-                                                    for (let newPost of newPosts) {
-                                                        if (newPost.id === post.id) {
-                                                            post.reflect = true;
-                                                        }
-                                                    }
-                                                    setPosts(newPosts);
-                                                } else {
-                                                    axios.post("/posts/" + post.postId + "/uncheck")
-                                                        .then(() => {
-                                                            alert("확인 취소하였습니다!");
-                                                        })
-                                                        .catch((error) => {
-                                                            console.error("게시글 uncheck 중 에러 발생:", error.response ? error.response.data : error.message);
-                                                            if (error.response) {
-                                                                console.error("에러 상태 코드:", error.response.status);
+                                                        let newPosts = [...posts];
+                                                        for (let newPost of newPosts) {
+                                                            if (newPost.id === post.id) {
+                                                                post.reflect = true;
                                                             }
-                                                        });
-
-                                                    let newPosts = [...posts];
-                                                    for (let newPost of newPosts) {
-                                                        if (newPost.id === post.id) {
-                                                            post.reflect = false;
                                                         }
+                                                        setPosts(newPosts);
+                                                    } else {
+                                                        axios.post("/posts/" + post.postId + "/uncheck")
+                                                            .then(() => {
+                                                                alert("확인 취소하였습니다!");
+                                                            })
+                                                            .catch((error) => {
+                                                                console.error("게시글 uncheck 중 에러 발생:", error.response ? error.response.data : error.message);
+                                                                if (error.response) {
+                                                                    console.error("에러 상태 코드:", error.response.status);
+                                                                }
+                                                            });
+
+                                                        let newPosts = [...posts];
+                                                        for (let newPost of newPosts) {
+                                                            if (newPost.id === post.id) {
+                                                                post.reflect = false;
+                                                            }
+                                                        }
+                                                        setPosts(newPosts);
                                                     }
-                                                    setPosts(newPosts);
-                                                }
-                                            }} />
+                                                }} /> :
+                                                <input type="checkbox" checked={post.reflect} readOnly />
+                                            }
                                         </div>
                                     </div>
                                     {

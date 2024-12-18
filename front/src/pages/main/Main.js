@@ -55,8 +55,8 @@ function Main() {
                         }
                         }>로그아웃</button> :
                         <>
-                            <a href="/members/join" className="btn btn-secondary btn-sm">회원가입</a>
-                            <a href="members/login" className="btn btn-secondary btn-sm">로그인</a>
+                            <a onClick={() => {navigate("/members/join")}} className="btn btn-secondary btn-sm">회원가입</a>
+                            <a onClick={() => {navigate("/members/login")}} className="btn btn-secondary btn-sm">로그인</a>
                         </>
                     }
                 </div>
@@ -81,17 +81,17 @@ function Main() {
             {/* Bottom Navigation */}
             <nav className="navbar fixed-bottom navbar-light bg-light border-top">
                 <div className="container d-flex justify-content-around">
-                    <a href="/seats" className="text-center text-dark" style={{textDecoration: "none"}}>
+                    <a onClick={() => {navigate("/seats")}} className="text-center text-dark" style={{textDecoration: "none"}}>
                         <i className="bi bi-house"></i>
                         <p className="small mb-0">스터디존</p>
                     </a>
-                    <a href="/posts" className="text-center text-dark" style={{textDecoration: "none"}}>
+                    <a onClick={() => {navigate("/posts")}} className="text-center text-dark" style={{textDecoration: "none"}}>
                         <i className="bi bi-book"></i>
                         <p className="small mb-0">게시판</p>
                     </a>
                     {
                         state.login ?
-                        <a href="/votes" className="text-center text-dark" style={{textDecoration: "none"}}>
+                        <a onClick={() => {navigate("/votes")}} className="text-center text-dark" style={{textDecoration: "none"}}>
                             <i className="bi bi-list"></i>
                             <p className="small mb-0">투표</p>
                         </a> :
@@ -100,11 +100,11 @@ function Main() {
                     {
                         state.memberGrade === "MEMBER" ?
                         <>
-                            <a href="/orders" className="text-center text-dark" style={{textDecoration: "none"}}>
+                            <a onClick={() => {navigate("/orders")}} className="text-center text-dark" style={{textDecoration: "none"}}>
                                 <i className="bi bi-journal"></i>
                                 <p className="small mb-0">주문내역 조회</p>
                             </a>
-                            <a href="/coupons" className="text-center text-dark" style={{textDecoration: "none"}}>
+                            <a onClick={() => {navigate("/coupons")}} className="text-center text-dark" style={{textDecoration: "none"}}>
                                 <i className="bi bi-ticket"></i>
                                 <p className="small mb-0">쿠폰함</p>
                             </a>
@@ -123,7 +123,7 @@ function Main() {
                     }
                     {
                         state.login ?
-                        <a href="/members/info" className="text-center text-dark" style={{textDecoration: "none"}}>
+                        <a onClick={() => {navigate("/members/info")}} className="text-center text-dark" style={{textDecoration: "none"}}>
                             <i className="bi bi-person"></i>
                             <p className="small mb-0">회원정보 변경</p>
                         </a> :
