@@ -27,6 +27,23 @@ function ItemManage() {
             });
     }, [])
 
+    function getUsageTimeAndUsagePeriod(itemType, itemName) {
+
+        let usageTime = null, usagePeriod = null;
+        if (itemType === "DAILY") {
+            usageTime = itemName.replace("시간", "");
+            usageTime = Number(usageTime);
+        } else if (itemType === "CHARGE") {
+            let usageTimePeriod = itemName.match(/\d+/g);
+            usageTime = parseInt(usageTimePeriod[0], 10);
+            usagePeriod = parseInt(usageTimePeriod[1], 10);
+        } else {
+            usagePeriod = itemName.replace("주일", "");
+            usagePeriod = Number(usagePeriod);
+        }
+        return [usageTime, usagePeriod];
+    }
+
     return (
         <div className="container" id="categoryContainer">
             <h2>상품 관리 페이지</h2>
@@ -63,11 +80,45 @@ function ItemManage() {
                             </div>
                             <ul className="product-list" id="productList-1">
                                 {
-                                    items[i].map(function(item) {
+                                    items[i].map(function(item, j) {
                                         return (
                                             <li key={item.itemName}>상품 종류: {item.itemName + " " + item.price + "원"}
                                                 <span>
-                                                    <button>수정</button>
+                                                    <button onClick={() => {
+                                                        let modifyYn = window.confirm("해당 상품을 수정하시겠습니까?")
+                                                        if (!modifyYn) {
+                                                            return;
+                                                        }
+
+                                                        let itemName = prompt("상품명을 입력해주세요.");
+                                                        let price = prompt("상품 가격을 입력해주세요(숫자만 입력해주세요)");
+
+                                                        let [usageTime, usagePeriod] = getUsageTimeAndUsagePeriod(category.itemType, itemName); // itemName -> usageTime, usagePeriod 구하기
+                                                        price = Number(price); // price -> Number 타입으로 변환
+
+                                                        axios.patch("/items/" + item.id, {
+                                                                itemType: category.itemType,
+                                                                itemName: itemName,
+                                                                usageTime: usageTime,
+                                                                usagePeriod: usagePeriod,
+                                                                price: price
+                                                            }, {
+                                                                headers: { "Content-Type": "application/json" }
+                                                            })
+                                                            .then(() => {
+                                                                alert("해당 상품을 수정하였습니다!");
+                                                            })
+                                                            .catch((error) => {
+                                                                console.error("상품 수정 중 에러 발생:", error.response ? error.response.data : error.message);
+                                                                if (error.response) {
+                                                                    console.error("에러 상태 코드:", error.response.status);
+                                                                }
+                                                            });
+
+                                                        let newItems = [...items];
+                                                        newItems[i][j] = {itemName: itemName, price: price};
+                                                        setItems(newItems);
+                                                    }}>수정</button>
                                                     <button onClick={() => {
                                                         let deleteYn = window.confirm("해당 상품을 삭제하시겠습니까?")
                                                         if (!deleteYn) {
@@ -100,22 +151,8 @@ function ItemManage() {
                                     let itemName = prompt("상품명을 입력해주세요.");
                                     let price = prompt("상품 가격을 입력해주세요(숫자만 입력해주세요)");
 
-                                    // itemName -> usageTime, usagePeriod 구하기
-                                    let usageTime = null, usagePeriod = null;
-                                    if (category.itemType === "DAILY") {
-                                        usageTime = itemName.replace("시간", "");
-                                        usageTime = Number(usageTime);
-                                    } else if (category.itemType === "CHARGE") {
-                                        let usageTimePeriod = itemName.match(/\d+/g);
-                                        usageTime = parseInt(usageTimePeriod[0], 10);
-                                        usagePeriod = parseInt(usageTimePeriod[1], 10);
-                                    } else {
-                                        usagePeriod = itemName.replace("주일", "");
-                                        usagePeriod = Number(usagePeriod);
-                                    }
-
-                                    // price -> Number 타입으로 변환
-                                    price = Number(price);
+                                    let [usageTime, usagePeriod] = getUsageTimeAndUsagePeriod(category.itemType, itemName); // itemName -> usageTime, usagePeriod 구하기
+                                    price = Number(price); // price -> Number 타입으로 변환
 
                                     // 서버에 POST /items 요청 보내기
                                     axios.post("/items", {
