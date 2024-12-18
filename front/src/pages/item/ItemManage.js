@@ -38,7 +38,27 @@ function ItemManage() {
                                 카테고리명: {categoryName[category.itemType]}
                                 <span>
                                     <button className="edit-category-btn">수정</button>
-                                    <button className="delete-category-btn">삭제</button>
+                                    <button className="delete-category-btn" onClick={() => {
+                                        let deleteYn = window.confirm("해당 카테고리를 삭제하시겠습니까? 카테고리를 삭제할 경우, 카테고리 내의 상품도 전부 삭제됩니다.");
+                                        if (!deleteYn) {
+                                            return;
+                                        }
+
+                                        axios.delete("/items?itemType=" + category.itemType)
+                                            .then(() => {{
+                                                alert("해당 카테고리가 삭제되었습니다!");
+                                            }})
+                                            .catch((error) => {
+                                                console.error("카테고리 삭제 중 에러 발생:", error.response ? error.response.data : error.message);
+                                                if (error.response) {
+                                                    console.error("에러 상태 코드:", error.response.status);
+                                                }
+                                            });
+
+                                        let newCategories = [...categories];
+                                        newCategories = newCategories.filter((newCategory) => {return newCategory.itemType !== category.itemType});
+                                        setCategories(newCategories);
+                                    }}>삭제</button>
                                 </span>
                             </div>
                             <ul className="product-list" id="productList-1">
@@ -49,7 +69,10 @@ function ItemManage() {
                                                 <span>
                                                     <button>수정</button>
                                                     <button onClick={() => {
-                                                        window.confirm("해당 상품을 삭제하시겠습니까?");
+                                                        let deleteYn = window.confirm("해당 상품을 삭제하시겠습니까?")
+                                                        if (!deleteYn) {
+                                                            return;
+                                                        }
 
                                                         axios.delete("/items/" + item.id)
                                                             .then(() => {{

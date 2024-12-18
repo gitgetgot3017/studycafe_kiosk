@@ -51,4 +51,10 @@ public class ItemRepository {
     public void deleteItem(Item item) {
         em.remove(item);
     }
+
+    public void deleteCategory(ItemType itemType) {
+        em.createQuery("delete from Item i where i.itemType = :itemType")
+                .setParameter("itemType", itemType)
+                .executeUpdate();
+    }
 }

@@ -52,4 +52,9 @@ public class ItemService {
             itemRepository.deleteItem(itemOp.get());
         }
     }
+
+    public void removeCategory(ItemType itemType) {
+
+        itemRepository.deleteCategory(itemType);
+    }
 }
