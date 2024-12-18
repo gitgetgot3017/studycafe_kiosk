@@ -34,4 +34,12 @@ public class PostRepository {
     public void updatePost(Post post, String newContent) {
         post.changeContent(newContent);
     }
+
+    public void updatePostChecked(Post post) {
+        post.checkPost();
+    }
+
+    public void updatePostUnchecked(Post post) {
+        post.uncheckPost();
+    }
 }

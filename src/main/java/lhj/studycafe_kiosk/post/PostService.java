@@ -23,4 +23,12 @@ public class PostService {
     public void modifyPost(Post post, String newContent) {
         postRepository.updatePost(post, newContent);
     }
+
+    public void checkPost(Post post) {
+        postRepository.updatePostChecked(post);
+    }
+
+    public void uncheckPost(Post post) {
+        postRepository.updatePostUnchecked(post);
+    }
 }

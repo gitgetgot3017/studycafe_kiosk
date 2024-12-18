@@ -5,13 +5,14 @@ import axios from "axios";
 function ItemManage() {
 
     let [categories, setCategories] = useState([]);
-    let categoryName = {"DAILY": "일일권", "CHARGE": "충전권", "PERIOD": "기간권", "FIXED": "고정석"};
+    let categoryNameDict = {"DAILY": "일일권", "CHARGE": "충전권", "PERIOD": "기간권", "FIXED": "고정석"};
     let [items, setItems] = useState([[]]); // 2차원 배열, 하나의 카테고리 당 하나의 배열을 가짐
 
     useEffect(() => {
         axios.get("/items/manage")
             .then((result) => {
                 setCategories(result.data);
+                console.log(result.data); // categories
 
                 let newItems = new Array(result.data.length);
                 for (let i=0; i<result.data.length; i++) {
@@ -52,9 +53,16 @@ function ItemManage() {
                     return (
                         <div className="category" id="category-1" key={category.itemType}>
                             <div className="category-title">
-                                카테고리명: {categoryName[category.itemType]}
+                                카테고리명: {categoryNameDict[category.itemType] || "기타"}
                                 <span>
-                                    <button className="edit-category-btn">수정</button>
+                                    <button className="edit-category-btn" onClick={() => {
+                                        let modifyCategoryNameYn = window.confirm("카테고리명을 수정하시겠습니까?");
+                                        if (!modifyCategoryNameYn) {
+                                            return;
+                                        }
+
+
+                                    }}>수정</button>
                                     <button className="delete-category-btn" onClick={() => {
                                         let deleteYn = window.confirm("해당 카테고리를 삭제하시겠습니까? 카테고리를 삭제할 경우, 카테고리 내의 상품도 전부 삭제됩니다.");
                                         if (!deleteYn) {
@@ -80,6 +88,7 @@ function ItemManage() {
                             </div>
                             <ul className="product-list" id="productList-1">
                                 {
+                                    items[i] !== undefined ?
                                     items[i].map(function(item, j) {
                                         return (
                                             <li key={item.itemName}>상품 종류: {item.itemName + " " + item.price + "원"}
@@ -143,7 +152,8 @@ function ItemManage() {
                                                 </span>
                                             </li>
                                         );
-                                    })
+                                    }) :
+                                    null
                                 }
                             </ul>
                             <div className="actions">
@@ -185,7 +195,18 @@ function ItemManage() {
                 })
             }
             <div className="actions">
-                <button className="add-category-btn">카테고리 추가</button>
+                <button className="add-category-btn" onClick={() => {
+                    let addCategoryYn = window.confirm("카테고리를 추가하시겠습니까?")
+                    if (!addCategoryYn) {
+                        return;
+                    }
+
+                    let categoryName = prompt("카테고리명을 입력해주세요.");
+
+                    let newCategories = [...categories];
+                    newCategories.push({itemType: 'FIXED', items: []})
+                    setCategories(newCategories);
+                }}>카테고리 추가</button>
             </div>
         </div>
     );

@@ -45,7 +45,32 @@ function PostList() {
                                     </div>
                                     <div className="row">
                                         <div className="col-3" style={{fontWeight: "bold"}}>확인</div>
-                                        <div className="col-9">{post.reflect ? 'O' : null}</div>
+                                        <div className="col-9">
+                                            <input type="checkbox" checked={post.reflect} onChange={(e) => {
+                                                if (e.target.checked) {
+                                                    axios.post("/posts/" + post.postId + "/check")
+                                                        .then(() => {
+                                                            alert("확인 처리하였습니다!");
+                                                        })
+                                                        .catch((error) => {
+                                                            console.error("게시글 check 중 에러 발생:", error.response ? error.response.data : error.message);
+                                                            if (error.response) {
+                                                                console.error("에러 상태 코드:", error.response.status);
+                                                            }
+                                                        });
+
+                                                    let newPosts = [...posts];
+                                                    newPosts = newPosts.filter((newPost) => {
+                                                        if (newPost.id === post.id) {
+                                                            return post.reflect = true;
+                                                        }
+                                                    })
+                                                    setPosts(newPosts);
+                                                } else {
+                                                    console.log('unchecked');
+                                                }
+                                            }} />
+                                        </div>
                                     </div>
                                     {
                                         post.mine ?

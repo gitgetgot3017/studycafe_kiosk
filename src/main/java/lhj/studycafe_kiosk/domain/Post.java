@@ -43,4 +43,12 @@ public class Post {
     public void changeContent(String content) {
         this.content = content;
     }
+
+    public void checkPost() {
+        reflect = true;
+    }
+
+    public void uncheckPost() {
+        reflect = false;
+    }
 }

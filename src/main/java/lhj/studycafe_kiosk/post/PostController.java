@@ -80,4 +80,18 @@ public class PostController {
         Post post = postRepository.getPost(postId);
         postService.modifyPost(post, modifyPostRequest.getContent());
     }
+
+    @PostMapping("/{postId}/check")
+    public void checkPost(@PathVariable("postId") Long postId) {
+
+        Post post = postRepository.getPost(postId);
+        postService.checkPost(post);
+    }
+
+    @PostMapping("/{postId}/uncheck")
+    public void uncheckPost(@PathVariable("postId") Long postId) {
+
+        Post post = postRepository.getPost(postId);
+        postService.uncheckPost(post);
+    }
 }
