@@ -60,14 +60,31 @@ function PostList() {
                                                         });
 
                                                     let newPosts = [...posts];
-                                                    newPosts = newPosts.filter((newPost) => {
+                                                    for (let newPost of newPosts) {
                                                         if (newPost.id === post.id) {
-                                                            return post.reflect = true;
+                                                            post.reflect = true;
                                                         }
-                                                    })
+                                                    }
                                                     setPosts(newPosts);
                                                 } else {
-                                                    console.log('unchecked');
+                                                    axios.post("/posts/" + post.postId + "/uncheck")
+                                                        .then(() => {
+                                                            alert("확인 취소하였습니다!");
+                                                        })
+                                                        .catch((error) => {
+                                                            console.error("게시글 uncheck 중 에러 발생:", error.response ? error.response.data : error.message);
+                                                            if (error.response) {
+                                                                console.error("에러 상태 코드:", error.response.status);
+                                                            }
+                                                        });
+
+                                                    let newPosts = [...posts];
+                                                    for (let newPost of newPosts) {
+                                                        if (newPost.id === post.id) {
+                                                            post.reflect = false;
+                                                        }
+                                                    }
+                                                    setPosts(newPosts);
                                                 }
                                             }} />
                                         </div>
