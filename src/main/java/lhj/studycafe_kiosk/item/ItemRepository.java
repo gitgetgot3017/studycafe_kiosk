@@ -47,4 +47,8 @@ public class ItemRepository {
         return em.createQuery("select i from Item i group by i.itemType", Item.class)
                 .getResultList();
     }
+
+    public void deleteItem(Item item) {
+        em.remove(item);
+    }
 }

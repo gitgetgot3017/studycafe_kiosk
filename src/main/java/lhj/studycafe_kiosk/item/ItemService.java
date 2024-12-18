@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -42,5 +43,13 @@ public class ItemService {
             itemsPerItemTypes.add(new ItemsPerItemType(itemType, itemsPerItemType));
         }
         return itemsPerItemTypes;
+    }
+
+    public void removeItem(Long itemId) {
+
+        Optional<Item> itemOp = itemRepository.getItem(itemId);
+        if (itemOp.isPresent()) {
+            itemRepository.deleteItem(itemOp.get());
+        }
     }
 }

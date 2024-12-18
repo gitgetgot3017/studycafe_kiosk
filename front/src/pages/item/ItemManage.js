@@ -48,7 +48,24 @@ function ItemManage() {
                                             <li key={item.itemName}>상품 종류: {item.itemName + " " + item.price + "원"}
                                                 <span>
                                                     <button>수정</button>
-                                                    <button>삭제</button>
+                                                    <button onClick={() => {
+                                                        window.confirm("해당 상품을 삭제하시겠습니까?");
+
+                                                        axios.delete("/items/" + item.id)
+                                                            .then(() => {{
+                                                                alert("해당 상품이 삭제되었습니다!");
+                                                            }})
+                                                            .catch((error) => {
+                                                                console.error("상품 삭제 중 에러 발생:", error.response ? error.response.data : error.message);
+                                                                if (error.response) {
+                                                                    console.error("에러 상태 코드:", error.response.status);
+                                                                }
+                                                            });
+
+                                                            let newItems = [...items];
+                                                            newItems[i] = newItems[i].filter((newItem) => {return newItem.id !== item.id});
+                                                            setItems(newItems);
+                                                    }}>삭제</button>
                                                 </span>
                                             </li>
                                         );

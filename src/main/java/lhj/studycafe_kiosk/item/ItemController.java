@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -97,5 +98,11 @@ public class ItemController {
 
         List<ItemsPerItemType> itemsPerItemTypes = itemService.getItemCategory();
         return new ResponseEntity<>(itemsPerItemTypes, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{itemId}")
+    public void removeItem(@PathVariable("itemId") Long itemId) {
+
+        itemService.removeItem(itemId);
     }
 }
