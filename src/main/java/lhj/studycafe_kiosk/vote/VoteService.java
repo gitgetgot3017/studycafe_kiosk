@@ -2,6 +2,7 @@ package lhj.studycafe_kiosk.vote;
 
 import lhj.studycafe_kiosk.domain.*;
 import lhj.studycafe_kiosk.vote.dto.VoteRequest;
+import lhj.studycafe_kiosk.vote.dto.VoteResultDto;
 import lhj.studycafe_kiosk.vote.exception.AlreadyVoteException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -57,5 +58,10 @@ public class VoteService {
         if (!votes.isEmpty()) {
             throw new AlreadyVoteException("[" + voteTitle.getTitle() + "] 주제에 대해 이미 투표 완료하였습니다!");
         }
+    }
+
+    public List<VoteResultDto> checkVoteResult() {
+
+        return voteRepository.getVoteResult();
     }
 }

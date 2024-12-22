@@ -4,6 +4,7 @@ import lhj.studycafe_kiosk.domain.Member;
 import lhj.studycafe_kiosk.domain.VoteTitleWithOptions;
 import lhj.studycafe_kiosk.member.MemberRepository;
 import lhj.studycafe_kiosk.vote.dto.VoteRequest;
+import lhj.studycafe_kiosk.vote.dto.VoteResultDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -33,5 +34,12 @@ public class VoteController {
 
         Member member = memberRepository.getMember(memberId);
         voteService.vote(member, voteRequest);
+    }
+
+    @GetMapping("/result")
+    public HttpEntity<List<VoteResultDto>> checkVoteResult() {
+
+        List<VoteResultDto> voteResultDtoList = voteService.checkVoteResult();
+        return new ResponseEntity<>(voteResultDtoList, HttpStatus.OK);
     }
 }
