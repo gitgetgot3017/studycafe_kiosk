@@ -12,6 +12,7 @@ import ItemManage from "./pages/item/ItemManage";
 import OrderList from './pages/order/OrderList';
 import Order from './pages/order/Order';
 import PostList from './pages/post/PostList';
+import Vote from './pages/vote/VoteMain';
 import Vote from './pages/vote/Vote';
 import VoteResult from './pages/vote/VoteResult';
 import CouponList from './pages/coupon/CouponList';
@@ -37,6 +38,7 @@ function App() {
             <Route path="/orders" element={<OrderList></OrderList>} />
             <Route path="/orders/summary" element={<Order></Order>} />
             <Route path="/posts" element={<PostList></PostList>} />
+            <Route path="/votes" element={<VoteMain></VoteMain>} />
             <Route path="/votes" element={<Vote></Vote>} />
             <Route path="/votes/result" element={<VoteResult></VoteResult>} />
             <Route path="/coupons" element={<CouponList></CouponList>} />

@@ -91,10 +91,15 @@ function Main() {
                     </a>
                     {
                         state.login ?
+                        (state.memberGrade === "MEMBER" ?
                         <a onClick={() => {navigate("/votes")}} className="text-center text-dark" style={{textDecoration: "none"}}>
                             <i className="bi bi-list"></i>
                             <p className="small mb-0">투표</p>
                         </a> :
+                        <a onClick={() => {navigate("/votes/main")}} className="text-center text-dark" style={{textDecoration: "none"}}>
+                            <i className="bi bi-list"></i>
+                            <p className="small mb-0">투표</p>
+                        </a>) :
                         null
                     }
                     {
