@@ -39,6 +39,14 @@ public class VoteRepository {
         return em.find(VoteOption.class, voteOptionId);
     }
 
+    public void saveVoteTitle(VoteTitle voteTitle) {
+        em.persist(voteTitle);
+    }
+
+    public void saveVoteOption(VoteOption voteOption) {
+        em.persist(voteOption);
+    }
+
     public void saveVote(Vote vote) {
         em.persist(vote);
     }

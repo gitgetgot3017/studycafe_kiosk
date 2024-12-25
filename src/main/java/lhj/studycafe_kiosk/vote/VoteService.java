@@ -1,6 +1,7 @@
 package lhj.studycafe_kiosk.vote;
 
 import lhj.studycafe_kiosk.domain.*;
+import lhj.studycafe_kiosk.vote.dto.VoteRegisterDto;
 import lhj.studycafe_kiosk.vote.dto.VoteRequest;
 import lhj.studycafe_kiosk.vote.dto.VoteResultDto;
 import lhj.studycafe_kiosk.vote.exception.AlreadyVoteException;
@@ -63,5 +64,21 @@ public class VoteService {
     public List<VoteResultDto> checkVoteResult() {
 
         return voteRepository.getVoteResult();
+    }
+
+    public void registerVote(VoteRegisterDto voteRegisterDto) {
+
+        // VoteTitle 등록
+        VoteTitle voteTitle = new VoteTitle(voteRegisterDto.getVoteTitle(), voteRegisterDto.isMultiple());
+        voteRepository.saveVoteTitle(voteTitle);
+
+        // 여러 VoteOption 등록
+        for (String voteOptionContent : voteRegisterDto.getVoteOptions()) {
+            if (voteOptionContent.equals("")) {
+                continue;
+            }
+            VoteOption voteOption = new VoteOption(voteTitle, voteOptionContent);
+            voteRepository.saveVoteOption(voteOption);
+        }
     }
 }

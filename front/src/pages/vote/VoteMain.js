@@ -9,8 +9,8 @@ function VoteMain() {
         <div className="container">
             <h3>관리자 투표 페이지</h3>
             <div className="link-group">
-                <a onClick={() => {navigate("/vote/register")}}>투표 등록하기</a>
-                <a onClick={() => {navigate("/vote/result")}}>투표 결과 조회하기</a>
+                <a onClick={() => {navigate("/votes/register")}}>투표 등록하기</a>
+                <a onClick={() => {navigate("/votes/result")}}>투표 결과 조회하기</a>
             </div>
         </div>
     );

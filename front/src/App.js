@@ -15,6 +15,7 @@ import PostList from './pages/post/PostList';
 import Vote from './pages/vote/Vote';
 import VoteMain from './pages/vote/VoteMain';
 import VoteResult from './pages/vote/VoteResult';
+import VoteRegister from './pages/vote/VoteRegister';
 import CouponList from './pages/coupon/CouponList';
 import ChangeInfoMain from './pages/member/ChangeInfoMain';
 import ChangeInfoGeneral from './pages/member/ChangeInfoGeneral';
@@ -41,6 +42,7 @@ function App() {
             <Route path="/votes" element={<Vote></Vote>} />
             <Route path="/votes/main" element={<VoteMain></VoteMain>} />
             <Route path="/votes/result" element={<VoteResult></VoteResult>} />
+            <Route path="/votes/register" element={<VoteRegister></VoteRegister>} />
             <Route path="/coupons" element={<CouponList></CouponList>} />
             <Route path="/members/info" element={<ChangeInfoMain></ChangeInfoMain>} />
             <Route path="/members/info/general" element={<ChangeInfoGeneral></ChangeInfoGeneral>} />

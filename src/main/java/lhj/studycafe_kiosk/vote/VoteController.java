@@ -3,6 +3,7 @@ package lhj.studycafe_kiosk.vote;
 import lhj.studycafe_kiosk.domain.Member;
 import lhj.studycafe_kiosk.domain.VoteTitleWithOptions;
 import lhj.studycafe_kiosk.member.MemberRepository;
+import lhj.studycafe_kiosk.vote.dto.VoteRegisterDto;
 import lhj.studycafe_kiosk.vote.dto.VoteRequest;
 import lhj.studycafe_kiosk.vote.dto.VoteResultDto;
 import lombok.RequiredArgsConstructor;
@@ -41,5 +42,11 @@ public class VoteController {
 
         List<VoteResultDto> voteResultDtoList = voteService.checkVoteResult();
         return new ResponseEntity<>(voteResultDtoList, HttpStatus.OK);
+    }
+
+    @PostMapping("/register")
+    public void registerVote(@RequestBody @Validated VoteRegisterDto voteRegisterDto) {
+
+        voteService.registerVote(voteRegisterDto);
     }
 }

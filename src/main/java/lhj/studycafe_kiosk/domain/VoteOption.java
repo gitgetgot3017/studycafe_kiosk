@@ -2,9 +2,11 @@ package lhj.studycafe_kiosk.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class VoteOption {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,4 +18,9 @@ public class VoteOption {
     private VoteTitle voteTitle;
 
     private String content;
+
+    public VoteOption(VoteTitle voteTitle, String content) {
+        this.voteTitle = voteTitle;
+        this.content = content;
+    }
 }
