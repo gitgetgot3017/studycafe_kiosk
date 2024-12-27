@@ -21,5 +21,7 @@ public class Reservation {
 
     private LocalDateTime reservationDateTime;
 
-    private boolean used;
+    private boolean used; // 예약이 실제 사용으로 이어졌는지 여부
+
+    private boolean finished; // 예약 서비스가 종료되었는지 여부
 }
