@@ -2,6 +2,7 @@ package lhj.studycafe_kiosk.reservation;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import lhj.studycafe_kiosk.domain.Member;
 import lhj.studycafe_kiosk.domain.Reservation;
 import lhj.studycafe_kiosk.domain.Seat;
 import org.springframework.stereotype.Repository;
@@ -19,6 +20,12 @@ public class ReservationRepository {
     public Reservation getAlreadyReservedSeat(Seat seat) {
         return em.createQuery("select r from Reservation r where r.finished = false and r.seat = :seat", Reservation.class)
                 .setParameter("seat", seat)
+                .getSingleResult();
+    }
+
+    public Reservation getAlreadyReserved(Member member) {
+        return em.createQuery("select r from Reservation r where r.finished = false and r.member = :member", Reservation.class)
+                .setParameter("member", member)
                 .getSingleResult();
     }
 }
