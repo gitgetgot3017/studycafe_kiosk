@@ -1,6 +1,9 @@
 package lhj.studycafe_kiosk.seat;
 
 import lhj.studycafe_kiosk.domain.*;
+import lhj.studycafe_kiosk.notification.NotificationService;
+import lhj.studycafe_kiosk.reservation.ReservationRepository;
+import lhj.studycafe_kiosk.reservation.exception.AlreadyReservedSeatException;
 import lhj.studycafe_kiosk.subscription.SubscriptionRepository;
 import lhj.studycafe_kiosk.subscription.SubscriptionService;
 import lhj.studycafe_kiosk.subscription.exception.ExpiredSubscriptionException;
@@ -26,6 +29,8 @@ public class SeatService {
     private final SeatRepository seatRepository;
     private final UsageStatusService usageStatusService;
     private final UsageStatusRepository usageStatusRepository;
+    private final ReservationRepository reservationRepository;
+    private final NotificationService notificationService;
 
     public void chooseSeat(Member member, Seat seat) {
 
@@ -86,6 +91,14 @@ public class SeatService {
 
         if (remainderTime == Duration.ZERO || remainderTime.isNegative()) {
             subscriptionService.changeSubscriptionInvalid(subscription);
+        }
+
+        // 해당 좌석이 예약된 좌석이라면 예약에 대한 처리를 해준다.
+        try {
+            Reservation reservation = reservationRepository.getAlreadyReservedSeat(seat);
+            notificationService.send(reservation.getMember().getId()); // 예약한 회원에게 알림을 준다.
+        } catch (EmptyResultDataAccessException e) {
+            // 예약된 좌석이 아닌 경우
         }
 
         return remainderTime;
