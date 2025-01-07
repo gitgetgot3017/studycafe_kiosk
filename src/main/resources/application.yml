@@ -15,3 +15,9 @@ spring:
 logging:
   level:
     org.hibernate.SQL: debug
+
+coolsms:
+  api:
+    key: NCSPTEMKNXZCQEN3
+    secret: J8RTIKM6EKDXF0ENVMLZA1PFF3UPIQYS
+    number: 01062802073
