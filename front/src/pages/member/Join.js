@@ -7,6 +7,7 @@ function Join() {
     let [password, setPassword] = useState('');
     let [optionalClause, setOptionalClause] = useState(false);
     let [errorMsg, setErrorMsg] = useState('');
+    let [phoneErrorMsg, setPhoneErrorMsg] = useState('');
 
     function handleSubmit(e) {
         e.preventDefault(); // 폼의 기본 제출 방지
@@ -39,7 +40,24 @@ function Join() {
                     <div className="mb-3">
                         <div className="input-group">
                             <input type="tel" id="phone" name="phone" className="form-control" placeholder="휴대폰번호 (-없이입력)" required onChange={(e) => {setPhone(e.target.value)}} />
-                            <button type="button" className="btn btn-outline-primary">인증번호 전송</button>
+                            <button type="button" className="btn btn-outline-primary" onClick={() => {
+                                axios.post("/sms", {
+                                        toPhoneNumber: phone
+                                    }, {
+                                        headers: { "Content-Type": "application/json" }
+                                    })
+                                    .then(() => {{
+                                        alert("인증번호를 전송하였습니다. 5분 내에 입력해주세요.");
+                                    }})
+                                    .catch((error) => {
+                                        console.error("인증 번호 전송 중 에러 발생:", error.response ? error.response.data : error.message);
+                                        if (error.response) {
+                                            console.error("에러 상태 코드:", error.response.status);
+                                        }
+                                        setPhoneErrorMsg(error.response.data.message);
+                                    });
+                            }}>인증번호 전송</button>
+                            <div style={{color: "red"}}>{ phoneErrorMsg }</div>
                         </div>
                     </div>
                     { /* 인증번호 입력 및 인증 버튼 */ }
