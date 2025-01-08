@@ -5,8 +5,8 @@ import jakarta.servlet.http.HttpSession;
 import lhj.studycafe_kiosk.domain.Member;
 import lhj.studycafe_kiosk.member.dto.*;
 import lhj.studycafe_kiosk.member.exception.*;
-import lhj.studycafe_kiosk.seat.exception.EmptySeatOutException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,7 +53,7 @@ public class MemberController {
             String subPassword = password.substring(0, 2); // 비밀번호 앞 2자리 추출
             memberRepository.getExistMember(subPhone, subPassword);
             throw new DuplicateMemberException("비밀번호를 변경해주세요.");
-        } catch (EmptySeatOutException e) {
+        } catch (EmptyResultDataAccessException e) {
             // 전화번호 뒤 4자리 + 비밀번호 앞 2자리가 같은 회원이 존재하지 않는 경우. 즉, 회원가입 가능한 경우
         }
     }
