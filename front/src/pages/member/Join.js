@@ -10,6 +10,7 @@ function Join() {
     let [errorMsg, setErrorMsg] = useState('');
     let [phoneErrorMsg, setPhoneErrorMsg] = useState('');
     let [verificationErrorMsg, setVerificationErrorMsg] = useState('');
+    let [pwdMismatchErrorMsg, setPwdMismatchErrorMsg] = useState('');
 
     function handleSubmit(e) {
         e.preventDefault(); // 폼의 기본 제출 방지
@@ -97,9 +98,16 @@ function Join() {
                     { /* 비밀번호 재입력 필드 */ }
                     <div className="mb-3">
                         <div className="input-group">
-                            <input type="tel" id="phone" name="phone" className="form-control" placeholder="비밀번호 확인 (숫자 6자리)" required />
+                            <input type="tel" id="phone" name="phone" className="form-control" placeholder="비밀번호 확인 (숫자 6자리)" required onChange={(e) => {
+                                if (e.target.value !== password) {
+                                    setPwdMismatchErrorMsg("비밀번호가 일치하지 않습니다.");
+                                } else {
+                                    setPwdMismatchErrorMsg("");
+                                }
+                            }} />
                         </div>
                     </div>
+                    <div style={{color: "red"}}>{ pwdMismatchErrorMsg }</div>
                     <p style={{color: "red"}}>{ errorMsg }</p>
                     { /* 약관 동의 및 약관 보기 모달 */ }
                     <div className="mb-3">
