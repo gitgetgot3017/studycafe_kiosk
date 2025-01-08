@@ -4,11 +4,14 @@ import lhj.studycafe_kiosk.sms.dto.SendSnsFailDto;
 import lhj.studycafe_kiosk.sms.dto.VerifySmsFailDto;
 import lhj.studycafe_kiosk.sms.exception.SendSmsFailException;
 import lhj.studycafe_kiosk.sms.exception.VerificationCodeMismatchException;
+import lhj.studycafe_kiosk.sms.exception.VerificationCodeTimeLimitException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import javax.management.RuntimeErrorException;
 
 @RestControllerAdvice(assignableTypes = SmsController.class)
 public class SmsExControllerAdvice {
@@ -26,8 +29,8 @@ public class SmsExControllerAdvice {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler
-    public VerifySmsFailDto verifySmsFail(VerificationCodeMismatchException e) {
+    @ExceptionHandler({VerificationCodeMismatchException.class, VerificationCodeTimeLimitException.class})
+    public VerifySmsFailDto verifySmsFail(RuntimeException e) {
         return new VerifySmsFailDto("번호 인증", e.getMessage());
     }
 }

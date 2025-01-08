@@ -1,6 +1,7 @@
 package lhj.studycafe_kiosk.sms;
 
 import jakarta.annotation.PostConstruct;
+import lhj.studycafe_kiosk.sms.dto.VerificationInfo;
 import lhj.studycafe_kiosk.sms.exception.SendSmsFailException;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.exception.NurigoEmptyResponseException;
@@ -11,6 +12,7 @@ import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,7 +29,7 @@ public class SmsService {
     @Value("${coolsms.api.number}")
     private String fromPhoneNumber;
 
-    private Map<String, String> verificationStore = new ConcurrentHashMap<>();
+    private Map<String, VerificationInfo> verificationStore = new ConcurrentHashMap<>();
 
     private DefaultMessageService defaultMessageService;
 
@@ -47,7 +49,7 @@ public class SmsService {
         message.setTo(toPhoneNumber);
 
         String verificationCode = generateRandomNumber();
-        verificationStore.put(toPhoneNumber, verificationCode);
+        verificationStore.put(toPhoneNumber, new VerificationInfo(verificationCode, LocalDateTime.now().plusMinutes(5)));
         message.setText("[인증번호] " + verificationCode + " 입니다.");
 
         try {
@@ -61,8 +63,19 @@ public class SmsService {
         return String.valueOf(new Random().nextInt(900000) + 100000);
     }
 
-    public boolean verifyCode(String phone, String verificationCode) {
-        String storedCode = verificationStore.get(phone);
-        return storedCode != null && storedCode.equals(verificationCode);
+    public int verifyCode(String phone, String verificationCode) {
+
+        VerificationInfo verificationInfo = verificationStore.get(phone);
+        String storedCode = verificationInfo.getVerificationCode();
+        LocalDateTime expiredDateTime = verificationInfo.getExpiredDateTime();
+        LocalDateTime curDateTime = LocalDateTime.now();
+
+        if (storedCode == null || !storedCode.equals(verificationCode)) {
+            return -1;
+        } else if (curDateTime.isAfter(expiredDateTime)) {
+            return -2;
+        } else {
+            return 1;
+        }
     }
 }
