@@ -4,10 +4,12 @@ import {useState} from "react";
 function Join() {
 
     let [phone, setPhone] = useState('');
+    let [verificationCode, setVerificationCode] = useState('');
     let [password, setPassword] = useState('');
     let [optionalClause, setOptionalClause] = useState(false);
     let [errorMsg, setErrorMsg] = useState('');
     let [phoneErrorMsg, setPhoneErrorMsg] = useState('');
+    let [verificationErrorMsg, setVerificationErrorMsg] = useState('');
 
     function handleSubmit(e) {
         e.preventDefault(); // 폼의 기본 제출 방지
@@ -63,8 +65,27 @@ function Join() {
                     { /* 인증번호 입력 및 인증 버튼 */ }
                     <div className="mb-3">
                         <div className="input-group">
-                            <input type="text" id="auth-code" name="auth-code" className="form-control" placeholder="인증번호 입력" required />
-                            <button type="button" className="btn btn-outline-primary">인증</button>
+                            <input type="text" id="auth-code" name="auth-code" className="form-control" placeholder="인증번호 입력" required onChange={(e) => {setVerificationCode(e.target.value)}} />
+                            <button type="button" className="btn btn-outline-primary" onClick={() => {
+                                axios.post("/sms/verify", {
+                                        phone: phone,
+                                        verificationCode: verificationCode
+                                    }, {
+                                        headers: { "Content-Type": "application/json" }
+                                    })
+                                    .then(() => {{
+                                        alert("인증에 성공하였습니다.");
+                                        setVerificationErrorMsg('');
+                                    }})
+                                    .catch((error) => {
+                                        console.error("번호 인증 중 에러 발생:", error.response ? error.response.data : error.message);
+                                        if (error.response) {
+                                            console.error("에러 상태 코드:", error.response.status);
+                                        }
+                                        setVerificationErrorMsg(error.response.data.message);
+                                    });
+                            }}>인증</button>
+                            <div style={{color: "red"}}>{ verificationErrorMsg }</div>
                         </div>
                     </div>
                     { /* 비밀번호 입력 필드 */ }

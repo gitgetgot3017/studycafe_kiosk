@@ -2,7 +2,6 @@ package lhj.studycafe_kiosk.sms;
 
 import jakarta.annotation.PostConstruct;
 import lhj.studycafe_kiosk.sms.exception.SendSmsFailException;
-import lombok.RequiredArgsConstructor;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.exception.NurigoEmptyResponseException;
 import net.nurigo.sdk.message.exception.NurigoMessageNotReceivedException;
@@ -13,6 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class SmsService {
@@ -26,14 +27,16 @@ public class SmsService {
     @Value("${coolsms.api.number}")
     private String fromPhoneNumber;
 
+    private Map<String, String> verificationStore = new ConcurrentHashMap<>();
+
     private DefaultMessageService defaultMessageService;
 
     @PostConstruct
     public void init() {
          defaultMessageService = NurigoApp.INSTANCE.initialize(
-                apiKey,
-                apiSecret,
-                "https://api.coolsms.co.kr"
+            apiKey,
+            apiSecret,
+            "https://api.coolsms.co.kr"
         );
     }
 
@@ -42,7 +45,10 @@ public class SmsService {
         Message message = new Message();
         message.setFrom(fromPhoneNumber);
         message.setTo(toPhoneNumber);
-        message.setText("[인증번호] " + generateRandomNumber() + " 입니다.");
+
+        String verificationCode = generateRandomNumber();
+        verificationStore.put(toPhoneNumber, verificationCode);
+        message.setText("[인증번호] " + verificationCode + " 입니다.");
 
         try {
             defaultMessageService.send(message);
@@ -53,5 +59,10 @@ public class SmsService {
 
     private String generateRandomNumber() {
         return String.valueOf(new Random().nextInt(900000) + 100000);
+    }
+
+    public boolean verifyCode(String phone, String verificationCode) {
+        String storedCode = verificationStore.get(phone);
+        return storedCode != null && storedCode.equals(verificationCode);
     }
 }

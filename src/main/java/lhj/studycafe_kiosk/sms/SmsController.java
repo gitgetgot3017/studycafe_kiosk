@@ -2,6 +2,9 @@ package lhj.studycafe_kiosk.sms;
 
 import lhj.studycafe_kiosk.sms.dto.SendSnsRequestDto;
 import lhj.studycafe_kiosk.sms.dto.SendSnsSuccessDto;
+import lhj.studycafe_kiosk.sms.dto.VerifySmsRequestDto;
+import lhj.studycafe_kiosk.sms.dto.VerifySmsSuccessDto;
+import lhj.studycafe_kiosk.sms.exception.VerificationCodeMismatchException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -23,6 +26,18 @@ public class SmsController {
 
         SendSnsSuccessDto sendSnsSuccessDto = new SendSnsSuccessDto("인증번호가 전송되었습니다.");
         return new ResponseEntity<>(sendSnsSuccessDto, HttpStatus.OK);
+    }
+
+    @PostMapping("/verify")
+    public HttpEntity<VerifySmsSuccessDto> verifyCode(@RequestBody @Validated VerifySmsRequestDto verifySmsRequestDto) {
+
+        boolean verificationResult = smsService.verifyCode(verifySmsRequestDto.getPhone(), verifySmsRequestDto.getVerificationCode());
+        if (!verificationResult) {
+            throw new VerificationCodeMismatchException("인증번호를 잘못 입력하셨습니다.");
+        }
+
+        VerifySmsSuccessDto verifySnsSuccessDto = new VerifySmsSuccessDto("번호 인증에 성공하셨습니다.");
+        return new ResponseEntity<>(verifySnsSuccessDto, HttpStatus.OK);
     }
 }
 
