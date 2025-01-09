@@ -12,6 +12,7 @@ function Join() {
     let [phoneErrorMsg, setPhoneErrorMsg] = useState('');
     let [verificationErrorMsg, setVerificationErrorMsg] = useState('');
     let [pwdMismatchErrorMsg, setPwdMismatchErrorMsg] = useState('');
+    let [checks, setChecks] = useState([false, false, false, false]);
 
     function handleSubmit(e) {
         e.preventDefault(); // 폼의 기본 제출 방지
@@ -120,23 +121,70 @@ function Join() {
                     { /* 약관 동의 및 약관 보기 모달 */ }
                     <div className="mb-3">
                         <div className="form-check">
-                            <input type="checkbox" id="agree-all" className="form-check-input" />
+                            <input type="checkbox" id="agree-all" className="form-check-input" checked={checks[0]} onChange={(e) => {
+                                if (e.target.checked) {
+                                    setChecks([true, true, true, true]);
+                                } else {
+                                    setChecks([false, false, false, false]);
+                                }
+                            }} />
                             <label htmlFor="agree-all" className="form-check-label fw-bold">전체 동의</label>
                         </div>
                         <div className="form-check">
-                            <input type="checkbox" id="agree-terms" name="agree-terms" className="form-check-input" required />
+                            <input type="checkbox" id="agree-terms" name="agree-terms" className="form-check-input" required checked={checks[1]} onChange={(e) => {
+                                let copy = [...checks];
+                                if (e.target.checked) {
+                                    copy[1] = true;
+
+                                    if (copy[2] && copy[3]) {
+                                        copy[0] = true;
+                                    }
+                                } else {
+                                    copy[1] = false;
+                                    copy[0] = false;
+                                }
+                                setChecks(copy);
+                            }}/>
                             <label htmlFor="agree-terms" className="form-check-label">이용 약관에 동의합니다.</label>
                             <button type="button" className="btn btn-link p-0 ms-2" data-bs-toggle="modal" data-bs-target="#termsModal">약관 보기</button>
                         </div>
                         <div className="form-check">
-                            <input type="checkbox" id="agree-privacy" name="agree-privacy" className="form-check-input" required />
+                            <input type="checkbox" id="agree-privacy" name="agree-privacy" className="form-check-input" required checked={checks[2]} onChange={(e) => {
+                                let copy = [...checks];
+                                if (e.target.checked) {
+                                    copy[2] = true;
+
+                                    if (copy[1] && copy[3]) {
+                                        copy[0] = true;
+                                    }
+                                } else {
+                                    copy[2] = false;
+                                    copy[0] = false;
+                                }
+                                setChecks(copy);
+                            }}/>
                             <label htmlFor="agree-privacy" className="form-check-label">개인정보 처리방침에 동의합니다.</label>
                             <button type="button" className="btn btn-link p-0 ms-2" data-bs-toggle="modal"
                                     data-bs-target="#privacyModal">약관 보기
                             </button>
                         </div>
                         <div className="form-check">
-                            <input type="checkbox" id="agree-marketing" name="agree-marketing" className="form-check-input" onClick={(e) => {setOptionalClause(e.target.checked)}} />
+                            <input type="checkbox" id="agree-marketing" name="agree-marketing" className="form-check-input" checked={checks[3]} onChange={(e) => {
+                                setOptionalClause(e.target.checked);
+
+                                let copy = [...checks];
+                                if (e.target.checked) {
+                                    copy[3] = true;
+
+                                    if (copy[1] && copy[2]) {
+                                        copy[0] = true;
+                                    }
+                                } else {
+                                    copy[3] = false;
+                                    copy[0] = false;
+                                }
+                                setChecks(copy);
+                            }} />
                             <label htmlFor="agree-marketing" className="form-check-label">마케팅 정보 수신에 동의합니다. (선택)</label>
                             <button type="button" className="btn btn-link p-0 ms-2" data-bs-toggle="modal" data-bs-target="#privacyModal">약관 보기</button>
                         </div>
