@@ -66,6 +66,10 @@ public class SmsService {
     public int verifyCode(String phone, String verificationCode) {
 
         VerificationInfo verificationInfo = verificationStore.get(phone);
+        if (verificationInfo == null) {
+            return -1;
+        }
+
         String storedCode = verificationInfo.getVerificationCode();
         LocalDateTime expiredDateTime = verificationInfo.getExpiredDateTime();
         LocalDateTime curDateTime = LocalDateTime.now();

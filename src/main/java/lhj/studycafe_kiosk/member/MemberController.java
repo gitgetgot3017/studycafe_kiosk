@@ -64,8 +64,8 @@ public class MemberController {
 
     private void validateVerified(String phone, String verificationCode) {
 
-        VerificationInfo storedCode = smsService.getVerificationStore().get(phone);
-        if (storedCode == null || !storedCode.equals(verificationCode)) {
+        VerificationInfo verificationInfo = smsService.getVerificationStore().get(phone);
+        if (verificationInfo == null || verificationInfo.getVerificationCode() == null || !verificationInfo.getVerificationCode().equals(verificationCode)) {
             throw new NotVerifiedException("휴대폰 번호 인증을 해주세요.");
         }
     }
