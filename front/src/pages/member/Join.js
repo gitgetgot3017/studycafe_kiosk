@@ -5,6 +5,7 @@ function Join() {
 
     let [phone, setPhone] = useState('');
     let [verificationCode, setVerificationCode] = useState('');
+    let [verified, setVerified] = useState(false);
     let [password, setPassword] = useState('');
     let [optionalClause, setOptionalClause] = useState(false);
     let [errorMsg, setErrorMsg] = useState('');
@@ -15,8 +16,14 @@ function Join() {
     function handleSubmit(e) {
         e.preventDefault(); // 폼의 기본 제출 방지
 
+        if (!verified) {
+            alert("휴대폰 번호 인증을 완료해야 합니다!");
+            return;
+        }
+
         axios.post("/members/join", {
             phone: phone,
+            verificationCode: verificationCode,
             password: password,
             optionalClause: optionalClause
         }, {
@@ -77,6 +84,7 @@ function Join() {
                                     .then(() => {{
                                         alert("인증에 성공하였습니다.");
                                         setVerificationErrorMsg('');
+                                        setVerified(true);
                                     }})
                                     .catch((error) => {
                                         console.error("번호 인증 중 에러 발생:", error.response ? error.response.data : error.message);

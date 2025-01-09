@@ -5,6 +5,8 @@ import jakarta.servlet.http.HttpSession;
 import lhj.studycafe_kiosk.domain.Member;
 import lhj.studycafe_kiosk.member.dto.*;
 import lhj.studycafe_kiosk.member.exception.*;
+import lhj.studycafe_kiosk.sms.SmsService;
+import lhj.studycafe_kiosk.sms.dto.VerificationInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpEntity;
@@ -24,12 +26,14 @@ public class MemberController {
 
     private final MemberService memberService;
     private final MemberRepository memberRepository;
+    private final SmsService smsService;
 
     @PostMapping("/join")
     public HttpEntity<JoinResponse> join(@RequestBody @Validated JoinRequest joinRequest) {
 
         validateDuplicatePhone(joinRequest.getPhone());
         validateDuplicateMemberInfo(joinRequest.getPhone(), joinRequest.getPassword());
+        validateVerified(joinRequest.getPhone(), joinRequest.getVerificationCode());
 
         Member member = changeJoinRequestToMember(joinRequest);
         memberService.join(member);
@@ -55,6 +59,14 @@ public class MemberController {
             throw new DuplicateMemberException("비밀번호를 변경해주세요.");
         } catch (EmptyResultDataAccessException e) {
             // 전화번호 뒤 4자리 + 비밀번호 앞 2자리가 같은 회원이 존재하지 않는 경우. 즉, 회원가입 가능한 경우
+        }
+    }
+
+    private void validateVerified(String phone, String verificationCode) {
+
+        VerificationInfo storedCode = smsService.getVerificationStore().get(phone);
+        if (storedCode == null || !storedCode.equals(verificationCode)) {
+            throw new NotVerifiedException("휴대폰 번호 인증을 해주세요.");
         }
     }
 

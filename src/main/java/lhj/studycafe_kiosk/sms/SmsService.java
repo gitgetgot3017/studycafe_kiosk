@@ -78,4 +78,8 @@ public class SmsService {
             return 1;
         }
     }
+
+    public Map<String, VerificationInfo> getVerificationStore() {
+        return verificationStore;
+    }
 }

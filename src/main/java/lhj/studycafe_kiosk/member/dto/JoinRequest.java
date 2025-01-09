@@ -12,6 +12,9 @@ public class JoinRequest {
     private String phone;
 
     @Pattern(regexp = "^[0-9]{6}$")
+    private String verificationCode;
+
+    @Pattern(regexp = "^[0-9]{6}$")
     @NotNull
     private String password;
 
