@@ -63,4 +63,8 @@ public class MemberRepository {
     public void updatePassword(Member member, String newPassword) {
         member.setPassword(newPassword);
     }
+
+    public void updatePhone(Member member, String phone) {
+        member.setPhone(phone);
+    }
 }

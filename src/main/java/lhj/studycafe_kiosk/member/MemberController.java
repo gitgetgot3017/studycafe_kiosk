@@ -7,6 +7,7 @@ import lhj.studycafe_kiosk.member.dto.*;
 import lhj.studycafe_kiosk.member.exception.*;
 import lhj.studycafe_kiosk.sms.SmsService;
 import lhj.studycafe_kiosk.sms.dto.VerificationInfo;
+import lhj.studycafe_kiosk.sms.exception.VerificationCodeTimeLimitException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpEntity;
@@ -16,6 +17,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -178,16 +180,8 @@ public class MemberController {
         return new ResponseEntity(new FindPasswordUuid(uuid), HttpStatus.OK);
     }
 
-    private void validateVerified(String phone, String verificationCode) {
-
-        VerificationInfo verificationInfo = smsService.getVerificationStore().get(phone);
-        if (verificationInfo == null || verificationInfo.getVerificationCode() == null || !verificationInfo.getVerificationCode().equals(verificationCode)) {
-            throw new NotVerifiedException("휴대폰 번호 인증을 해주세요.");
-        }
-    }
-
     @PostMapping("/find-password/password")
-    public void changePassword(@RequestBody @Validated FindPasswordMainRequest findPasswordMainRequest) {
+    public void findPassword(@RequestBody @Validated FindPasswordMainRequest findPasswordMainRequest) {
 
         String phone = uuidPhone.get(findPasswordMainRequest.getUuid());
         List<Member> member = memberRepository.getJoinMember(phone);
@@ -196,5 +190,24 @@ public class MemberController {
         }
 
         memberService.changePassword(member.get(0), findPasswordMainRequest.getPassword());
+    }
+
+    @PatchMapping("/info/phone")
+    public void changePhone(@SessionAttribute("loginMember") Long memberId, @RequestBody @Validated FindPasswordByPhoneRequest findPasswordByPhoneRequest) {
+
+        validateVerified(findPasswordByPhoneRequest.getPhone(), findPasswordByPhoneRequest.getVerificationCode());
+
+        Member member = memberRepository.getMember(memberId);
+        memberService.changePhone(member, findPasswordByPhoneRequest.getPhone());
+    }
+
+    private void validateVerified(String phone, String verificationCode) {
+
+        VerificationInfo verificationInfo = smsService.getVerificationStore().get(phone);
+        if (verificationInfo == null || verificationInfo.getVerificationCode() == null || !verificationInfo.getVerificationCode().equals(verificationCode)) {
+            throw new NotVerifiedException("휴대폰 번호 인증을 해주세요.");
+        } else if (LocalDateTime.now().isAfter(verificationInfo.getExpiredDateTime())) {
+            throw new VerificationCodeTimeLimitException("인증 시간이 경과하였습니다.");
+        }
     }
 }

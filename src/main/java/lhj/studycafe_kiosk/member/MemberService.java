@@ -56,4 +56,9 @@ public class MemberService {
 
         memberRepository.updatePassword(member, newPassword);
     }
+
+    public void changePhone(Member member, String phone) {
+
+        memberRepository.updatePhone(member, phone);
+    }
 }

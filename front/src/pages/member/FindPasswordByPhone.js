@@ -90,6 +90,7 @@ function FindPasswordByPhone() {
                                 if (error.response) {
                                     console.error("에러 상태 코드:", error.response.status);
                                 }
+                                alert(error.response.data.message);
                             });
                     }}>다음</button>
                 </form>

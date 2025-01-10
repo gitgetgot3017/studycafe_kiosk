@@ -5,6 +5,7 @@ import lhj.studycafe_kiosk.member.dto.FindMemberFailResponse;
 import lhj.studycafe_kiosk.member.dto.JoinFailResponse;
 import lhj.studycafe_kiosk.member.dto.LoginFailResponse;
 import lhj.studycafe_kiosk.member.exception.*;
+import lhj.studycafe_kiosk.sms.exception.VerificationCodeTimeLimitException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -22,7 +23,7 @@ public class MemberExControllerAdvice {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({DuplicatePhoneException.class, DuplicateMemberException.class, NotVerifiedException.class})
+    @ExceptionHandler({DuplicatePhoneException.class, DuplicateMemberException.class, NotVerifiedException.class, VerificationCodeTimeLimitException.class})
     public JoinFailResponse joinFail(RuntimeException e) {
         return new JoinFailResponse("회원가입", e.getMessage());
     }
