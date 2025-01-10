@@ -1,6 +1,7 @@
 import axios from "axios";
 import {useSelector} from "react-redux";
 import {useState} from "react";
+import {useNavigate} from "react-router-dom";
 
 function FindPasswordMain() {
 
@@ -8,6 +9,7 @@ function FindPasswordMain() {
     let [pwdMismatchErrorMsg, setPwdMismatchErrorMsg] = useState('');
 
     let state = useSelector((state) => {return state});
+    let navigate = useNavigate();
 
     return (
         <div className="bg-dark d-flex align-items-center justify-content-center" style={{height: "100vh"}}>
@@ -37,6 +39,7 @@ function FindPasswordMain() {
                             })
                             .then(() => {{
                                 alert("비밀번호가 변경되었습니다!");
+                                navigate("/members/login");
                             }})
                             .catch((error) => {
                                 console.error("비밀번호 변경(2) 중 에러 발생:", error.response ? error.response.data : error.message);
