@@ -66,6 +66,17 @@ let orderItemPrice = createSlice({
 })
 export let { setOrderItemPrice } = orderItemPrice.actions;
 
+let uuid = createSlice({
+    name: 'uuid',
+    initialState: '',
+    reducers: {
+        setUuid(state, action) {
+            return state = action.payload;
+        }
+    }
+})
+export let { setUuid } = uuid.actions;
+
 export default configureStore({
     reducer: {
         userInOut: userInOut.reducer,
@@ -73,6 +84,7 @@ export default configureStore({
         memberInfo: memberInfo.reducer,
         memberGrade: memberGrade.reducer,
         orderItem: orderItem.reducer,
-        orderItemPrice: orderItemPrice.reducer
+        orderItemPrice: orderItemPrice.reducer,
+        uuid: uuid.reducer
     }
 })

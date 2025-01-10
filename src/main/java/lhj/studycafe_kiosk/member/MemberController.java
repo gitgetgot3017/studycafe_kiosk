@@ -16,8 +16,12 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,6 +31,8 @@ public class MemberController {
     private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final SmsService smsService;
+
+    private Map<String, String> uuidPhone = new ConcurrentHashMap<>();
 
     @PostMapping("/join")
     public HttpEntity<JoinResponse> join(@RequestBody @Validated JoinRequest joinRequest) {
@@ -59,14 +65,6 @@ public class MemberController {
             throw new DuplicateMemberException("비밀번호를 변경해주세요.");
         } catch (EmptyResultDataAccessException e) {
             // 전화번호 뒤 4자리 + 비밀번호 앞 2자리가 같은 회원이 존재하지 않는 경우. 즉, 회원가입 가능한 경우
-        }
-    }
-
-    private void validateVerified(String phone, String verificationCode) {
-
-        VerificationInfo verificationInfo = smsService.getVerificationStore().get(phone);
-        if (verificationInfo == null || verificationInfo.getVerificationCode() == null || !verificationInfo.getVerificationCode().equals(verificationCode)) {
-            throw new NotVerifiedException("휴대폰 번호 인증을 해주세요.");
         }
     }
 
@@ -162,5 +160,41 @@ public class MemberController {
                 throw new ChangeMemberInfoException();
             }
         }
+    }
+
+    @PostMapping("/find-password/phone")
+    public HttpEntity<FindPasswordUuid> findByPhone(@RequestBody @Validated FindPasswordByPhoneRequest findPasswordByPhoneRequest) {
+
+        List<Member> member = memberRepository.getJoinMember(findPasswordByPhoneRequest.getPhone());
+        if (member.size() < 1) {
+            throw new NotExistMemberException("존재하지 않는 회원입니다. 회원가입을 해주세요.");
+        }
+
+        validateVerified(findPasswordByPhoneRequest.getPhone(), findPasswordByPhoneRequest.getVerificationCode());
+
+        String uuid = UUID.randomUUID().toString();
+        uuidPhone.put(uuid, findPasswordByPhoneRequest.getPhone());
+
+        return new ResponseEntity(new FindPasswordUuid(uuid), HttpStatus.OK);
+    }
+
+    private void validateVerified(String phone, String verificationCode) {
+
+        VerificationInfo verificationInfo = smsService.getVerificationStore().get(phone);
+        if (verificationInfo == null || verificationInfo.getVerificationCode() == null || !verificationInfo.getVerificationCode().equals(verificationCode)) {
+            throw new NotVerifiedException("휴대폰 번호 인증을 해주세요.");
+        }
+    }
+
+    @PostMapping("/find-password/password")
+    public void changePassword(@RequestBody @Validated FindPasswordMainRequest findPasswordMainRequest) {
+
+        String phone = uuidPhone.get(findPasswordMainRequest.getUuid());
+        List<Member> member = memberRepository.getJoinMember(phone);
+        if (member.size() < 1) {
+            throw new NotExistMemberException("존재하지 않는 회원입니다. 회원가입을 해주세요.");
+        }
+
+        memberService.changePassword(member.get(0), findPasswordMainRequest.getPassword());
     }
 }

@@ -53,10 +53,10 @@ function Login() {
                         <label htmlFor="remember" className="form-check-label">로그인 상태 유지</label>
                     </div>
                     <div className="d-flex justify-content-between mb-4">
-                        <a href="/find-password" className="link-primary">비밀번호 찾기</a>
+                        <a onClick={() => {navigate("/members/find-password/phone");}} style={{cursor: "pointer"}}>비밀번호 찾기</a>
                     </div>
                     <button type="submit" className="btn btn-primary w-100 mb-2">로그인</button>
-                    <button type="button" className="btn btn-secondary w-100" onClick="window.location.href='/signup'">회원가입</button>
+                    <button type="button" className="btn btn-secondary w-100" onClick={() => {navigate("/members/join");}}>회원가입</button>
                 </form>
             </div>
         </div>

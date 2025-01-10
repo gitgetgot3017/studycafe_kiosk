@@ -59,4 +59,8 @@ public class MemberRepository {
                 .setParameter("subPassword", subPassword)
                 .getSingleResult();
     }
+
+    public void updatePassword(Member member, String newPassword) {
+        member.setPassword(newPassword);
+    }
 }

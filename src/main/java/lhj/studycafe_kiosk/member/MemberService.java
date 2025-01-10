@@ -51,4 +51,9 @@ public class MemberService {
 
         memberRepository.updateMember(memberId, type, changeMemberInfoRequest);
     }
+
+    public void changePassword(Member member, String newPassword) {
+
+        memberRepository.updatePassword(member, newPassword);
+    }
 }
