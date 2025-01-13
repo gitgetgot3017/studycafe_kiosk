@@ -7,6 +7,7 @@ import lhj.studycafe_kiosk.member.dto.ChangeMemberInfoRequest;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class MemberRepository {
@@ -22,6 +23,13 @@ public class MemberRepository {
          return em.createQuery("select m from Member m where m.phone = :phone", Member.class)
                 .setParameter("phone", phone)
                 .getResultList();
+    }
+
+    public Optional<Member> getSaltByPhone(String phone) {
+        Member member = em.createQuery("select m from Member m where m.phone = :phone", Member.class)
+                .setParameter("phone", phone)
+                .getSingleResult();
+        return Optional.of(member);
     }
 
     public List<Member> getLoginMember(String phone, String password) {

@@ -23,6 +23,8 @@ public class Member {
 
     private String password;
 
+    private String salt;
+
     private LocalDate birth;
 
     @Enumerated(EnumType.STRING)
@@ -49,5 +51,9 @@ public class Member {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
 }
