@@ -44,16 +44,27 @@ let memberGrade = createSlice({
 })
 export let { changeMemberGrade } = memberGrade.actions;
 
-let orderItem = createSlice({
-    name: 'orderItem',
-    initialState: '',
+let orderItemId = createSlice({
+    name: 'orderItemId',
+    initialState: 0,
     reducers: {
-        setOrderItem(state, action) {
+        setOrderItemId(state, action) {
             return state = action.payload;
         }
     }
 })
-export let { setOrderItem } = orderItem.actions;
+export let { setOrderItemId } = orderItemId.actions;
+
+let orderItemName = createSlice({
+    name: 'orderItemName',
+    initialState: '',
+    reducers: {
+        setOrderItemName(state, action) {
+            return state = action.payload;
+        }
+    }
+})
+export let { setOrderItemName } = orderItemName.actions;
 
 let orderItemPrice = createSlice({
     name: 'orderItemPrice',
@@ -83,7 +94,8 @@ export default configureStore({
         login: login.reducer,
         memberInfo: memberInfo.reducer,
         memberGrade: memberGrade.reducer,
-        orderItem: orderItem.reducer,
+        orderItemId: orderItemId.reducer,
+        orderItemName: orderItemName.reducer,
         orderItemPrice: orderItemPrice.reducer,
         uuid: uuid.reducer
     }

@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class CouponInfoResponse {
 
+    private Long couponId;
     private Member member;
     private String name;
     private CouponType couponType;

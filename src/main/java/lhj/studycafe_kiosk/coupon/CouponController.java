@@ -47,7 +47,7 @@ public class CouponController {
 
     private CouponInfoResponse changeCouponToCouponInfoResponse(Coupon coupon) {
 
-        return new CouponInfoResponse(coupon.getMember(), coupon.getName(), coupon.getCouponType(), coupon.getRateOrHour(), coupon.isUsed(), getFormattedEndDateTime(coupon.getStartDatetime()), getFormattedEndDateTime(coupon.getEndDatetime()), getFormattedEndDateTime(coupon.getIssueDatetime()));
+        return new CouponInfoResponse(coupon.getId(), coupon.getMember(), coupon.getName(), coupon.getCouponType(), coupon.getRateOrHour(), coupon.isUsed(), getFormattedEndDateTime(coupon.getStartDatetime()), getFormattedEndDateTime(coupon.getEndDatetime()), getFormattedEndDateTime(coupon.getIssueDatetime()));
     }
 
     private List<CouponInfoResponse> changeAllCouponToCouponInfoResponse(List<Coupon> coupons) {
