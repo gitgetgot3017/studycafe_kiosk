@@ -45,7 +45,7 @@ public class SeatController {
     private Map<Long, ScheduledFuture<?>> taskReservations = new ConcurrentHashMap<>();
 
     @PostMapping("/{seatId}")
-    public HttpEntity<SeatResponse> chooseSeat(@SessionAttribute("loginMember") Long memberId, @PathVariable("seatId") Long seatId) {
+    public HttpEntity<SeatResponse> chooseSeat(@SessionAttribute("loginMember") Long memberId, @RequestParam(value = "seatId", defaultValue = "/") Long seatId) {
 
         Seat seat = seatRepository.getSeat(seatId);
         Member member = memberRepository.getMember(memberId);

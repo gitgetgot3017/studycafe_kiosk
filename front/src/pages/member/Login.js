@@ -17,15 +17,19 @@ function Login() {
     function handleSubmit(e) {
         e.preventDefault(); // 폼의 기본 제출 방지
 
-        axios.post("/members/login", {
-            phone: phone,
-            password: password
-        }, {
-            headers: { "Content-Type": "application/json" }
-        })
+        let queryString = window.location.search;
+        let params = new URLSearchParams(queryString);
+        let redirectUrl = params.get("redirectUrl");
+
+        axios.post("/members/login?redirectUrl=" + redirectUrl, {
+                phone: phone,
+                password: password
+            }, {
+                headers: { "Content-Type": "application/json" }
+            })
             .then((result) => {
                 dispatch(changeMemberGrade(result.data.grade));
-                navigate("/"); // 로그인 성공 시 메인 페이지로 이동
+                navigate(result.data.redirectUrl);
             })
             .catch((error) => {
                 console.error("로그인 중 에러 발생:", error.response ? error.response.data : error.message);

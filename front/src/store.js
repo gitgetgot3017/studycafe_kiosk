@@ -35,7 +35,7 @@ export let { getMemberInfo } = memberInfo.actions;
 
 let memberGrade = createSlice({
     name: 'memberGrade',
-    initialState: '',
+    initialState: 'GUEST',
     reducers: {
         changeMemberGrade(state, action) {
             return state = action.payload;

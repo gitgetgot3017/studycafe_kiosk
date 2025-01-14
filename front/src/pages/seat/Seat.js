@@ -2,11 +2,13 @@ import './Seat.css';
 import {useState, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
+import {useSelector} from "react-redux";
 
 function Seat() {
 
     let navigate = useNavigate();
     let [seats, setSeats] = useState([null, "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]);
+    let state = useSelector((state) => {return state});
 
     useEffect(() => {
         axios.get("/seats/occupied")
@@ -48,7 +50,11 @@ function Seat() {
         }));
 
         if (flag) { // 좌석을 변경하는 경우
-            alert("해당 좌석으로 변경하시겠습니까?");
+            let result = window.confirm("해당 좌석으로 변경하시겠습니까?");
+            if (!result) {
+                return;
+            }
+
             axios.patch("/seats", {afterSeatId: seatId})
                 .then(() => {{
                     navigate("/");
@@ -60,7 +66,18 @@ function Seat() {
                     }
                 });
         } else { // 좌석을 선택하는 경우
-            alert("해당 좌석을 선택하시겠습니까?");
+
+            if (state.memberGrade === "GUEST") {
+                alert("로그인을 하셔야 좌석 선택이 가능합니다.");
+                navigate("/members/login?redirectUrl=/seats");
+                return;
+            }
+
+            let result = window.confirm("해당 좌석을 선택하시겠습니까?");
+            if (!result) {
+                return;
+            }
+
             axios.post("/seats/" + seatId)
                 .then(() => {{
                     navigate("/");
