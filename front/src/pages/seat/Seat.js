@@ -72,7 +72,7 @@ function Seat() {
                 return;
             }
 
-            if (state.memberGrade === "GUEST") {
+            if (state.memberGrade === "GUEST") { // 로그인을 하지 않은 경우에 대한 처리
                 alert("로그인을 하셔야 좌석 선택이 가능합니다.");
                 navigate("/members/login?redirectUrl=/seats");
                 return;
@@ -87,7 +87,7 @@ function Seat() {
                     if (error.response) {
                         console.error("에러 상태 코드:", error.response.status);
                     }
-                    alert(error.response.data.message);
+                    alert(error.response.data.message); // 보유 중인 이용권이 없는 경우에 대한 처리
                     navigate("/items");
                 });
         }
