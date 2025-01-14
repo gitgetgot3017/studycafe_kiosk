@@ -67,14 +67,14 @@ function Seat() {
                 });
         } else { // 좌석을 선택하는 경우
 
-            if (state.memberGrade === "GUEST") {
-                alert("로그인을 하셔야 좌석 선택이 가능합니다.");
-                navigate("/members/login?redirectUrl=/seats");
+            let result = window.confirm("해당 좌석을 선택하시겠습니까?");
+            if (!result) {
                 return;
             }
 
-            let result = window.confirm("해당 좌석을 선택하시겠습니까?");
-            if (!result) {
+            if (state.memberGrade === "GUEST") {
+                alert("로그인을 하셔야 좌석 선택이 가능합니다.");
+                navigate("/members/login?redirectUrl=/seats");
                 return;
             }
 
@@ -87,6 +87,8 @@ function Seat() {
                     if (error.response) {
                         console.error("에러 상태 코드:", error.response.status);
                     }
+                    alert(error.response.data.message);
+                    navigate("/items");
                 });
         }
     }

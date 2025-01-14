@@ -8,8 +8,10 @@ import lhj.studycafe_kiosk.seat.exception.InvalidSeatChangeException;
 import lhj.studycafe_kiosk.seat.exception.NotExistSeatException;
 import lhj.studycafe_kiosk.seat.exception.NotUsableSeatException;
 import lhj.studycafe_kiosk.subscription.SubscriptionRepository;
+import lhj.studycafe_kiosk.subscription.exception.NotExistSubscriptionException;
 import lhj.studycafe_kiosk.usage_status.UsageStatusRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,11 +47,16 @@ public class SeatController {
     private Map<Long, ScheduledFuture<?>> taskReservations = new ConcurrentHashMap<>();
 
     @PostMapping("/{seatId}")
-    public HttpEntity<SeatResponse> chooseSeat(@SessionAttribute("loginMember") Long memberId, @RequestParam(value = "seatId", defaultValue = "/") Long seatId) {
+    public HttpEntity<SeatResponse> chooseSeat(@SessionAttribute("loginMember") Long memberId, @PathVariable("seatId") Long seatId) {
 
         Seat seat = seatRepository.getSeat(seatId);
         Member member = memberRepository.getMember(memberId);
-        Subscription subscription = subscriptionRepository.getRepresentativeSubscription(member);
+        Subscription subscription;
+        try {
+            subscription = subscriptionRepository.getRepresentativeSubscription(member);
+        } catch (EmptyResultDataAccessException e) {
+            throw new NotExistSubscriptionException("보유 중인 이용권이 존재하지 않습니다.");
+        }
 
         validateUsableSeat(seat);
         seatService.chooseSeat(member, seat);
