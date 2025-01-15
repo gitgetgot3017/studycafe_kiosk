@@ -133,7 +133,7 @@ function Price(props) {
     let [itemPerItemType, setItemPerItemType] = useState();
 
     useEffect(() => {
-        axios.get("/items/manage")
+        axios.get("/items/detail")
             .then((result) => {
                 setItemsPerItemType(result.data);
             })
