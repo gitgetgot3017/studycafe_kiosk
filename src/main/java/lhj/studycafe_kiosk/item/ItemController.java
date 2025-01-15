@@ -1,11 +1,9 @@
 package lhj.studycafe_kiosk.item;
 
 import lhj.studycafe_kiosk.domain.Item;
-import lhj.studycafe_kiosk.domain.ItemType;
 import lhj.studycafe_kiosk.domain.ItemsPerItemType;
 import lhj.studycafe_kiosk.item.dto.*;
 import lhj.studycafe_kiosk.item.exception.DuplicateItemNameException;
-import lhj.studycafe_kiosk.item.exception.NoItemException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,7 +20,6 @@ import java.util.Optional;
 public class ItemController {
 
     private final ItemService itemService;
-    private final ItemRepository itemRepository;
 
     @PostMapping
     public HttpEntity<ItemRegResponse> registerItem(@RequestBody @Validated ItemRegRequest itemRegRequest) {
@@ -38,16 +34,10 @@ public class ItemController {
     }
 
     @GetMapping("/detail")
-    public HttpEntity<List<ItemInfoResponse>> findItems(@RequestParam("itemType") ItemType itemType) {
+    public HttpEntity<List<ItemsPerItemType>> getItemsPerItemType() {
 
-        List<Item> items = itemRepository.getItems(itemType);
-
-        if (items.isEmpty()) {
-            throw new NoItemException("아직 상품이 등록되지 않았습니다.");
-        }
-
-        List<ItemInfoResponse> responseItems = changeAllItemToItemInfoResponse(items);
-        return new ResponseEntity<>(responseItems, HttpStatus.OK);
+        List<ItemsPerItemType> itemsPerItemTypes = itemService.getItemCategory();
+        return new ResponseEntity<>(itemsPerItemTypes, HttpStatus.OK);
     }
 
     @PatchMapping("/{itemId}")
@@ -91,13 +81,6 @@ public class ItemController {
     private Item changeItemChangeRequestToItem(ItemChangeRequest itemChangeRequest) {
 
         return new Item(itemChangeRequest.getItemType(), itemChangeRequest.getItemName(), itemChangeRequest.getUsageTime(), itemChangeRequest.getUsagePeriod(), itemChangeRequest.getPrice());
-    }
-
-    @GetMapping("/manage")
-    public HttpEntity<List<ItemsPerItemType>> getItemsPerItemType() {
-
-        List<ItemsPerItemType> itemsPerItemTypes = itemService.getItemCategory();
-        return new ResponseEntity<>(itemsPerItemTypes, HttpStatus.OK);
     }
 
     @DeleteMapping("/{itemId}")

@@ -2,7 +2,6 @@ package lhj.studycafe_kiosk.item;
 
 import lhj.studycafe_kiosk.item.dto.FindItemFailResponse;
 import lhj.studycafe_kiosk.item.dto.ItemRegFailResponse;
-import lhj.studycafe_kiosk.item.exception.NoItemException;
 import lhj.studycafe_kiosk.item.exception.DuplicateItemNameException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -26,12 +25,6 @@ public class ItemExControllerAdvice {
     @ExceptionHandler
     public ItemRegFailResponse regItemFail(DuplicateItemNameException e) {
         return new ItemRegFailResponse("상품등록", e.getMessage());
-    }
-
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler
-    public FindItemFailResponse findItemsFail1(NoItemException e) {
-        return new FindItemFailResponse("상품조회", e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
