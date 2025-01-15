@@ -105,10 +105,4 @@ public class ItemController {
 
         itemService.removeItem(itemId);
     }
-
-    @DeleteMapping
-    public void removeCategory(@RequestParam("itemType") ItemType itemType) {
-
-        itemService.removeCategory(itemType);
-    }
 }
