@@ -37,8 +37,7 @@ public class ItemService {
     public List<ItemsPerItemType> getItemCategory() {
 
         List<ItemsPerItemType> itemsPerItemTypes = new ArrayList<>();
-        for (Item item : itemRepository.getItemType()) {
-            ItemType itemType = item.getItemType();
+        for (ItemType itemType : ItemType.values()) {
             List<Item> itemsPerItemType = itemRepository.getItems(itemType);
             itemsPerItemTypes.add(new ItemsPerItemType(itemType, itemsPerItemType));
         }

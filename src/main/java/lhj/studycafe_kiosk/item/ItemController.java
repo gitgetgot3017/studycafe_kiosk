@@ -94,7 +94,7 @@ public class ItemController {
     }
 
     @GetMapping("/manage")
-    public HttpEntity<List<ItemsPerItemType>> getItemCategory() {
+    public HttpEntity<List<ItemsPerItemType>> getItemsPerItemType() {
 
         List<ItemsPerItemType> itemsPerItemTypes = itemService.getItemCategory();
         return new ResponseEntity<>(itemsPerItemTypes, HttpStatus.OK);

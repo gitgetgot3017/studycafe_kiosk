@@ -26,7 +26,7 @@ public class ItemRepository {
     }
 
     public List<Item> getItems(ItemType itemType) {
-        return em.createQuery("select i from Item i where i.itemType = :itemType")
+        return em.createQuery("select i from Item i where i.itemType = :itemType order by i.itemName", Item.class)
                 .setParameter("itemType", itemType)
                 .getResultList();
     }
@@ -41,11 +41,6 @@ public class ItemRepository {
     public Optional<Item> getItem(Long itemId) {
         Item item = em.find(Item.class, itemId);
         return Optional.ofNullable(item);
-    }
-
-    public List<Item> getItemType() {
-        return em.createQuery("select i from Item i group by i.itemType", Item.class)
-                .getResultList();
     }
 
     public void deleteItem(Item item) {

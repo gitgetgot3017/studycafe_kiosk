@@ -3,12 +3,13 @@ import {useEffect, useState} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
 import {useDispatch} from "react-redux";
 import {setOrderItemId, setOrderItemName, setOrderItemPrice} from "../../store";
+import axios from "axios";
 
 function ItemDetail() {
 
     let itemTypeObject = {"DAILY": 0, "CHARGE": 1, "PERIOD": 2, "FIXED": 3};
     let [chooseTab, setChooseTab] = useState(["", "", "", ""]);
-    let [tab, setTab] = useState("daily");
+    let [tab, setTab] = useState("DAILY");
     let [id, setId] = useState(0);
     let [type, setType] = useState("");
     let [price, setPrice] = useState("0");
@@ -127,90 +128,42 @@ function Explanation(props) {
 }
 
 function Price(props) {
-    if (props.tab === "DAILY") {
-        return (
-            <div className="d-flex flex-column overflow-auto mb-4 scroll-container box">
-                <div className="product-box mb-3 card" onClick={() => {props.setId(1); props.setPrice("3,000"); props.setType("일일권 1시간");}}>
-                    <p className="text-center">1시간 3,000원</p>
+
+    let [itemsPerItemType, setItemsPerItemType] = useState([]);
+    let [itemPerItemType, setItemPerItemType] = useState();
+
+    useEffect(() => {
+        axios.get("/items/manage")
+            .then((result) => {
+                setItemsPerItemType(result.data);
+            })
+            .catch((error) => {
+                console.error("상품 정보 가져오는 중 에러 발생:", error.response ? error.response.data : error.message);
+                if (error.response) {
+                    console.error("에러 상태 코드:", error.response.status);
+                }
+            });
+    }, []);
+
+    useEffect(() => {
+        setItemPerItemType(itemsPerItemType.find((itemType) => itemType.itemType === props.tab));
+    }, [props.tab, itemsPerItemType]);
+
+    return (
+        itemPerItemType ?
+        itemPerItemType.items.map(function(item) {
+            return (
+                <div className="product-box mb-3 card" key={item.id} onClick={() => {
+                    props.setId(item.id);
+                    props.setPrice(item.price);
+                    props.setType(item.itemName);
+                }}>
+                    <p className="text-center">{item.itemName} {item.price}원</p>
                 </div>
-                <div className="product-box mb-3 card" onClick={() => {props.setId(2); props.setPrice("4,000"); props.setType("일일권 2시간");}}>
-                    <p className="text-center">2시간 4,000원</p>
-                </div>
-                <div className="product-box mb-3 card" onClick={() => {props.setId(3); props.setPrice("6,000"); props.setType("일일권 4시간");}}>
-                    <p className="text-center">4시간 6,000원</p>
-                </div>
-                <div className="product-box mb-3 card" onClick={() => {props.setId(4); props.setPrice("8,000"); props.setType("일일권 6시간");}}>
-                    <p className="text-center">6시간 8,000원</p>
-                </div>
-                <div className="product-box mb-3 card" onClick={() => {props.setId(5); props.setPrice("9,000"); props.setType("일일권 8시간");}}>
-                    <p className="text-center">8시간 9,000원</p>
-                </div>
-                <div className="product-box mb-3 card" onClick={() => {props.setId(6); props.setPrice("1,000"); props.setType("일일권 10시간");}}>
-                    <p className="text-center">10시간 11,000원</p>
-                </div>
-                <div className="product-box mb-3 card" onClick={() => {props.setId(7); props.setPrice("12,000"); props.setType("일일권 12시간");}}>
-                    <p className="text-center">12시간 12,000원</p>
-                </div>
-            </div>
-        );
-    }
-    else if (props.tab === "CHARGE") {
-        return (
-            <div className="d-flex flex-column overflow-auto mb-4 scroll-container box">
-                <div className="product-box mb-3 card" onClick={() => {props.setId(8); props.setPrice("39,000"); props.setType("충전권 30시간(60일)");}}>
-                    <p className="text-center">30시간(60일) 39,000원</p>
-                </div>
-                <div className="product-box mb-3 card" onClick={() => {props.setId(9); props.setPrice("59,000"); props.setType("충전권 50시간(90일)");}}>
-                    <p className="text-center">50시간(90일) 59,000원</p>
-                </div>
-                <div className="product-box mb-3 card" onClick={() => {props.setId(10); props.setPrice("79,000"); props.setType("충전권 100시간(45일)");}}>
-                    <p className="text-center">100시간(45일) 79,000원</p>
-                </div>
-                <div className="product-box mb-3 card" onClick={() => {props.setId(11); props.setPrice("119,000"); props.setType("충전권 100시간(180일)");}}>
-                    <p className="text-center">100시간(180일) 119,000원</p>
-                </div>
-                <div className="product-box mb-3 card" onClick={() => {props.setId(12); props.setPrice("129,000"); props.setType("충전권 200시간(45일)");}}>
-                    <p className="text-center">200시간(45일) 112,900원</p>
-                </div>
-                <div className="product-box mb-3 card" onClick={() => {props.setId(13); props.setPrice("200,000"); props.setType("충전권 200시간(180일)");}}>
-                    <p className="text-center">200시간(180일) 200,000원</p>
-                </div>
-            </div>
-        );
-    }
-    else if (props.tab === "PERIOD") {
-        return (
-            <div className="d-flex flex-column overflow-auto mb-4 scroll-container box">
-                <div className="product-box mb-3 card" onClick={() => {props.setId(14); props.setPrice("39,000"); props.setType("기간권 1주일");}}>
-                    <p className="text-center">1주일 39,000원</p>
-                </div>
-                <div className="product-box mb-3 card" onClick={() => {props.setId(15); props.setPrice("69,000"); props.setType("기간권 2주일");}}>
-                    <p className="text-center">2주일 69,000원</p>
-                </div>
-                <div className="product-box mb-3 card" onClick={() => {props.setId(16); props.setPrice("119,000"); props.setType("기간권 4주일");}}>
-                    <p className="text-center">4주일 119,000원</p>
-                </div>
-                <div className="product-box mb-3 card" onClick={() => {props.setId(17); props.setPrice("209,000"); props.setType("기간권 8주일");}}>
-                    <p className="text-center">8주일 209,000원</p>
-                </div>
-            </div>
-        );
-    }
-    else if (props.tab === "FIXED") {
-        return (
-            <div className="d-flex flex-column overflow-auto mb-4 scroll-container box">
-                <div className="product-box mb-3 card" onClick={() => {props.setId(18); props.setPrice("99,000"); props.setType("고정석 2주일");}}>
-                    <p className="text-center">2주일 99,000원</p>
-                </div>
-                <div className="product-box mb-3 card" onClick={() => {props.setId(19); props.setPrice("169,000"); props.setType("고정석 4주일");}}>
-                    <p className="text-center">4주일 169,000</p>
-                </div>
-                <div className="product-box mb-3 card" onClick={() => {props.setId(20); props.setPrice("319,000"); props.setType("고정석 8주일");}}>
-                    <p className="text-center">8주일 319,000</p>
-                </div>
-            </div>
-        );
-    }
+            );
+        }) :
+        null
+    )
 }
 
 export default ItemDetail;
