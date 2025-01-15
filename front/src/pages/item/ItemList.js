@@ -31,27 +31,21 @@ function ItemList() {
                         <hr/>
                         <p className="text-center">오늘 하루만 사용하고 싶을 때 추천해요</p>
                     </div>
-                    {
-                        state.login ?
-                        <>
-                            <div className="product-box item" onClick={() => {navigate("/items/detail?itemType=CHARGE")}}>
-                                <h5 className="text-center">충전권</h5>
-                                <hr/>
-                                <p className="text-center">시간을 충전해서 정기적으로 사용할 수 있어요</p>
-                            </div>
-                            <div className="product-box item" onClick={() => {navigate("/items/detail?itemType=PERIOD")}}>
-                                <h5 className="text-center">기간권</h5>
-                                <hr/>
-                                <p className="text-center">일정 기간 동안 무제한으로 사용할 수 있어요</p>
-                            </div>
-                            <div className="product-box item" onClick={() => {navigate("/items/detail?itemType=FIXED")}}>
-                                <h5 className="text-center">고정석</h5>
-                                <hr/>
-                                <p className="text-center">지정된 좌석을 일정 기간 동안 무제한으로 사용할 수 있어요</p>
-                            </div>
-                        </> :
-                        null
-                    }
+                    <div className="product-box item" onClick={() => {navigate("/items/detail?itemType=CHARGE")}}>
+                        <h5 className="text-center">충전권</h5>
+                        <hr/>
+                        <p className="text-center">시간을 충전해서 정기적으로 사용할 수 있어요</p>
+                    </div>
+                    <div className="product-box item" onClick={() => {navigate("/items/detail?itemType=PERIOD")}}>
+                        <h5 className="text-center">기간권</h5>
+                        <hr/>
+                        <p className="text-center">일정 기간 동안 무제한으로 사용할 수 있어요</p>
+                    </div>
+                    <div className="product-box item" onClick={() => {navigate("/items/detail?itemType=FIXED")}}>
+                        <h5 className="text-center">고정석</h5>
+                        <hr/>
+                        <p className="text-center">지정된 좌석을 일정 기간 동안 무제한으로 사용할 수 있어요</p>
+                    </div>
                 </div>
             </div>
         </div>
