@@ -22,6 +22,10 @@ public class CouponService {
 
     public boolean isBirthCouponIssueDate(LocalDate birth) {
 
+        if (birth == null) {
+            return false;
+        }
+
         LocalDate today = LocalDate.now();
         LocalDate oneWeekBeforeBirth = LocalDate.of(today.getYear(), birth.getMonthValue(), birth.getDayOfMonth()).minusDays(7);
 
