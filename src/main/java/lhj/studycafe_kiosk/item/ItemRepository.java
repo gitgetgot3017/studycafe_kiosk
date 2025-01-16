@@ -26,7 +26,7 @@ public class ItemRepository {
     }
 
     public List<Item> getItems(ItemType itemType) {
-        return em.createQuery("select i from Item i where i.itemType = :itemType order by i.itemName", Item.class)
+        return em.createQuery("select i from Item i where i.itemType = :itemType order by i.usageTime, i.usagePeriod", Item.class)
                 .setParameter("itemType", itemType)
                 .getResultList();
     }
