@@ -24,8 +24,6 @@ public class ItemController {
     @PostMapping
     public HttpEntity<ItemRegResponse> registerItem(@RequestBody @Validated ItemRegRequest itemRegRequest) {
 
-        validateDuplicateItemName(itemRegRequest.getItemName());
-
         Item item = changeItemRegRequestToItem(itemRegRequest);
         itemService.registerItem(item);
 
