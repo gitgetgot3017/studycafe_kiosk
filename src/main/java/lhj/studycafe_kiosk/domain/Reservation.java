@@ -1,11 +1,13 @@
 package lhj.studycafe_kiosk.domain;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
 @NoArgsConstructor
 public class Reservation {
 
