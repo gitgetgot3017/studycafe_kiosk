@@ -12,7 +12,7 @@ import java.time.Duration;
 public class Item {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "item_id")
+    @Column(name = "item_id") // TODO: item_id로 바꿨을 때 왜 오류가 발생하는지 원인 파악하기
     private Long id;
 
     @Enumerated(EnumType.STRING)
