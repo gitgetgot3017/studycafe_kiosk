@@ -20,8 +20,6 @@ public class Subscription {
     @JoinColumn(name = "order_id")
     private Order order;
 
-    private boolean isRepresentative;
-
     private LocalDateTime startDateTime;
 
     private LocalDateTime endDateTime; // 일일권, 충전권, 기간권, 고정석에서 사용
@@ -30,9 +28,8 @@ public class Subscription {
 
     private boolean isValid;
 
-    public Subscription(Order order, boolean isRepresentative, LocalDateTime startDateTime, LocalDateTime endDateTime, Duration leftTime, boolean isValid) {
+    public Subscription(Order order, LocalDateTime startDateTime, LocalDateTime endDateTime, Duration leftTime, boolean isValid) {
         this.order = order;
-        this.isRepresentative = isRepresentative;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.leftTime = leftTime;
@@ -45,17 +42,5 @@ public class Subscription {
 
     public void setSubscriptionInvalid() {
         isValid = false;
-    }
-
-    public void startSubscription() {
-        startDateTime = LocalDateTime.now();
-    }
-
-    public void setSubscriptionNotRepresentative() {
-        isRepresentative = false;
-    }
-
-    public void setSubscriptionRepresentative() {
-        isRepresentative = true;
     }
 }

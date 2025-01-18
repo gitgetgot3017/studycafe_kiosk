@@ -50,7 +50,7 @@ public class MainController {
 
         try {
             UsageStatus usageStatus = usageStatusRepository.getUsageStatus(member);
-            subscriptionRepository.getRepresentativeSubscription(member);
+            subscriptionRepository.getSubscription(member);
 
             if (usageStatus.getUserInOut() == UserInOut.IN) { // 대표 이용권이 존재하고 IN(입실) 상태인 경우, MainIn.js를 보여준다.
                 mainInOutResponse.setMainInOut(true);
@@ -73,7 +73,7 @@ public class MainController {
         // 유저가 이용권을 갖고 있는지 확인
         Subscription subscription;
         try {
-            subscription = subscriptionRepository.getRepresentativeSubscription(member);
+            subscription = subscriptionRepository.getSubscription(member);
         } catch (EmptyResultDataAccessException e) {
             throw new NotExistSubscriptionException("보유 중인 이용권이 존재하지 않습니다.");
         }

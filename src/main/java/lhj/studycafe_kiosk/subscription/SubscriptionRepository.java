@@ -15,10 +15,9 @@ public class SubscriptionRepository {
     @PersistenceContext
     EntityManager em;
 
-    public Subscription getRepresentativeSubscription(Member member) {
-        return em.createQuery("select s from Subscription s where s.order.member = :member and s.isRepresentative = :isRepresentative", Subscription.class)
+    public Subscription getSubscription(Member member) {
+        return em.createQuery("select s from Subscription s where s.order.member = :member", Subscription.class)
                 .setParameter("member", member)
-                .setParameter("isRepresentative", true)
                 .getSingleResult();
     }
 
@@ -30,16 +29,5 @@ public class SubscriptionRepository {
         return em.createQuery("select s from Subscription s where s.order = :order", Subscription.class)
                 .setParameter("order", order)
                 .getSingleResult();
-    }
-
-    public Subscription getSubscription(Long subscriptionId) {
-        return em.find(Subscription.class, subscriptionId);
-    }
-
-    public List<Subscription> getSubscriptions(Member member) {
-        return em.createQuery("select s from Subscription s where s.order.member = :member and s.isValid = :isValid", Subscription.class)
-                .setParameter("member", member)
-                .setParameter("isValid", true)
-                .getResultList();
     }
 }

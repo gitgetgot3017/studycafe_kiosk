@@ -106,7 +106,7 @@ public class SeatService {
 
     private Subscription getSubscription(Member member) {
         try {
-            return subscriptionRepository.getRepresentativeSubscription(member);
+            return subscriptionRepository.getSubscription(member);
         } catch (EmptyResultDataAccessException e) {
             throw new NotExistSubscriptionException("이용권이 존재하지 않습니다.");
         }

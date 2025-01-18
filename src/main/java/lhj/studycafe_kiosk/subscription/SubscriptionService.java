@@ -19,18 +19,16 @@ public class SubscriptionService {
 
     public void issueSubscription(Member member, Item item, Order order) {
 
-        boolean isRepresentative = false;
         LocalDateTime startDateTime = null;
         LocalDateTime endDateTime = null;
         try {
-            subscriptionRepository.getRepresentativeSubscription(member);
+            subscriptionRepository.getSubscription(member);
         } catch (EmptyResultDataAccessException e) {
-            isRepresentative = true;
             startDateTime = LocalDateTime.now();
             endDateTime = getEndDateTime(startDateTime, item);
         }
 
-        Subscription subscription = new Subscription(order, isRepresentative, startDateTime, endDateTime, getLeftTime(item), true);
+        Subscription subscription = new Subscription(order, startDateTime, endDateTime, getLeftTime(item), true);
         subscriptionRepository.saveSubscription(subscription);
     }
 
@@ -55,15 +53,5 @@ public class SubscriptionService {
     public void changeSubscriptionInvalid(Subscription subscription) {
 
         subscription.setSubscriptionInvalid();
-    }
-
-    public void changeSubscriptionStart(Subscription subscription) {
-        subscription.startSubscription();
-    }
-
-    public void changeSubscription(Subscription beforeSubscription, Subscription afterSubscription) {
-
-        beforeSubscription.setSubscriptionNotRepresentative();
-        afterSubscription.setSubscriptionRepresentative();
     }
 }

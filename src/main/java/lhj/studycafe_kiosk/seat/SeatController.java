@@ -53,7 +53,7 @@ public class SeatController {
         Member member = memberRepository.getMember(memberId);
         Subscription subscription;
         try {
-            subscription = subscriptionRepository.getRepresentativeSubscription(member);
+            subscription = subscriptionRepository.getSubscription(member);
         } catch (EmptyResultDataAccessException e) {
             throw new NotExistSubscriptionException("보유 중인 이용권이 존재하지 않습니다.");
         }
