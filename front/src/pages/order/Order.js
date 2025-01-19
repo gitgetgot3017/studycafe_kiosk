@@ -90,7 +90,7 @@ function Order() {
                                 if (error.response) {
                                     console.error("에러 상태 코드:", error.response.status);
                                 }
-                                alert();
+                                alert(error.response.data.message);
                             });
                     }}>주문하기</button>
                 </div>
