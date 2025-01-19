@@ -43,4 +43,12 @@ public class Subscription {
     public void setSubscriptionInvalid() {
         isValid = false;
     }
+
+    public void extendSubscriptionHours(int hours) {
+        endDateTime.plusHours(hours);
+    }
+
+    public void extendSubscriptionDays(int days) {
+        endDateTime.plusDays(days);
+    }
 }

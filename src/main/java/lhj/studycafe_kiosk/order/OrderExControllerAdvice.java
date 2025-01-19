@@ -75,4 +75,10 @@ public class OrderExControllerAdvice {
     public GuestsOrderFailResponse notDailyJoinFail(NotDailyJoinException e) {
         return new GuestsOrderFailResponse("주문", e.getMessage());
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public OrderFailResponse alreayExistSubscriptionFail(AlreadyExistSubscriptionException e) {
+        return new OrderFailResponse("주문", e.getMessage());
+    }
 }

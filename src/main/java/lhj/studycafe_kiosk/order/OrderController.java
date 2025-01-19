@@ -10,16 +10,16 @@ import lhj.studycafe_kiosk.member.MemberRepository;
 import lhj.studycafe_kiosk.member.exception.NotExistMemberException;
 import lhj.studycafe_kiosk.order.dto.*;
 import lhj.studycafe_kiosk.order.exception.AlreadyRefundException;
-import lhj.studycafe_kiosk.order.exception.NotDailyJoinException;
-import lhj.studycafe_kiosk.order.exception.NotExistOrderException;
+import lhj.studycafe_kiosk.order.exception.AlreadyExistSubscriptionException;
+import lhj.studycafe_kiosk.subscription.SubscriptionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -37,22 +37,61 @@ public class OrderController {
     private final OrderService orderService;
     private final OrderRepository orderRepository;
     private final MemberRepository memberRepository;
+    private final SubscriptionRepository subscriptionRepository;
 
     @PostMapping
-    public HttpEntity<OrderResponse> orderItem(@SessionAttribute("loginMember") Long memberId, @RequestBody @Validated OrderRequest orderRequest) {
+    public void orderItem(@SessionAttribute("loginMember") Long memberId, @RequestBody @Validated OrderRequest orderRequest) {
 
-        validateOrderRequest(orderRequest);
+        Item item = validateOrderRequest(orderRequest);
+        validateOrderable(memberId, item);
 
-        Long orderId = orderService.orderItem(memberId, orderRequest.getItemId(), orderRequest.getCouponId());
-
-        Member member = memberRepository.getMember(memberId);
-        Item item = itemRepository.getItem(orderRequest.getItemId()).get();
-        Order order = orderRepository.getOrder(orderId);
-        OrderResponse orderResponse = new OrderResponse(orderId, member.getName(), item.getItemName(), order.getPrice(), LocalDateTime.now());
+        orderService.orderItem(memberId, orderRequest.getItemId(), orderRequest.getCouponId());
 
         handleCouponUsage(orderRequest.getCouponId()); // 쿠폰 사용 완료 처리
+    }
 
-        return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);
+    private Item validateOrderRequest(OrderRequest orderRequest) {
+
+        Optional<Item> opItem = itemRepository.getItem(orderRequest.getItemId());
+        if (opItem.isEmpty()) {
+            throw new NotExistItemException("존재하지 않는 상품 ID를 입력하셨습니다.");
+        }
+
+        if (orderRequest.getCouponId() != null) { // 주문 시 쿠폰을 사용하는 경우 (쿠폰을 사용하는 경우: null)
+            Optional<Coupon> opCoupon = couponRepository.getCoupon(orderRequest.getCouponId());
+            if (opCoupon.isEmpty()) {
+                throw new NotExistCouponException("존재하지 않는 쿠폰 ID를 입력하셨습니다.");
+            }
+        }
+
+        return opItem.get();
+    }
+
+    private void validateOrderable(Long memberId, Item item) {
+
+        Member member = memberRepository.getMember(memberId);
+        try {
+            Subscription subscription = subscriptionRepository.getSubscription(member);
+            if (subscription.getOrder().getItem().getItemType() == item.getItemType()) { // 이용 연장하는 경우 (일일권, 기간권, 고정석에 한함)
+                if (item.getItemType() == ItemType.CHARGE) {
+                    throw new AlreadyExistSubscriptionException("이미 사용 중인 이용권이 존재합니다.");
+                }
+                extendSubscription(item, subscription);
+            } else { // 다른 종류의 이용권을 구매하는 경우
+                throw new AlreadyExistSubscriptionException("이미 사용 중인 이용권이 존재합니다.");
+            }
+        } catch (EmptyResultDataAccessException e) {
+            // 이용권이 존재하지 않는 유저인 경우: 이용권을 구매한다.
+        }
+    }
+
+    private void extendSubscription(Item item, Subscription subscription) {
+
+        if (item.getItemType() == ItemType.DAILY) {
+            subscription.extendSubscriptionHours(item.getUsageTime());
+        } else {
+            subscription.extendSubscriptionDays(item.getUsagePeriod());
+        }
     }
 
     @PostMapping("/{orderId}")
@@ -88,22 +127,6 @@ public class OrderController {
             orderHistoryResponses = changeAllOrderToOrderHistoryResponse(orders);
         }
         return new ResponseEntity<>(orderHistoryResponses, HttpStatus.OK);
-    }
-
-    private void validateOrderRequest(OrderRequest orderRequest) {
-
-        Optional<Item> opItem = itemRepository.getItem(orderRequest.getItemId());
-        if (opItem.isEmpty()) {
-            throw new NotExistItemException("존재하지 않는 상품 ID를 입력하셨습니다.");
-        }
-
-        if (orderRequest.getCouponId() == null) { // 주문 시 쿠폰을 사용하지 않는 경우
-            return;
-        }
-        Optional<Coupon> opCoupon = couponRepository.getCoupon(orderRequest.getCouponId());
-        if (opCoupon.isEmpty()) {
-            throw new NotExistCouponException("존재하지 않는 쿠폰 ID를 입력하셨습니다.");
-        }
     }
 
     private void handleCouponUsage(Long couponId) {
