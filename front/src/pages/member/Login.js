@@ -20,6 +20,9 @@ function Login() {
         let queryString = window.location.search;
         let params = new URLSearchParams(queryString);
         let redirectUrl = params.get("redirectUrl");
+        if (redirectUrl === null) {
+            redirectUrl = "/";
+        }
 
         axios.post("/members/login?redirectUrl=" + redirectUrl, {
                 phone: phone,
