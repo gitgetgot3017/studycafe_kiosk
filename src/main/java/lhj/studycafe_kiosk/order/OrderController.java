@@ -72,25 +72,15 @@ public class OrderController {
         Member member = memberRepository.getMember(memberId);
         try {
             Subscription subscription = subscriptionRepository.getSubscription(member);
-            if (subscription.getOrder().getItem().getItemType() == item.getItemType()) { // 이용 연장하는 경우 (일일권, 기간권, 고정석에 한함)
+            if (subscription.getItem().getItemType() == item.getItemType()) { // 이용 연장하는 경우 (일일권, 기간권, 고정석에 한함)
                 if (item.getItemType() == ItemType.CHARGE) {
                     throw new AlreadyExistSubscriptionException("이미 사용 중인 이용권이 존재합니다.");
                 }
-                extendSubscription(item, subscription);
             } else { // 다른 종류의 이용권을 구매하는 경우
                 throw new AlreadyExistSubscriptionException("이미 사용 중인 이용권이 존재합니다.");
             }
         } catch (EmptyResultDataAccessException e) {
             // 이용권이 존재하지 않는 유저인 경우: 이용권을 구매한다.
-        }
-    }
-
-    private void extendSubscription(Item item, Subscription subscription) {
-
-        if (item.getItemType() == ItemType.DAILY) {
-            subscription.extendSubscriptionHours(item.getUsageTime());
-        } else {
-            subscription.extendSubscriptionDays(item.getUsagePeriod());
         }
     }
 
@@ -102,7 +92,7 @@ public class OrderController {
 
         validateAlreadyRefund(order);
 
-        int refundRate = orderService.getRefundRate(order);
+        int refundRate = orderService.getRefundRate(order, member);
         orderService.getRefundConsiderCoupon(member, order, refundRate);
         if (refundRate == 0) {
             return new ResponseEntity(new OrderRefundResponse("주문취소", "환불이 불가합니다."), HttpStatus.OK);

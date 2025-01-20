@@ -62,7 +62,7 @@ public class SeatController {
         seatService.chooseSeat(member, seat);
 
         // 기간권의 경우 좌석 선택 후 10분 내에 입실하지 않으면 vacate 처리됨
-        ItemType itemType = subscription.getOrder().getItem().getItemType();
+        ItemType itemType = subscription.getItem().getItemType();
         if (itemType == ItemType.PERIOD) {
             Instant executionTime = Instant.now().plus(10, ChronoUnit.MINUTES);
             taskScheduler.schedule(new EnterCheckTask(member, usageStatusRepository, seatService), executionTime);

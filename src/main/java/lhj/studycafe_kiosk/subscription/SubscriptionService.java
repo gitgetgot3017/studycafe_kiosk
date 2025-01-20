@@ -1,6 +1,7 @@
 package lhj.studycafe_kiosk.subscription;
 
 import lhj.studycafe_kiosk.domain.*;
+import lhj.studycafe_kiosk.order.OrderService;
 import lhj.studycafe_kiosk.subscription.exception.NotExistSubscriptionException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -16,20 +17,19 @@ import java.time.LocalDateTime;
 public class SubscriptionService {
 
     private final SubscriptionRepository subscriptionRepository;
+    private final OrderService orderService;
 
-    public void issueSubscription(Member member, Item item, Order order) {
+    public void issueOrExtendSubscription(Member member, Item item) {
 
-        LocalDateTime startDateTime = null;
-        LocalDateTime endDateTime = null;
-        try {
-            subscriptionRepository.getSubscription(member);
-        } catch (EmptyResultDataAccessException e) {
-            startDateTime = LocalDateTime.now();
-            endDateTime = getEndDateTime(startDateTime, item);
+        try { // 이용권이 존재하는 유저인 경우: 이용권을 연장한다.
+            Subscription subscription = subscriptionRepository.getSubscription(member);
+            orderService.extendSubscription(item, subscription);
+        } catch (EmptyResultDataAccessException e) { // 이용권이 존재하지 않는 유저인 경우: 이용권을 구매한다.
+            LocalDateTime startDateTime = LocalDateTime.now();
+            LocalDateTime endDateTime = getEndDateTime(startDateTime, item);
+            Subscription subscription = new Subscription(member, item, startDateTime, endDateTime, getLeftTime(item), true);
+            subscriptionRepository.saveSubscription(subscription);
         }
-
-        Subscription subscription = new Subscription(order, startDateTime, endDateTime, getLeftTime(item), true);
-        subscriptionRepository.saveSubscription(subscription);
     }
 
     private LocalDateTime getEndDateTime(LocalDateTime startDateTime, Item item) {

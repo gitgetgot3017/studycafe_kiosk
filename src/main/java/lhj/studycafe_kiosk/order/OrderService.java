@@ -42,22 +42,22 @@ public class OrderService {
         int orderPrice = calculateOrderPrice(item.getPrice(), item, coupon);
 
         Order order = new Order(member, item, orderPrice, coupon, LocalDateTime.now(), OrderStatus.ORDERED);
-        eventPublisher.publishEvent(new OrderEvent(this, member, item, order)); // 주문 이벤트 발생
+        eventPublisher.publishEvent(new OrderEvent(this, member, item)); // 주문 이벤트 발생
         return orderRepository.saveOrder(order);
     }
 
-    public Long orderItemGuest(Long itemId, Long couponId) {
+    public void extendSubscription(Item item, Subscription subscription) {
 
-        Item item = itemRepository.getItem(itemId).get();
-
-        Order order = new Order(null, item, item.getPrice(), null, LocalDateTime.now(), OrderStatus.ORDERED);
-        eventPublisher.publishEvent(new OrderEvent(this, null, item, order)); // 주문 이벤트 발생
-        return orderRepository.saveOrder(order);
+        if (item.getItemType() == ItemType.DAILY) {
+            subscription.extendSubscriptionHours(item.getUsageTime());
+        } else {
+            subscription.extendSubscriptionDays(item.getUsagePeriod());
+        }
     }
 
-    public int getRefundRate(Order order) {
+    public int getRefundRate(Order order, Member member) {
 
-        Subscription subscription = subscriptionRepository.getSubscriptionByOrder(order);
+        Subscription subscription = subscriptionRepository.getSubscription(member);
         if (subscription.getStartDateTime() == null && checkWithin7Days(order)) {
             return 100; // 100% 환불 가능
         }
@@ -66,7 +66,7 @@ public class OrderService {
         if (item.getItemType() == ItemType.DAILY) {
             return 0; // 환불 불가
         } else if (item.getItemType() == ItemType.CHARGE) {
-            if (checkWithin7Days(order) && checkWithin30Percent(order)) {
+            if (checkWithin7Days(order) && checkWithin30Percent(order, member)) {
                 return 50; // 50% 환불 가능
             } else {
                 return 0; // 환불 불가
@@ -117,7 +117,7 @@ public class OrderService {
                 decisionReEnableCoupon(member, order, coupon);
             }
         }
-        Subscription subscription = subscriptionRepository.getSubscriptionByOrder(order);
+        Subscription subscription = subscriptionRepository.getSubscription(member);
         subscription.setSubscriptionInvalid();
     }
 
@@ -157,10 +157,10 @@ public class OrderService {
         }
     }
 
-    private boolean checkWithin30Percent(Order order) {
+    private boolean checkWithin30Percent(Order order, Member member) {
 
-        Subscription subscription = subscriptionRepository.getSubscriptionByOrder(order);
-        Item item = subscription.getOrder().getItem();
+        Subscription subscription = subscriptionRepository.getSubscription(member);
+        Item item = order.getItem();
 
         long itemSecond = getItemSecond(item);
         long leftSecond = getLeftSecond(item, subscription);

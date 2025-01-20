@@ -11,12 +11,10 @@ public class OrderEvent extends ApplicationEvent {
 
     private Member member;
     private Item item;
-    private Order order;
 
-    public OrderEvent(Object source, Member member, Item item, Order order) {
+    public OrderEvent(Object source, Member member, Item item) {
         super(source);
         this.member = member;
         this.item = item;
-        this.order = order;
     }
 }

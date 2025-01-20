@@ -17,8 +17,12 @@ public class Subscription {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    @OneToOne
+    @JoinColumn(name = "item_id")
+    private Item item;
 
     private LocalDateTime startDateTime;
 
@@ -28,8 +32,9 @@ public class Subscription {
 
     private boolean isValid;
 
-    public Subscription(Order order, LocalDateTime startDateTime, LocalDateTime endDateTime, Duration leftTime, boolean isValid) {
-        this.order = order;
+    public Subscription(Member member, Item item, LocalDateTime startDateTime, LocalDateTime endDateTime, Duration leftTime, boolean isValid) {
+        this.member = member;
+        this.item = item;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.leftTime = leftTime;
@@ -45,10 +50,10 @@ public class Subscription {
     }
 
     public void extendSubscriptionHours(int hours) {
-        endDateTime.plusHours(hours);
+        endDateTime = endDateTime.plusHours(hours);
     }
 
     public void extendSubscriptionDays(int days) {
-        endDateTime.plusDays(days);
+        endDateTime = endDateTime.plusDays(days);
     }
 }

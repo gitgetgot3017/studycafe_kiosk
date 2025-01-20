@@ -22,6 +22,6 @@ public class CouponEventListener {
     @EventListener
     public void handleOrderEvent(OrderEvent event) {
         couponService.issueCouponBasedCumulativeAmount(event.getMember());
-        subscriptionService.issueSubscription(event.getMember(), event.getItem(), event.getOrder());
+        subscriptionService.issueOrExtendSubscription(event.getMember(), event.getItem());
     }
 }

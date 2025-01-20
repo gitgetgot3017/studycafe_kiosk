@@ -16,18 +16,12 @@ public class SubscriptionRepository {
     EntityManager em;
 
     public Subscription getSubscription(Member member) {
-        return em.createQuery("select s from Subscription s where s.order.member = :member", Subscription.class)
+        return em.createQuery("select s from Subscription s where s.member = :member", Subscription.class)
                 .setParameter("member", member)
                 .getSingleResult();
     }
 
     public void saveSubscription(Subscription subscription) {
         em.persist(subscription);
-    }
-
-    public Subscription getSubscriptionByOrder(Order order) {
-        return em.createQuery("select s from Subscription s where s.order = :order", Subscription.class)
-                .setParameter("order", order)
-                .getSingleResult();
     }
 }

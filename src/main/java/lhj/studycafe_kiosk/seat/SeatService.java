@@ -35,7 +35,7 @@ public class SeatService {
     public void chooseSeat(Member member, Seat seat) {
 
         Subscription subscription = getSubscription(member);
-        Item item = subscription.getOrder().getItem();
+        Item item = subscription.getItem();
 
         LocalDateTime endDateTime;
         LocalDateTime curDateTime = LocalDateTime.now();
@@ -75,7 +75,7 @@ public class SeatService {
         usageStatusService.recordUsageStatus(new UsageStatus(subscription, member, UserInOut.OUT, LocalDateTime.now()));
 
         // 남은 시간 보여주기
-        Item item = subscription.getOrder().getItem();
+        Item item = subscription.getItem();
         Duration remainderTime;
 
         if (item.getItemType() == ItemType.DAILY) {
