@@ -2,6 +2,7 @@ package lhj.studycafe_kiosk.seat;
 
 import lhj.studycafe_kiosk.domain.*;
 import lhj.studycafe_kiosk.member.MemberRepository;
+import lhj.studycafe_kiosk.order.OrderRepository;
 import lhj.studycafe_kiosk.seat.dto.*;
 import lhj.studycafe_kiosk.seat.exception.EmptySeatOutException;
 import lhj.studycafe_kiosk.seat.exception.InvalidSeatChangeException;
@@ -42,6 +43,7 @@ public class SeatController {
     private final MemberRepository memberRepository;
     private final SubscriptionRepository subscriptionRepository;
     private final UsageStatusRepository usageStatusRepository;
+    private final OrderRepository orderRepository;
     private final TaskScheduler taskScheduler;
 
     private Map<Long, ScheduledFuture<?>> taskReservations = new ConcurrentHashMap<>();
@@ -52,8 +54,10 @@ public class SeatController {
         Seat seat = seatRepository.getSeat(seatId);
         Member member = memberRepository.getMember(memberId);
         Subscription subscription;
+        Order order;
         try {
             subscription = subscriptionRepository.getSubscription(member);
+            order = orderRepository.getItemByMember(member);
         } catch (EmptyResultDataAccessException e) {
             throw new NotExistSubscriptionException("보유 중인 이용권이 존재하지 않습니다.");
         }
@@ -62,7 +66,7 @@ public class SeatController {
         seatService.chooseSeat(member, seat);
 
         // 기간권의 경우 좌석 선택 후 10분 내에 입실하지 않으면 vacate 처리됨
-        ItemType itemType = subscription.getItem().getItemType();
+        ItemType itemType = order.getItem().getItemType();
         if (itemType == ItemType.PERIOD) {
             Instant executionTime = Instant.now().plus(10, ChronoUnit.MINUTES);
             taskScheduler.schedule(new EnterCheckTask(member, usageStatusRepository, seatService), executionTime);

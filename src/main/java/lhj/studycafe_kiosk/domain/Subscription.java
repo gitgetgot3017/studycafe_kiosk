@@ -20,10 +20,6 @@ public class Subscription {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToOne
-    @JoinColumn(name = "item_id")
-    private Item item;
-
     private LocalDateTime startDateTime;
 
     private LocalDateTime endDateTime; // 일일권, 충전권, 기간권, 고정석에서 사용
@@ -32,9 +28,8 @@ public class Subscription {
 
     private boolean isValid;
 
-    public Subscription(Member member, Item item, LocalDateTime startDateTime, LocalDateTime endDateTime, Duration leftTime, boolean isValid) {
+    public Subscription(Member member, LocalDateTime startDateTime, LocalDateTime endDateTime, Duration leftTime, boolean isValid) {
         this.member = member;
-        this.item = item;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.leftTime = leftTime;

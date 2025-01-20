@@ -71,8 +71,8 @@ public class OrderController {
 
         Member member = memberRepository.getMember(memberId);
         try {
-            Subscription subscription = subscriptionRepository.getSubscription(member);
-            if (subscription.getItem().getItemType() == item.getItemType()) { // 이용 연장하는 경우 (일일권, 기간권, 고정석에 한함)
+            Order order = orderRepository.getItemByMember(member);
+            if (order.getItem().getItemType() == item.getItemType()) { // 이용 연장하는 경우 (일일권, 기간권, 고정석에 한함)
                 if (item.getItemType() == ItemType.CHARGE) {
                     throw new AlreadyExistSubscriptionException("이미 사용 중인 이용권이 존재합니다.");
                 }

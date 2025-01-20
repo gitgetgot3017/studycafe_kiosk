@@ -27,7 +27,7 @@ public class SubscriptionService {
         } catch (EmptyResultDataAccessException e) { // 이용권이 존재하지 않는 유저인 경우: 이용권을 구매한다.
             LocalDateTime startDateTime = LocalDateTime.now();
             LocalDateTime endDateTime = getEndDateTime(startDateTime, item);
-            Subscription subscription = new Subscription(member, item, startDateTime, endDateTime, getLeftTime(item), true);
+            Subscription subscription = new Subscription(member, startDateTime, endDateTime, getLeftTime(item), true);
             subscriptionRepository.saveSubscription(subscription);
         }
     }

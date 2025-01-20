@@ -36,4 +36,11 @@ public class OrderRepository {
                 .setParameter("member", member)
                 .getResultList();
     }
+
+    public Order getItemByMember(Member member) {
+        return em.createQuery("select o from Order o where o.member = :member order by o.orderDatetime desc", Order.class)
+                .setParameter("member", member)
+                .setMaxResults(1)
+                .getSingleResult();
+    }
 }

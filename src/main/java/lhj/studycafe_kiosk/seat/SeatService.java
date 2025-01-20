@@ -2,6 +2,7 @@ package lhj.studycafe_kiosk.seat;
 
 import lhj.studycafe_kiosk.domain.*;
 import lhj.studycafe_kiosk.notification.NotificationService;
+import lhj.studycafe_kiosk.order.OrderRepository;
 import lhj.studycafe_kiosk.reservation.ReservationRepository;
 import lhj.studycafe_kiosk.reservation.exception.AlreadyReservedSeatException;
 import lhj.studycafe_kiosk.subscription.SubscriptionRepository;
@@ -31,11 +32,13 @@ public class SeatService {
     private final UsageStatusRepository usageStatusRepository;
     private final ReservationRepository reservationRepository;
     private final NotificationService notificationService;
+    private final OrderRepository orderRepository;
 
     public void chooseSeat(Member member, Seat seat) {
 
         Subscription subscription = getSubscription(member);
-        Item item = subscription.getItem();
+        Order order = orderRepository.getItemByMember(member);
+        Item item = order.getItem();
 
         LocalDateTime endDateTime;
         LocalDateTime curDateTime = LocalDateTime.now();
@@ -75,7 +78,8 @@ public class SeatService {
         usageStatusService.recordUsageStatus(new UsageStatus(subscription, member, UserInOut.OUT, LocalDateTime.now()));
 
         // 남은 시간 보여주기
-        Item item = subscription.getItem();
+        Order order = orderRepository.getItemByMember(member);
+        Item item = order.getItem();
         Duration remainderTime;
 
         if (item.getItemType() == ItemType.DAILY) {
