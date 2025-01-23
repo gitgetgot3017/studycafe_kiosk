@@ -9,6 +9,7 @@ import lhj.studycafe_kiosk.seat.exception.InvalidSeatChangeException;
 import lhj.studycafe_kiosk.seat.exception.NotExistSeatException;
 import lhj.studycafe_kiosk.seat.exception.NotUsableSeatException;
 import lhj.studycafe_kiosk.subscription.SubscriptionRepository;
+import lhj.studycafe_kiosk.subscription.exception.ExpiredSubscriptionException;
 import lhj.studycafe_kiosk.subscription.exception.NotExistSubscriptionException;
 import lhj.studycafe_kiosk.usage_status.UsageStatusRepository;
 import lombok.RequiredArgsConstructor;
@@ -42,61 +43,16 @@ public class SeatController {
     private final SeatRepository seatRepository;
     private final MemberRepository memberRepository;
     private final SubscriptionRepository subscriptionRepository;
-    private final UsageStatusRepository usageStatusRepository;
-    private final OrderRepository orderRepository;
-    private final TaskScheduler taskScheduler;
 
     private Map<Long, ScheduledFuture<?>> taskReservations = new ConcurrentHashMap<>();
 
     @PostMapping("/{seatId}")
-    public HttpEntity<SeatResponse> chooseSeat(@SessionAttribute("loginMember") Long memberId, @PathVariable("seatId") Long seatId) {
+    public HttpEntity<SeatResponse> chooseSeat(@SessionAttribute(value = "loginMember") Long memberId, @PathVariable("seatId") Long seatId) {
 
-        Seat seat = seatRepository.getSeat(seatId);
-        Member member = memberRepository.getMember(memberId);
-        Subscription subscription;
-        Order order;
-        try {
-            subscription = subscriptionRepository.getSubscription(member);
-            order = orderRepository.getItemByMember(member);
-        } catch (EmptyResultDataAccessException e) {
-            throw new NotExistSubscriptionException("보유 중인 이용권이 존재하지 않습니다.");
-        }
-
-        validateUsableSeat(seat);
-        seatService.chooseSeat(member, seat);
-
-        // 기간권의 경우 좌석 선택 후 10분 내에 입실하지 않으면 vacate 처리됨
-        ItemType itemType = order.getItem().getItemType();
-        if (itemType == ItemType.PERIOD) {
-            Instant executionTime = Instant.now().plus(10, ChronoUnit.MINUTES);
-            taskScheduler.schedule(new EnterCheckTask(member, usageStatusRepository, seatService), executionTime);
-            registerScheduledTask(member, LocalDateTime.ofInstant(executionTime, ZoneId.of("Asia/Seoul")), ENTRACELIMIT);
-        }
-
-        // (모든 이용권에 대해) 좌석을 vacate하는 작업 등록하기
-        registerVacateSeat(subscription.getLeftTime(), itemType, member);
+        seatService.chooseSeat(memberId, seatId);
 
         SeatResponse seatResponse = new SeatResponse("좌석 선택이 완료되었습니다.", seatId);
         return new ResponseEntity(seatResponse, HttpStatus.ACCEPTED);
-    }
-
-    private void registerVacateSeat(Duration leftTime, ItemType itemType, Member member) {
-
-        long seconds = leftTime.getSeconds();
-        if (itemType == ItemType.CHARGE || itemType == ItemType.PERIOD) {
-            if (seconds > 24 * 60 * 60) {
-                seconds = 24 * 60 * 60;
-            }
-        }
-
-        Instant executionTime = Instant.now().plus(seconds, ChronoUnit.SECONDS);
-        ScheduledFuture<?> taskReservation = taskScheduler.schedule(new VacateSeatTask(member, seatService), executionTime);
-        taskReservations.put(member.getId(), taskReservation);
-        registerScheduledTask(member, LocalDateTime.ofInstant(executionTime, ZoneId.of("Asia/Seoul")), VACATESEAT);
-    }
-
-    private void registerScheduledTask(Member member, LocalDateTime executionTime, TaskType type) {
-        seatService.registerScheduledTask(new ScheduledTask(member, executionTime, type));
     }
 
     @PatchMapping
@@ -120,7 +76,7 @@ public class SeatController {
         Member member = memberRepository.getMember(memberId);
 
         validateIsMySeat(member, seat);
-        Duration remainderTime = seatService.outSeat(seat, member);
+        Duration remainderTime = seatService.outSeat(seatId, member);
 
         UserOutSeatResponse outSeatResponse = new UserOutSeatResponse("좌석 퇴실이 완료되었습니다.", seatId, changeDurationToString(remainderTime));
         return new ResponseEntity<>(outSeatResponse, HttpStatus.ACCEPTED);
@@ -145,17 +101,6 @@ public class SeatController {
         return new ResponseEntity<>(mySeatResponse, HttpStatus.OK);
     }
 
-    private void validateUsableSeat(Seat seat) {
-
-        if (seat == null) {
-            throw new NotExistSeatException("존재하지 않는 좌석 번호입니다.");
-        }
-
-        if (seat.getMember() != null) {
-            throw new NotUsableSeatException("이미 사용 중인 좌석입니다.");
-        }
-    }
-
     private void validateIsMySeat(Member member, Seat seat) {
 
         if (seat.getMember() == null) {
@@ -170,7 +115,7 @@ public class SeatController {
     private void validateChangeability(Member member, Seat beforeSeat, Seat afterSeat) {
 
         // 이동 가능한 좌석인지 검증
-        validateUsableSeat(afterSeat);
+//        validateUsableSeat(afterSeat);
     }
 
     private String changeDurationToString(Duration duration) {

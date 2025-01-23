@@ -10,6 +10,7 @@ import lhj.studycafe_kiosk.main.dto.MainInOutResponse;
 import lhj.studycafe_kiosk.member.MemberRepository;
 import lhj.studycafe_kiosk.member.exception.LoginFailException;
 import lhj.studycafe_kiosk.seat.SeatRepository;
+import lhj.studycafe_kiosk.seat.SeatService;
 import lhj.studycafe_kiosk.seat.exception.NotExistSeatException;
 import lhj.studycafe_kiosk.subscription.SubscriptionRepository;
 import lhj.studycafe_kiosk.subscription.exception.NotExistSubscriptionException;
@@ -24,6 +25,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+
+import static lhj.studycafe_kiosk.domain.TaskType.ENTRACELIMIT;
 
 @RestController
 @RequiredArgsConstructor
@@ -87,6 +90,10 @@ public class MainController {
 
         // 입실 처리(usage_status에 IN 기록 남기기)
         usageStatusService.recordUsageStatus(new UsageStatus(subscription, member, UserInOut.IN, LocalDateTime.now()));
+
+        // 해당 좌석에 대해 10분 내 입실 확인 예약이 DB에 등록되어 있으면 취소한다.
+        seatRepository.deleteScheduledTaskByMemberAndType(member, ENTRACELIMIT);
+
         return new ResponseEntity(new EntranceSuccessRequest("입실 완료하였습니다."), HttpStatus.OK);
     }
 

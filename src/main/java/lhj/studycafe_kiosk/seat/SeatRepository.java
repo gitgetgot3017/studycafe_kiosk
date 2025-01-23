@@ -5,7 +5,9 @@ import jakarta.persistence.PersistenceContext;
 import lhj.studycafe_kiosk.domain.Member;
 import lhj.studycafe_kiosk.domain.ScheduledTask;
 import lhj.studycafe_kiosk.domain.Seat;
+import lhj.studycafe_kiosk.domain.TaskType;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,12 +22,8 @@ public class SeatRepository {
     }
 
     public void updateTwoSeat(Seat beforeSeat, Seat afterSeat) {
-        afterSeat.changeSeatState(beforeSeat.getMember(), beforeSeat.getEndDateTime());
-        beforeSeat.changeSeatState(null, null);
-    }
-
-    public void updateSeat(Seat seat) {
-        seat.changeSeatState(null, null);
+        afterSeat.chooseSeat(beforeSeat.getMember());
+        beforeSeat.chooseSeat(null);
     }
 
     public List<Seat> getOccupiedSeats() {
@@ -39,8 +37,9 @@ public class SeatRepository {
                 .getSingleResult();
     }
 
+    @Transactional // TODO: 근본적인 해결 방법을 찾아야 함
     public void vacateSeat(Member member) {
-        em.createQuery("update Seat s set s.member = null, s.endDateTime = null where s.member = :member")
+        em.createQuery("update Seat s set s.member = null where s.member = :member")
                 .setParameter("member", member)
                 .executeUpdate();
     }
@@ -59,5 +58,12 @@ public class SeatRepository {
         if (scheduledTask != null) {
            em.remove(scheduledTask);
        }
+    }
+
+    public void deleteScheduledTaskByMemberAndType(Member member, TaskType type) {
+        em.createQuery("delete from ScheduledTask s where s.member = :member and s.type = :type")
+                .setParameter("member", member)
+                .setParameter("type", type)
+                .executeUpdate();
     }
 }
