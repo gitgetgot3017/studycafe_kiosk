@@ -42,9 +42,6 @@ public class SeatController {
     private final SeatService seatService;
     private final SeatRepository seatRepository;
     private final MemberRepository memberRepository;
-    private final SubscriptionRepository subscriptionRepository;
-
-    private Map<Long, ScheduledFuture<?>> taskReservations = new ConcurrentHashMap<>();
 
     @PostMapping("/{seatId}")
     public HttpEntity<SeatResponse> chooseSeat(@SessionAttribute(value = "loginMember") Long memberId, @PathVariable("seatId") Long seatId) {
@@ -62,7 +59,7 @@ public class SeatController {
         Seat beforeSeat = seatRepository.getMySeat(member);
         Seat afterSeat = seatRepository.getSeat(seatChangeRequest.getAfterSeatId());
 
-        validateChangeability(member, beforeSeat, afterSeat);
+        validateChangeability(afterSeat);
         seatService.changeSeat(beforeSeat, afterSeat);
 
         SeatChangeSuccessResponse seatChangeSuccessResponse = new SeatChangeSuccessResponse("좌석 이동을 완료하였습니다.", beforeSeat.getId(), seatChangeRequest.getAfterSeatId());
@@ -80,6 +77,23 @@ public class SeatController {
 
         UserOutSeatResponse outSeatResponse = new UserOutSeatResponse("좌석 퇴실이 완료되었습니다.", seatId, changeDurationToString(remainderTime));
         return new ResponseEntity<>(outSeatResponse, HttpStatus.ACCEPTED);
+    }
+
+    private void validateChangeability(Seat afterSeat) {
+
+        // 이동 가능한 좌석인지 검증
+        validateUsableSeat(afterSeat);
+    }
+
+    private void validateUsableSeat(Seat seat) {
+
+        if (seat == null) {
+            throw new NotExistSeatException("존재하지 않는 좌석 번호입니다.");
+        }
+
+        if (seat.getMember() != null) {
+            throw new NotUsableSeatException("이미 사용 중인 좌석입니다.");
+        }
     }
 
     @GetMapping("/occupied")
@@ -110,12 +124,6 @@ public class SeatController {
         if (!seat.getMember().equals(member)) {
             throw new InvalidSeatChangeException("현재 나의 좌석이 아닙니다.");
         }
-    }
-
-    private void validateChangeability(Member member, Seat beforeSeat, Seat afterSeat) {
-
-        // 이동 가능한 좌석인지 검증
-//        validateUsableSeat(afterSeat);
     }
 
     private String changeDurationToString(Duration duration) {
