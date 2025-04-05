@@ -1,11 +1,8 @@
 package lhj.studycafe_kiosk;
 
-import lhj.studycafe_kiosk.domain.ScheduledTask;
-import lhj.studycafe_kiosk.seat.EnterCheckTask;
-import lhj.studycafe_kiosk.seat.SeatRepository;
-import lhj.studycafe_kiosk.seat.SeatService;
-import lhj.studycafe_kiosk.seat.VacateSeatTask;
-import lhj.studycafe_kiosk.usage_status.UsageStatusRepository;
+import lhj.studycafe_kiosk.domain.seat.repository.SeatRepository;
+import lhj.studycafe_kiosk.domain.seat.service.SeatService;
+import lhj.studycafe_kiosk.domain.usage_status.repository.UsageStatusRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -16,7 +13,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 
-import static lhj.studycafe_kiosk.domain.TaskType.ENTRACELIMIT;
+import static lhj.studycafe_kiosk.TaskType.ENTRACELIMIT;
 
 @Component
 @RequiredArgsConstructor
