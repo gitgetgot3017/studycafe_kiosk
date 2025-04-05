@@ -1,21 +1,19 @@
 package lhj.studycafekiosk.domain.order.service;
 
+import lhj.studycafekiosk.OrderEvent;
 import lhj.studycafekiosk.domain.coupon.domain.Coupon;
 import lhj.studycafekiosk.domain.coupon.domain.CouponType;
 import lhj.studycafekiosk.domain.coupon.repository.CouponRepository;
 import lhj.studycafekiosk.domain.item.domain.Item;
 import lhj.studycafekiosk.domain.item.domain.ItemType;
-import lhj.studycafekiosk.domain.item.order.exception.*;
+import lhj.studycafekiosk.domain.item.repository.ItemRepository;
 import lhj.studycafekiosk.domain.member.domain.Member;
-import lhj.studycafekiosk.OrderEvent;
+import lhj.studycafekiosk.domain.member.repository.MemberRepository;
 import lhj.studycafekiosk.domain.order.domain.Order;
 import lhj.studycafekiosk.domain.order.domain.OrderStatus;
-import lhj.studycafekiosk.domain.order.repository.OrderRepository;
 import lhj.studycafekiosk.domain.order.exception.*;
+import lhj.studycafekiosk.domain.order.repository.OrderRepository;
 import lhj.studycafekiosk.domain.subscription.domain.Subscription;
-import lhj.studycafekiosk.domain.item.repository.ItemRepository;
-import lhj.studycafekiosk.domain.member.repository.MemberRepository;
-import lhj.studycafekiosk.order.exception.*;
 import lhj.studycafekiosk.domain.subscription.repository.SubscriptionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;

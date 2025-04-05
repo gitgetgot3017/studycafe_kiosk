@@ -1,16 +1,15 @@
 package lhj.studycafekiosk.domain.seat.controller;
 
 import lhj.studycafekiosk.domain.member.domain.Member;
+import lhj.studycafekiosk.domain.member.repository.MemberRepository;
 import lhj.studycafekiosk.domain.seat.domain.Seat;
-import lhj.studycafekiosk.domain.seat.repository.SeatRepository;
-import lhj.studycafekiosk.domain.seat.service.SeatService;
 import lhj.studycafekiosk.domain.seat.dto.*;
 import lhj.studycafekiosk.domain.seat.exception.EmptySeatOutException;
 import lhj.studycafekiosk.domain.seat.exception.InvalidSeatChangeException;
 import lhj.studycafekiosk.domain.seat.exception.NotExistSeatException;
 import lhj.studycafekiosk.domain.seat.exception.NotUsableSeatException;
-import lhj.studycafekiosk.domain.member.repository.MemberRepository;
-import lhj.studycafekiosk.seat.dto.*;
+import lhj.studycafekiosk.domain.seat.repository.SeatRepository;
+import lhj.studycafekiosk.domain.seat.service.SeatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
