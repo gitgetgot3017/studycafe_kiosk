@@ -2,18 +2,16 @@ package lhj.studycafekiosk.domain.member.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import lhj.studycafekiosk.domain.member.repository.MemberRepository;
-import lhj.studycafekiosk.domain.member.service.MemberService;
+import lhj.studycafekiosk.domain.member.domain.Member;
 import lhj.studycafekiosk.domain.member.dto.*;
 import lhj.studycafekiosk.domain.member.exception.*;
-import lhj.studycafekiosk.domain.member.domain.Member;
-import lhj.studycafekiosk.member.dto.*;
-import lhj.studycafekiosk.member.exception.*;
-import lhj.studycafekiosk.domain.sms.service.SmsService;
-import lhj.studycafekiosk.domain.sms.dto.VerificationInfo;
+import lhj.studycafekiosk.domain.member.repository.MemberRepository;
+import lhj.studycafekiosk.domain.member.service.MemberService;
 import lhj.studycafekiosk.domain.sms.exception.VerificationCodeTimeLimitException;
+import lhj.studycafekiosk.domain.sms.service.SmsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +19,12 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -37,6 +34,8 @@ public class MemberController {
     private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final SmsService smsService;
+
+    private final RedisTemplate<String, String> stringRedisTemplate;
 
     private Map<String, String> uuidPhone = new ConcurrentHashMap<>();
 
@@ -207,11 +206,11 @@ public class MemberController {
 
     private void validateVerified(String phone, String verificationCode) {
 
-        VerificationInfo verificationInfo = smsService.getVerificationStore().get(phone);
-        if (verificationInfo == null || verificationInfo.getVerificationCode() == null || !verificationInfo.getVerificationCode().equals(verificationCode)) {
-            throw new NotVerifiedException("휴대폰 번호 인증을 해주세요.");
-        } else if (LocalDateTime.now().isAfter(verificationInfo.getExpiredDateTime())) {
+        String redisVerificationCode = stringRedisTemplate.opsForValue().get("auth:phone:" + phone);
+        if (redisVerificationCode == null) {
             throw new VerificationCodeTimeLimitException("인증 시간이 경과하였습니다.");
+        } else if (!redisVerificationCode.equals(verificationCode)) {
+            throw new NotVerifiedException("인증번호를 잘못 입력하셨습니다.");
         }
     }
 }

@@ -1,8 +1,8 @@
 package lhj.studycafekiosk.domain.sms.service;
 
 import jakarta.annotation.PostConstruct;
-import lhj.studycafekiosk.domain.sms.dto.VerificationInfo;
 import lhj.studycafekiosk.domain.sms.exception.SendSmsFailException;
+import lombok.AllArgsConstructor;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.exception.NurigoEmptyResponseException;
 import net.nurigo.sdk.message.exception.NurigoMessageNotReceivedException;
@@ -10,14 +10,14 @@ import net.nurigo.sdk.message.exception.NurigoUnknownException;
 import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.Duration;
 import java.util.Random;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
+@AllArgsConstructor
 public class SmsService {
 
     @Value("${coolsms.api.key}")
@@ -29,9 +29,9 @@ public class SmsService {
     @Value("${coolsms.api.number}")
     private String fromPhoneNumber;
 
-    private Map<String, VerificationInfo> verificationStore = new ConcurrentHashMap<>();
-
     private DefaultMessageService defaultMessageService;
+
+    private final RedisTemplate<String, String> stringRedisTemplate;
 
     @PostConstruct
     public void init() {
@@ -49,7 +49,7 @@ public class SmsService {
         message.setTo(toPhoneNumber);
 
         String verificationCode = generateRandomNumber();
-        verificationStore.put(toPhoneNumber, new VerificationInfo(verificationCode, LocalDateTime.now().plusMinutes(5)));
+        stringRedisTemplate.opsForValue().set("auth:phone:" + toPhoneNumber, verificationCode, Duration.ofMinutes(3));
         message.setText("[인증번호] " + verificationCode + " 입니다.");
 
         try {
@@ -65,25 +65,13 @@ public class SmsService {
 
     public int verifyCode(String phone, String verificationCode) {
 
-        VerificationInfo verificationInfo = verificationStore.get(phone);
-        if (verificationInfo == null) {
+        String redisVerificationCode = stringRedisTemplate.opsForValue().get("auth:phone:" + phone);
+        if (redisVerificationCode == null) {
             return -1;
-        }
-
-        String storedCode = verificationInfo.getVerificationCode();
-        LocalDateTime expiredDateTime = verificationInfo.getExpiredDateTime();
-        LocalDateTime curDateTime = LocalDateTime.now();
-
-        if (storedCode == null || !storedCode.equals(verificationCode)) {
-            return -1;
-        } else if (curDateTime.isAfter(expiredDateTime)) {
+        } else if(!redisVerificationCode.equals(verificationCode)) {
             return -2;
         } else {
             return 1;
         }
-    }
-
-    public Map<String, VerificationInfo> getVerificationStore() {
-        return verificationStore;
     }
 }

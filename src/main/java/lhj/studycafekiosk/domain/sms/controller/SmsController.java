@@ -35,9 +35,9 @@ public class SmsController {
 
         int verificationResult = smsService.verifyCode(verifySmsRequestDto.getPhone(), verifySmsRequestDto.getVerificationCode());
         if (verificationResult == -1) {
-            throw new VerificationCodeMismatchException("인증번호를 잘못 입력하셨습니다.");
-        } else if (verificationResult == -2) {
             throw new VerificationCodeTimeLimitException("인증 시간이 경과하였습니다.");
+        } else if (verificationResult == -2) {
+            throw new VerificationCodeMismatchException("인증번호를 잘못 입력하셨습니다.");
         }
 
         VerifySmsSuccessDto verifySnsSuccessDto = new VerifySmsSuccessDto("번호 인증에 성공하셨습니다.");
