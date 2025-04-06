@@ -1,6 +1,7 @@
 package lhj.studycafekiosk.domain.sms.service;
 
 import jakarta.annotation.PostConstruct;
+import lhj.studycafekiosk.domain.sms.domain.VerificationResult;
 import lhj.studycafekiosk.domain.sms.exception.SendSmsFailException;
 import lhj.studycafekiosk.domain.sms.exception.VerificationAttemptLimitExceededException;
 import lombok.AllArgsConstructor;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.Random;
+
+import static lhj.studycafekiosk.domain.sms.domain.VerificationResult.*;
 
 @Service
 @AllArgsConstructor
@@ -79,21 +82,21 @@ public class SmsService {
         return String.valueOf(new Random().nextInt(900000) + 100000);
     }
 
-    public int verifyCode(String phone, String verificationCode) {
+    public VerificationResult verifyCode(String phone, String verificationCode) {
 
         String authPhoneKey = "auth:phone:" + phone;
         String authAttempt = "auth:attempt:" + phone;
 
         String redisVerificationCode = stringRedisTemplate.opsForValue().get(authPhoneKey);
         if (redisVerificationCode == null) {
-            return -1;
+            return TIME_EXPIRED;
         } else if(!redisVerificationCode.equals(verificationCode)) {
             integerRedisTemplate.opsForValue().increment(authAttempt);
             integerRedisTemplate.expire(authAttempt, REDIS_TTL);
-            return -2;
+            return MISMATCH;
         } else {
             integerRedisTemplate.delete(authAttempt);
-            return 1;
+            return SUCCESS;
         }
     }
 }
